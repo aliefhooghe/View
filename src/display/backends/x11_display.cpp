@@ -47,12 +47,14 @@ namespace View {
         void sys_invalidate_rect(const draw_area& area) override;
 
         //  Internal helpers
+        void _resize_window(unsigned int width, unsigned int height);
         bool _process_event(const XEvent& event, std::optional<draw_area>& redraw_area);
         void _redraw_area(draw_area area);
         void _redraw_window();
 
         Display *display{nullptr};
         Window window{0};
+        Visual *visual{0};
         XdbeBackBuffer back_buffer{0};            // For double buffering
         Atom wm_delete_message{0};
         cairo_surface_t *cairo_surface{nullptr};
@@ -99,6 +101,7 @@ namespace View {
         if( found_screen_info == nullptr || found_screen_count < 1 )
             throw std::runtime_error("View::x11_window : No Visual With Double Buffering\n");
 
+        visual = found_screen_info->visual;
 
         //  Create the xindows
         const auto screen_id = DefaultScreen(display);
@@ -200,6 +203,29 @@ namespace View {
         return false;
     }
 
+    void x11_window::_resize_window(unsigned int width, unsigned int height)
+    {
+        std::cout << "Resize window : from ["
+            << display_width() << "x" << display_height() << "]"
+            << " to [" << width << "x"  << height << "]" << std::endl;
+
+        resize_display(width, height);
+
+        cairo_destroy(cr);
+        cairo_surface_destroy(cairo_surface);
+        XdbeDeallocateBackBufferName(display, back_buffer);
+
+        XResizeWindow(display, window, width, height);
+        back_buffer = XdbeAllocateBackBufferName(display, window, XdbeBackground);
+        cairo_surface =
+            cairo_xlib_surface_create(
+                display, back_buffer, visual, width, height);
+
+        cr = cairo_create(cairo_surface);
+
+        _redraw_window();
+    }
+
     bool x11_window::_process_event(const XEvent& event, std::optional<draw_area>& redraw_area)
     {
 
@@ -271,7 +297,15 @@ namespace View {
         break;
 
         case ConfigureNotify:
+        {
+            const auto& conf = event.xconfigure;
+
+            //  Windows resized by user
+            if (conf.width != display_width() || conf.height != display_height())
+                _resize_window(conf.width, conf.height);
+        }
         break;
+
         }
 
         return false;
