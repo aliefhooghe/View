@@ -2,7 +2,9 @@
 #define VIEW_DISPLAY_CONTROLER_H_
 
 #include <exception>
-#include "widget.h"
+#include "widget/widget.h"
+
+#include <iostream>
 
 namespace View {
 
@@ -13,20 +15,26 @@ namespace View {
     class display_controler {
     public:
         display_controler(widget& w)
-        : _widget{w}
+        : _widget{&w}
         {
-            if (_widget._display_ctl == nullptr)
-                _widget._display_ctl = this;
+            if (_widget->_display_ctl == nullptr)
+                _widget->_display_ctl = this;
             else
                 throw std::runtime_error("Tried to construst a second display controler for a widget");
         }
 
         display_controler(const display_controler&) = delete;
-        display_controler(display_controler&&) noexcept = default;
+        display_controler(display_controler&& other) noexcept
+        {
+            _widget = other._widget;
+            _widget->_display_ctl = this;
+            other._widget = nullptr;
+        }
 
         virtual ~display_controler()
         {
-            _widget._display_ctl = nullptr;
+            if (_widget)
+                _widget->_display_ctl = nullptr;
         }
 
         /**
@@ -41,7 +49,7 @@ namespace View {
         virtual void invalidate_rect(const rectangle<>& rect) =0;
 
     private:
-        widget& _widget;
+        widget *_widget{nullptr};
     };
 
 }

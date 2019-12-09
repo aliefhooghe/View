@@ -1,8 +1,8 @@
 #ifndef VIEW_WIDGET_ADAPTER_H_
 #define VIEW_WIDGET_ADAPTER_H_
 
-#include "../widget/widget.h"
-#include "widget/display_controler.h"
+#include "widget/widget.h"
+#include "display/common/display_controler.h"
 
 namespace View {
 
@@ -29,6 +29,11 @@ namespace View {
          *  \return display height in pixel
          */
         unsigned int display_height()   { return _display_height; }
+
+        /**
+         *  \brief
+         */
+        void resize_display(unsigned int width, unsigned int height);
 
         /**
          *  \brief Inform the underlying display that an area must be redrawn

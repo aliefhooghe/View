@@ -27,8 +27,9 @@ set(VIEW_COMMON_SRC
     cairo_definition.h
     controls/simple_panel.h
     display/display_types/application_display.h
-    display/widget_adapter.cpp
-    display/widget_adapter.h
+    display/common/display_controler.h
+    display/common/widget_adapter.cpp
+    display/common/widget_adapter.h
     drawing/cairo_helper.h
     drawing/color.h
     Tests/widgets_demo.cpp
@@ -37,7 +38,6 @@ set(VIEW_COMMON_SRC
     widget/widget_container.h
     widget/widget.cpp
     widget/widget.h
-    widget/display_controler.h
 )
 
 ## Find Cairo Graphics librarie

@@ -1,6 +1,6 @@
 
 #include "widget.h"
-#include "display_controler.h"
+#include "display/common/display_controler.h"
 
 namespace View {
 

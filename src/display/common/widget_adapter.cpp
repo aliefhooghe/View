@@ -12,6 +12,12 @@ namespace View {
         _display_height = static_cast<unsigned int>(pixel_per_unit * _root.height());
     }
 
+    void widget_adapter::resize_display(unsigned int width, unsigned int height)
+    {
+        _display_width = width;
+        _display_height = height;
+    }
+
     void widget_adapter::sys_draw(cairo_t *cr)
     {
         cairo_save(cr);
@@ -27,10 +33,10 @@ namespace View {
     {
         cairo_save(cr);
 
-        // //  Clip the area that should be redrawn
-        // //  Clipping at interger coordinate allow Cairo optimzation
-        // cairo_rectangle(cr, left, top, right - left, bottom - top);
-        // cairo_clip(cr);
+        //  Clip the area that should be redrawn
+        //  Clipping at interger coordinate allow Cairo optimzation
+        cairo_rectangle(cr, left, top, right - left, bottom - top);
+        cairo_clip(cr);
 
         //  Scale to widget coordinate
         cairo_scale(

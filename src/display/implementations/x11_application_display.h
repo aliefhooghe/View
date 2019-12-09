@@ -1,7 +1,7 @@
 #ifndef VIEW_X11_APPLICATION_DISPLAY_H_
 #define VIEW_X11_APPLICATION_DISPLAY_H_
 
-#include "../display_types/application_display.h"
+#include "display/display_types/application_display.h"
 #include "../backends/x11_display.h"
 
 namespace View {

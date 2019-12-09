@@ -11,7 +11,7 @@ namespace View {
      */
     class application_display {
     public:
-        ~application_display() = default;
+        virtual ~application_display() = default;
 
         /**
          *  \brief Open a windows

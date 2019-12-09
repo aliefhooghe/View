@@ -9,9 +9,10 @@ int main()
 
     simple_panel<> panel{100, 100};
 
-    panel.insert_widget(12.2, 38, std::make_unique<simple_panel<>>(15, 18));
+    native_application_display dpy{panel, 6};
 
-    native_application_display dpy{panel, 10};
+    panel.insert_widget(12.2, 38, std::make_unique<simple_panel<>>(15, 18));
+    panel.insert_widget(20, 60, std::make_unique<simple_panel<>>(15, 18));
 
     dpy.open("");
     dpy.wait();

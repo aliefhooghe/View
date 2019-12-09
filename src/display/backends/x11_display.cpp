@@ -8,8 +8,8 @@
 #include <X11/Xutil.h>
 #include <X11/extensions/Xdbe.h>
 
-#include "widget/display_controler.h"
-#include "display/widget_adapter.h"
+#include "display/common/display_controler.h"
+#include "display/common/widget_adapter.h"
 #include "x11_display.h"
 
 #include <iostream>
@@ -17,7 +17,6 @@
 namespace View {
 
     class x11_window : private widget_adapter {
-
 
         static constexpr auto X_EVENT_MASK =
             KeyPressMask        |
@@ -36,8 +35,6 @@ namespace View {
         x11_window(x11_window&) = delete;
         ~x11_window();
 
-        /** TODO redraw rect, redraw **/
-
         /**
          *  \brief wait and process some events
          *  \param usec_wait_timeout the maximum event wait time allowed
@@ -46,7 +43,10 @@ namespace View {
         bool process_events(unsigned int usec_wait_timeout);
 
     private:
+        //  Widget adapter interface
         void sys_invalidate_rect(const draw_area& area) override;
+
+        //  Internal helpers
         bool _process_event(const XEvent& event, std::optional<draw_area>& redraw_area);
         void _redraw_area(draw_area area);
         void _redraw_window();
@@ -54,7 +54,6 @@ namespace View {
         Display *display{nullptr};
         Window window{0};
         XdbeBackBuffer back_buffer{0};            // For double buffering
-        GC graphic_context{nullptr};
         Atom wm_delete_message{0};
         cairo_surface_t *cairo_surface{nullptr};
 		cairo_t *cr{nullptr};
@@ -100,6 +99,7 @@ namespace View {
         if( found_screen_info == nullptr || found_screen_count < 1 )
             throw std::runtime_error("View::x11_window : No Visual With Double Buffering\n");
 
+
         //  Create the xindows
         const auto screen_id = DefaultScreen(display);
         XSetWindowAttributes xattributs;
@@ -137,18 +137,10 @@ namespace View {
             XNextEvent(display, &event);
         } while (event.type != MapNotify);
 
-        //  Create graphic context
-        graphic_context = XCreateGC(display, back_buffer, 0, nullptr);
-        XSetForeground(display, graphic_context, BlackPixel(display, screen_id));
-
         //  Create cairo surface
         cairo_surface =
             cairo_xlib_surface_create(
                 display, back_buffer, found_screen_info->visual, width, height);
-
-        /**  \todo : is it useful ? **/
-        cairo_xlib_surface_set_size(
-                cairo_surface, width, height);
 
         cr = cairo_create(cairo_surface);
 
@@ -164,7 +156,6 @@ namespace View {
         cairo_destroy(cr);
         cairo_surface_destroy(cairo_surface);
         XdbeDeallocateBackBufferName(display, back_buffer);
-        XFreeGC(display, graphic_context);
         XDestroyWindow(display, window);
         XCloseDisplay(display);
     }
@@ -312,7 +303,7 @@ namespace View {
         sys_draw(cr);
         XdbeSwapInfo info;
         info.swap_window = window;
-        info.swap_action = XdbeUndefined;
+        info.swap_action = XdbeBackground;
         XdbeSwapBuffers(display, &info, 1);
         XFlush(display);
     }

@@ -7,7 +7,7 @@
 #include <algorithm>
 
 #include "widget.h"
-#include "display_controler.h"
+#include "display/common/display_controler.h"
 
 namespace View {
 
@@ -36,6 +36,10 @@ namespace View {
             }
 
         private:
+            /**
+             *      Display controler interface
+             */
+
             void invalidate_widget() override
             {
                 _parent.invalidate_rect(
@@ -60,7 +64,7 @@ namespace View {
         : widget(width, height)
         {}
 
-        virtual ~widget_container() = default;
+        ~widget_container() override = default;
 
         //  Container Api
         void insert_widget(float x, float y, std::unique_ptr<Tchildren>&& w)
