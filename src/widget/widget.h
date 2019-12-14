@@ -4,6 +4,7 @@
 #include "rectangle.h"
 #include "cairo_definition.h"
 #include "event.h"
+#include "display/common/cursor.h"
 
 namespace View {
 
@@ -45,8 +46,10 @@ namespace View {
         virtual void draw_rect(cairo_t*, const rectangle<>&) {};
 
     protected:
+        /** display control helpers **/
         void invalidate();
         void invalidate_rect(const rectangle<>&);
+        void set_cursor(cursor cursor);
 
     private:
         display_controler *_display_ctl{nullptr};

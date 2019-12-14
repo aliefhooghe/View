@@ -38,4 +38,10 @@ namespace View {
             _display_ctl->invalidate_rect(rect);
     }
 
+    void widget::set_cursor(cursor c)
+    {
+        if (_display_ctl)
+            _display_ctl->set_cursor(c);
+    }
+
 }

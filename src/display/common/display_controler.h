@@ -3,6 +3,7 @@
 
 #include <exception>
 #include "widget/widget.h"
+#include "cursor.h"
 
 #include <iostream>
 
@@ -47,6 +48,12 @@ namespace View {
          *  \param rect the are which need to be redrawn (widget coordinate)
          **/
         virtual void invalidate_rect(const rectangle<>& rect) =0;
+
+        /**
+         *  \brief Change the current cursor
+         *
+         **/
+        virtual void set_cursor(cursor /* = default */) =0;
 
     private:
         widget *_widget{nullptr};

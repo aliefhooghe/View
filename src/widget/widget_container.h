@@ -53,6 +53,11 @@ namespace View {
                 _parent.invalidate_rect(rect.translate(_pos_x, _pos_y));
             }
 
+            void set_cursor(cursor c) override
+            {
+                _parent.set_cursor(c);
+            }
+
             float _pos_x;
             float _pos_y;
             std::unique_ptr<Tchildren> _widget_instance;

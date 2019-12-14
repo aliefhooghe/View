@@ -1,11 +1,13 @@
 
 #include <cstring>
 #include <optional>
-#include <sys/select.h>
+#include <array>
 
+#include <sys/select.h>
 #include <X11/Xlib.h>
 #include <X11/Xatom.h>
 #include <X11/Xutil.h>
+#include <X11/cursorfont.h>
 #include <X11/extensions/Xdbe.h>
 
 #include "display/common/display_controler.h"
@@ -42,6 +44,8 @@ namespace View {
          **/
         bool process_events(unsigned int usec_wait_timeout);
 
+        //  display controler interface
+        void set_cursor(cursor c) override;
     private:
         //  Widget adapter interface
         void sys_invalidate_rect(const draw_area& area) override;
@@ -52,11 +56,15 @@ namespace View {
         void _redraw_area(draw_area area);
         void _redraw_window();
 
+        void _initialiaze_cursors();
+        void _free_cursors();
+
         Display *display{nullptr};
         Window window{0};
         Visual *visual{0};
         XdbeBackBuffer back_buffer{0};            // For double buffering
         Atom wm_delete_message{0};
+        std::array<Cursor, VIEW_CURSOR_COUNT> x11_cursors{};
         cairo_surface_t *cairo_surface{nullptr};
 		cairo_t *cr{nullptr};
     };
@@ -133,6 +141,9 @@ namespace View {
         //  Select which type of event should be processed
         XSelectInput(display, window, X_EVENT_MASK);
 
+        //  Initialazie cursors
+        _initialiaze_cursors();
+
         //  Map (show) the windows and wait untile it is mapped
         XMapWindow(display, window);
         XEvent event;
@@ -160,7 +171,13 @@ namespace View {
         cairo_surface_destroy(cairo_surface);
         XdbeDeallocateBackBufferName(display, back_buffer);
         XDestroyWindow(display, window);
+        _free_cursors();
         XCloseDisplay(display);
+    }
+
+    void x11_window::set_cursor(cursor c)
+    {
+        XDefineCursor(display, window, x11_cursors[static_cast<int>(c)]);
     }
 
     bool x11_window::process_events(unsigned int usec_wait_timeout)
@@ -357,6 +374,28 @@ namespace View {
 
         XSendEvent(display, window, true, ExposureMask, &ev);
     }
+
+    void x11_window::_initialiaze_cursors()
+    {
+        x11_cursors[static_cast<int>(cursor::standard)] = XCreateFontCursor(display, XC_left_ptr);
+        x11_cursors[static_cast<int>(cursor::arrow)] = XCreateFontCursor(display, XC_left_ptr);
+        x11_cursors[static_cast<int>(cursor::cross)] = XCreateFontCursor(display, XC_cross);
+        x11_cursors[static_cast<int>(cursor::noway)] = XCreateFontCursor(display, XC_circle);
+        x11_cursors[static_cast<int>(cursor::wait)] = XCreateFontCursor(display, XC_watch);
+        x11_cursors[static_cast<int>(cursor::hand)] = XCreateFontCursor(display, XC_hand1);
+        x11_cursors[static_cast<int>(cursor::size_horizontal)] = XCreateFontCursor(display, XC_sb_h_double_arrow);
+        x11_cursors[static_cast<int>(cursor::size_vertical)] = XCreateFontCursor(display, XC_sb_v_double_arrow);
+        x11_cursors[static_cast<int>(cursor::move)] = XCreateFontCursor(display, XC_fleur);
+    }
+
+    void x11_window::_free_cursors()
+    {
+        for (auto cur : x11_cursors)
+            XFreeCursor(display, cur);
+    }
+
+
+
 
     /**
      *
