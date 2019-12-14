@@ -236,8 +236,10 @@ namespace View {
 
                 used_event = _focused_widget->get()->on_mouse_drag_end(button, x_rel, y_rel);
 
-                if (!(_focused_widget->get()->contains(x_rel, y_rel)))
+                if (!(_focused_widget->get()->contains(x_rel, y_rel))) {
                     used_event |= _focused_widget->get()->on_mouse_exit();
+                    _focused_widget = nullptr;
+                }
 
                 _draging = false;
                 return used_event;
