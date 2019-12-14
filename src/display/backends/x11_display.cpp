@@ -183,8 +183,6 @@ namespace View {
 
     bool x11_window::process_events(unsigned int usec_wait_timeout)
     {
-        std::optional<draw_area> redraw_area;
-
         struct timeval timeout = {
                 .tv_sec = 0,
                 .tv_usec = usec_wait_timeout };
@@ -204,7 +202,7 @@ namespace View {
             }
             else {
                 //  There are some event to be processed
-                bool need_redraw = false;
+                std::optional<draw_area> redraw_area;
 
                 while (XPending(display)) {
                     XEvent event;
@@ -214,7 +212,7 @@ namespace View {
                 }
 
                 if (redraw_area)
-                    _redraw_area(redraw_area.value());
+                    _redraw_window();//_redraw_area(redraw_area.value());
             }
         }
 
