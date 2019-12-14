@@ -31,15 +31,9 @@ namespace View {
         unsigned int display_height()   { return _display_height; }
 
         /**
-         *  \brief
+         *  \brief Notify the widget that the display is resized
          */
         void resize_display(unsigned int width, unsigned int height);
-
-        /**
-         *  \brief Inform the underlying display that an area must be redrawn
-         */
-        using draw_area = rectangle<unsigned int>;
-        virtual void sys_invalidate_rect(const draw_area& area) =0;
 
         /**
          *  'Low level' callback, called by system event processing
@@ -61,6 +55,13 @@ namespace View {
 		bool sys_mouse_dbl_click(void);
 		bool sys_key_down(const keycode key);
 		bool sys_key_up(const keycode key);
+
+    protected:
+        /**
+         *  \brief Inform the underlying display that an area must be redrawn
+         */
+        using draw_area = rectangle<unsigned int>;
+        virtual void sys_invalidate_rect(const draw_area& area) =0;
 
     private:
         /**

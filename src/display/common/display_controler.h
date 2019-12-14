@@ -2,6 +2,7 @@
 #define VIEW_DISPLAY_CONTROLER_H_
 
 #include <exception>
+
 #include "widget/widget.h"
 #include "cursor.h"
 

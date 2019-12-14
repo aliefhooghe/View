@@ -46,11 +46,15 @@ namespace View {
 
         //  display controler interface
         void set_cursor(cursor c) override;
+
     private:
         //  Widget adapter interface
         void sys_invalidate_rect(const draw_area& area) override;
 
         //  Internal helpers
+        void _allocate_drawing_context(unsigned int width, unsigned int height);
+        void _free_drawing_context();
+
         void _resize_window(unsigned int width, unsigned int height);
         bool _process_event(const XEvent& event, std::optional<draw_area>& redraw_area);
         void _redraw_area(draw_area area);
@@ -59,14 +63,20 @@ namespace View {
         void _initialiaze_cursors();
         void _free_cursors();
 
+        //  X11 members
         Display *display{nullptr};
         Window window{0};
         Visual *visual{0};
-        XdbeBackBuffer back_buffer{0};            // For double buffering
         Atom wm_delete_message{0};
         std::array<Cursor, VIEW_CURSOR_COUNT> x11_cursors{};
+
+        //  Double buffering
+        XdbeBackBuffer back_buffer{0};
+
+        //  Cairo members
         cairo_surface_t *cairo_surface{nullptr};
 		cairo_t *cr{nullptr};
+
     };
 
     x11_window::x11_window(Window parent, widget& root, float pixel_per_unit)
@@ -134,10 +144,6 @@ namespace View {
         wm_delete_message = XInternAtom(display, "WM_DELETE_WINDOW", false);
         XSetWMProtocols(display, window, &wm_delete_message, 1);
 
-        /** \todo Check errors **/
-        //  Allocate back buffer for double buffering
-        back_buffer = XdbeAllocateBackBufferName(display, window, XdbeBackground);
-
         //  Select which type of event should be processed
         XSelectInput(display, window, X_EVENT_MASK);
 
@@ -151,12 +157,8 @@ namespace View {
             XNextEvent(display, &event);
         } while (event.type != MapNotify);
 
-        //  Create cairo surface
-        cairo_surface =
-            cairo_xlib_surface_create(
-                display, back_buffer, found_screen_info->visual, width, height);
-
-        cr = cairo_create(cairo_surface);
+        //  Prepare drawing context
+        _allocate_drawing_context(display_width(), display_height());
 
         free(visual_info);
         free(found_screen_info);
@@ -167,10 +169,9 @@ namespace View {
 
     x11_window::~x11_window()
     {
-        cairo_destroy(cr);
-        cairo_surface_destroy(cairo_surface);
-        XdbeDeallocateBackBufferName(display, back_buffer);
+        _free_drawing_context();
         XDestroyWindow(display, window);
+
         _free_cursors();
         XCloseDisplay(display);
     }
@@ -220,32 +221,38 @@ namespace View {
         return false;
     }
 
-    void x11_window::_resize_window(unsigned int width, unsigned int height)
+    void x11_window::_allocate_drawing_context(unsigned int width, unsigned int height)
     {
-        std::cout << "Resize window : from ["
-            << display_width() << "x" << display_height() << "]"
-            << " to [" << width << "x"  << height << "]" << std::endl;
-
-        resize_display(width, height);
-
-        cairo_destroy(cr);
-        cairo_surface_destroy(cairo_surface);
-        XdbeDeallocateBackBufferName(display, back_buffer);
-
-        XResizeWindow(display, window, width, height);
+        // Double buffering : BackBuffer is the Xlib Drawable we will draw on
         back_buffer = XdbeAllocateBackBufferName(display, window, XdbeBackground);
         cairo_surface =
             cairo_xlib_surface_create(
                 display, back_buffer, visual, width, height);
-
         cr = cairo_create(cairo_surface);
+    }
 
+    void x11_window::_free_drawing_context()
+    {
+        cairo_destroy(cr);
+        cairo_surface_destroy(cairo_surface);
+        XdbeDeallocateBackBufferName(display, back_buffer);
+    }
+
+
+    void x11_window::_resize_window(unsigned int width, unsigned int height)
+    {
+        //  Recreate a drawing context with the propper dimensions
+        /** \todo : optim : clip if sizes are reduced **/
+        _free_drawing_context();
+        _allocate_drawing_context(width, height);
+
+        //  Notify the content that window size has changed
+        resize_display(width, height);
         _redraw_window();
     }
 
     bool x11_window::_process_event(const XEvent& event, std::optional<draw_area>& redraw_area)
     {
-
         switch (event.type)
         {
 

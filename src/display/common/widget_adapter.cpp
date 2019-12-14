@@ -16,6 +16,11 @@ namespace View {
     {
         _display_width = width;
         _display_height = height;
+
+        float widget_width, widget_height;
+        _coord_display2widget(width, height, widget_width, widget_height);
+
+        _root.resize(widget_width, widget_height);
     }
 
     void widget_adapter::sys_draw(cairo_t *cr)
