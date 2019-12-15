@@ -2,6 +2,7 @@
 #include "push_button.h"
 #include "drawing/color.h"
 #include "drawing/cairo_helper.h"
+#include "drawing/named_colors.h"
 
 #include <iostream>
 
@@ -54,18 +55,12 @@ namespace View {
 
         //  Draw background
         set_source(cr, _pushed ? 0x525252FF : 0x424242FF);
+        cairo_fill_preserve(cr);
 
         //  Draw border
-        if (hovered()) {
-            cairo_fill_preserve(cr);
-
-            set_source(cr, 0x45A1FFFF);
-            cairo_set_line_width(cr, 0.3);
-            cairo_stroke(cr);
-        }
-        else {
-            cairo_fill(cr);
-        }
+        set_source(cr, hovered() ? 0x45A1FFFF: named_colors::gray);
+        cairo_set_line_width(cr, 0.3);
+        cairo_stroke(cr);
     }
 
     void push_button::_update_pushed(bool pushed)
