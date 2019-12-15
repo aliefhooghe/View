@@ -43,7 +43,7 @@ namespace View {
         virtual bool on_mouse_drag_cancel()                                                             { return false; }
 
         virtual void draw(cairo_t*) {}
-        virtual void draw_rect(cairo_t*, const rectangle<>&) {};
+        virtual void draw_rect(cairo_t* cr, const rectangle<>&) { draw(cr); }
 
     protected:
         /** display control helpers **/
