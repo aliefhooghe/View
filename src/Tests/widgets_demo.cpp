@@ -1,7 +1,7 @@
 
+#include <iostream>
+
 #include "view.h"
-
-
 
 int main()
 {
@@ -11,8 +11,11 @@ int main()
 
     native_application_display dpy{panel, 6};
 
-    panel.insert_widget(12.2, 38, std::make_unique<simple_panel<>>(15, 18));
-    panel.insert_widget(20, 60, std::make_unique<simple_panel<>>(15, 18));
+    auto button = std::make_unique<push_button>(15, 4);
+    button->set_callback([](auto&) { std::cout << "Pushed !" << std::endl; });
+    panel.insert_widget(5, 30, std::move(button));
+
+    panel.insert_widget(5, 5, std::make_unique<checkbox>(3));
 
     dpy.open("");
     dpy.wait();

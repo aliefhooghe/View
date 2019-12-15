@@ -13,11 +13,10 @@ namespace View {
     class simple_panel : public widget_container<Children> {
 
     public:
-        simple_panel(float width, float height, color c = 0x00FF00FFu)
+        simple_panel(float width, float height, color c = 0x2A2A2EFFu)
         :   widget_container<Children>{width, height}, _background{c}
         {}
-
-        virtual ~simple_panel() = default;
+        ~simple_panel() override = default;
     protected:
         void draw_background(cairo_t *cr) override
         {
@@ -26,6 +25,7 @@ namespace View {
             cairo_fill(cr);
         }
 
+    private:
         color _background;
     };
 }
