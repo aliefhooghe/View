@@ -26,12 +26,18 @@ option(VIEW_X11_BACKEND "" ON)
 set(VIEW_COMMON_SRC
     cairo_definition.h
     controls/simple_panel.h
+    controls/control.h
+    controls/control.cpp
+    controls/checkbox.h
+    controls/checkbox.cpp
     display/display_types/application_display.h
     display/common/display_controler.h
     display/common/widget_adapter.cpp
     display/common/widget_adapter.h
     drawing/cairo_helper.h
+    drawing/cairo_helper.cpp
     drawing/color.h
+    drawing/named_colors.h
     Tests/widgets_demo.cpp
     view.h
     widget/event.h

@@ -23,6 +23,7 @@ namespace View {
     constexpr double get_green_d(color c)   { return static_cast<double>(get_green(c)) / 255.; }
     constexpr double get_blue_d(color c)    { return static_cast<double>(get_blue(c)) / 255.; }
     constexpr double get_alpha_d(color c)   { return static_cast<double>(get_alpha(c)) / 255.; }
+
 }
 
 #endif

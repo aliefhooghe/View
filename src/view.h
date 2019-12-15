@@ -5,7 +5,10 @@
 #include "display/implementations/x11_application_display.h"
 #include "widget/widget.h"
 #include "widget/widget_container.h"
+
+//  Controls
 #include "controls/simple_panel.h"
+#include "controls/push_button.h"
 
 namespace View {
 
