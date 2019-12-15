@@ -9,6 +9,7 @@
 //  Controls
 #include "controls/simple_panel.h"
 #include "controls/push_button.h"
+#include "controls/checkbox.h"
 
 namespace View {
 

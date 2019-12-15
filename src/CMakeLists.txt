@@ -30,6 +30,8 @@ set(VIEW_COMMON_SRC
     controls/control.cpp
     controls/checkbox.h
     controls/checkbox.cpp
+    controls/push_button.h
+    controls/push_button.cpp
     display/display_types/application_display.h
     display/common/display_controler.h
     display/common/widget_adapter.cpp
