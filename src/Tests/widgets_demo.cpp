@@ -7,7 +7,7 @@ int main()
 {
     using namespace View;
 
-    simple_panel<> panel{100, 100};
+    color_panel<> panel{100, 100};
 
     native_application_display dpy{panel, 6};
 
