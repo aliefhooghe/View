@@ -15,6 +15,11 @@ namespace View {
         panel(float width, float height)
         :   widget_container<panel<TChildren>, TChildren>{width, height}
         {}
+
+        panel(float width, float height, size_constraint width_constraint, size_constraint height_constraint)
+        :   widget_container<panel<TChildren>, TChildren>{width, height, width_constraint, height_constraint}
+        {}
+
         ~panel() override = default;
 
         // drawing funcs

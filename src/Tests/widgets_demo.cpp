@@ -7,8 +7,7 @@ int main()
 {
     using namespace View;
 
-    color_panel<> panel{100, 100};
-
+    color_panel<> panel{100, 100, free_size, free_size};
     native_application_display dpy{panel, 6};
 
     panel.insert_widget(5, 5, std::make_unique<checkbox>(3));

@@ -16,6 +16,11 @@ namespace View {
             _background{background}
         {}
 
+        color_panel(float width, float height, size_constraint width_constraint, size_constraint height_constraint, color background = 0x2A2A2EFFu)
+        :   panel<TChildren>{width, height, width_constraint, height_constraint},
+            _background{background}
+        {}
+
         ~color_panel() override = default;
 
         using panel<TChildren>::insert_widget;

@@ -5,13 +5,22 @@
 namespace View {
 
     widget::widget(float width, float height) noexcept
-    : _width{width}, _height{height}
+    : _width{width}, _height{height},
+        _width_constraint{width, width},
+        _height_constraint{height, height}
+    {}
+
+    widget::widget(float width, float height, size_constraint width_constraint, size_constraint height_constraint) noexcept
+    :   _width{width}, _height{height},
+        _width_constraint{width_constraint},
+        _height_constraint{height_constraint}
     {
+
     }
 
     bool widget::resize(float width, float height)
     {
-        if (width > 0.0f && height > 0.0f) {
+        if (_width_constraint.contains(width) && _height_constraint.contains(height)) {
             _width = width;
             _height = height;
             return true;

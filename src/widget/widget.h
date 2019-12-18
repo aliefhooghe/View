@@ -5,6 +5,7 @@
 #include "cairo_definition.h"
 #include "event.h"
 #include "display/common/cursor.h"
+#include "size_constraint.h"
 
 namespace View {
 
@@ -15,13 +16,19 @@ namespace View {
         friend class display_controler;
     public:
         widget(float width, float height) noexcept;
+        widget(float width, float height, size_constraint width_constraint, size_constraint height_constraint) noexcept;
         widget(widget&&) = default;
         widget(widget&) = delete;
         virtual ~widget() = default;
 
-        virtual bool resize(float width, float height);
         float width() const noexcept    { return _width; }
         float height() const noexcept   { return _height; }
+
+        /** Size constraints **/
+        auto& width_constraint() const noexcept  { return _width_constraint; }
+        auto& height_constraint() const noexcept { return _height_constraint; }
+        virtual bool resize(float width, float height);
+
         virtual bool contains(float x, float y);
 
         //  Events
@@ -55,6 +62,8 @@ namespace View {
         display_controler *_display_ctl{nullptr};
         float _width;
         float _height;
+        size_constraint _width_constraint;
+        size_constraint _height_constraint;
     };
 
 }

@@ -63,11 +63,13 @@ namespace View {
         };
 
     public:
-        widget_container(float width, float height)
+        widget_container(float width, float height) noexcept
         : widget{width, height}
         {}
+        widget_container(float width, float height, size_constraint width_constraint, size_constraint height_constraint) noexcept
+        : widget{width, height, width_constraint, height_constraint}
+        {}
         ~widget_container() override = default;
-
 
         //  Events
         bool on_key_up(const keycode key) override;
