@@ -27,7 +27,11 @@ namespace View {
         /** Size constraints **/
         auto& width_constraint() const noexcept  { return _width_constraint; }
         auto& height_constraint() const noexcept { return _height_constraint; }
+        void freeze_size();
+
         virtual bool resize(float width, float height);
+        bool resize_width(float w) { return resize(w, height()); }
+        bool resize_height(float h) { return resize(width(), h); }
 
         virtual bool contains(float x, float y);
 
@@ -57,6 +61,12 @@ namespace View {
         void invalidate();
         void invalidate_rect(const rectangle<>&);
         void set_cursor(cursor cursor);
+
+        void set_size_constraints(size_constraint width, size_constraint height) noexcept
+        {
+            _width_constraint = width;
+            _height_constraint = height;
+        }
 
     private:
         display_controler *_display_ctl{nullptr};

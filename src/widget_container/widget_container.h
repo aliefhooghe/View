@@ -8,7 +8,7 @@
 
 namespace View {
 
-    template <typename TDerived, typename TChildren>
+    template <typename TDerived, typename TChildren = widget>
     class widget_container : public widget {
 
     protected:
@@ -24,6 +24,10 @@ namespace View {
 
             widget_holder(const widget_holder& x) noexcept = delete;
             widget_holder(widget_holder&& other) noexcept = default;
+
+            void set_pos(float x, float y) noexcept { _pos_x = x; _pos_y = y; }
+            void set_pos_x(float x) noexcept { _pos_x = x; }
+            void set_pos_y(float y) noexcept { _pos_y = y; }
 
             auto pos_x() const noexcept { return _pos_x; }
             auto pos_y() const noexcept { return _pos_y; }

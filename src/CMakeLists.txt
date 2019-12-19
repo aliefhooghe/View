@@ -25,6 +25,8 @@ option(VIEW_X11_BACKEND "" ON)
 ## Common Sources
 set(VIEW_COMMON_SRC
     cairo_definition.h
+    view.h
+
     controls/control.h
     controls/control.cpp
     controls/checkbox.h
@@ -33,21 +35,30 @@ set(VIEW_COMMON_SRC
     controls/knob.cpp
     controls/push_button.h
     controls/push_button.cpp
+
     display/display_types/application_display.h
     display/common/display_controler.h
     display/common/widget_adapter.cpp
     display/common/widget_adapter.h
+
     drawing/cairo_helper.h
     drawing/cairo_helper.cpp
     drawing/color.h
     drawing/named_colors.h
-    view.h
+
     widget/event.h
     widget/widget.cpp
     widget/widget.h
+    widget/rectangle.h
+    widget/size_constraint.h
+    widget/orientation.h
+
     widget_container/widget_container.h
+    widget_container/layout_separator.h
+    widget_container/layout_separator.cpp
     widget_container/panel.h
     widget_container/color_panel.h
+    widget_container/pair_layout.h
 )
 
 ## Find Cairo Graphics librarie

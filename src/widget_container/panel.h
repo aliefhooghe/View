@@ -7,10 +7,9 @@
 
 namespace View {
 
-    template <typename TChildren>
+    template <typename TChildren = widget>
     class panel : public widget_container<panel<TChildren>, TChildren> {
         friend class widget_container<panel<TChildren>, TChildren>;
-        using widget_holder = typename widget_container<panel<TChildren>, TChildren>::widget_holder;
     public:
         panel(float width, float height)
         :   widget_container<panel<TChildren>, TChildren>{width, height}
@@ -41,12 +40,14 @@ namespace View {
         }
 
     protected:
+        using widget_holder = typename widget_container<panel<TChildren>, TChildren>::widget_holder;
+
         virtual void draw_background(cairo_t *cr) {}
         virtual void draw_foreground(cairo_t *cr) {}
 
-        void insert_widget(float x, float y, std::unique_ptr<TChildren>&& w)
+        widget_holder& insert_widget(float x, float y, std::unique_ptr<TChildren>&& w)
         {
-            _childrens.emplace_back(*this, x, y, std::move(w));
+            return _childrens.emplace_back(*this, x, y, std::move(w));
         }
 
         void remove_widget(TChildren *children)

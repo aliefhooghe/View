@@ -7,6 +7,7 @@
 
 //  Widget Container
 #include "widget_container/color_panel.h"
+#include "widget_container/pair_layout.h"
 
 //  Controls
 #include "controls/push_button.h"

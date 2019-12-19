@@ -4,15 +4,16 @@
 
 namespace View {
 
-    control::control(float width, float height)
-    : widget{width, height}
+    control::control(float width, float height, cursor c)
+    : widget{width, height},
+        _cursor{c}
     {
     }
 
     bool control::on_mouse_enter()
     {
         _hovered = true;
-        set_cursor(cursor::hand);
+        set_cursor(_cursor);
         invalidate();
         return true;
     }

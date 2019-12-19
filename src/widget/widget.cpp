@@ -6,16 +6,20 @@ namespace View {
 
     widget::widget(float width, float height) noexcept
     : _width{width}, _height{height},
-        _width_constraint{width, width},
-        _height_constraint{height, height}
+        _width_constraint{free_size},
+        _height_constraint{free_size}
     {}
 
     widget::widget(float width, float height, size_constraint width_constraint, size_constraint height_constraint) noexcept
     :   _width{width}, _height{height},
         _width_constraint{width_constraint},
         _height_constraint{height_constraint}
-    {
+    {}
 
+    void widget::freeze_size()
+    {
+        _width_constraint = size_constraint{width(), width()};
+        _height_constraint = size_constraint{height(), height()};
     }
 
     bool widget::resize(float width, float height)
@@ -26,6 +30,7 @@ namespace View {
             return true;
         }
         else {
+             std::cout << "resize_all failed" << std::endl;
             return false;
         }
     }

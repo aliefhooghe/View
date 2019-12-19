@@ -19,13 +19,13 @@ namespace View {
             return size_constraint{min + other.min, max + other.max};
         }
 
-        auto intersectc(const size_constraint& other) const noexcept
+        auto intersect(const size_constraint& other) const noexcept
         {
             return size_constraint{std::max(min, other.min), std::min(max, other.max)};
         }
 
-        const float min;
-        const float max;
+        float min;
+        float max;
     };
 
     constexpr auto free_size = size_constraint{0.f, 1000000.f};

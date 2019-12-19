@@ -1,6 +1,7 @@
 #ifndef CURSOR_H_
 #define CURSOR_H_
 
+#include "widget/orientation.h"
 namespace View {
     /**
      *  \brief PLatform independant cursors identifiers
@@ -21,6 +22,12 @@ namespace View {
     };
 
     constexpr auto VIEW_CURSOR_COUNT = static_cast<unsigned int>(cursor::_count);
+
+    constexpr cursor make_size_cursor(orientation o)
+    {
+        return o == orientation::horizontal ? cursor::size_horizontal : cursor::size_vertical;
+    }
 }
+
 
 #endif
