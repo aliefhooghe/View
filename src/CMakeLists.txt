@@ -22,6 +22,12 @@ option(VIEW_X11_BACKEND "" ON)
 #                          #
 ############################
 
+
+## Dependencies
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake_modules")
+find_package(Cairo REQUIRED)
+find_package(PangoCairo REQUIRED)
+
 ## Common Sources
 set(VIEW_COMMON_SRC
     cairo_definition.h
@@ -44,6 +50,7 @@ set(VIEW_COMMON_SRC
     drawing/cairo_helper.h
     drawing/cairo_helper.cpp
     drawing/color.h
+    drawing/font.h
     drawing/named_colors.h
 
     widget/event.h
@@ -61,14 +68,10 @@ set(VIEW_COMMON_SRC
     widget_container/pair_layout.h
 )
 
-## Find Cairo Graphics librarie
-list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake_modules")
-find_package(Cairo REQUIRED)
-
 ##  View Library
 add_library(View STATIC ${VIEW_COMMON_SRC})
-target_include_directories(View PUBLIC ${Cairo_INCLUDE_DIRS} ${CMAKE_CURRENT_SOURCE_DIR})
-target_link_libraries(View PUBLIC ${Cairo_LIBS})
+target_include_directories(View PUBLIC ${Cairo_INCLUDE_DIRS} ${PangoCairo_INCLUDE_DIRS} ${CMAKE_CURRENT_SOURCE_DIR})
+target_link_libraries(View PUBLIC ${Cairo_LIBRARIES} ${PangoCairo_LIBRARIES})
 
 ##  X11 Backend
 if (VIEW_X11_BACKEND)
