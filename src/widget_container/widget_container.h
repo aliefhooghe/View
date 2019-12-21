@@ -151,15 +151,14 @@ namespace View {
     bool widget_container<TDerived, TChildren>::on_mouse_move(float x, float y)
     {
         if (_focused_widget) {
-            const auto x_rel = x - _focused_widget->pos_x();
-            const auto y_rel = y - _focused_widget->pos_y();
+            auto *child = widget_at(x, y);
 
-            //  May avoid uing widget_at too much
-            if (_focused_widget->get()->contains(x_rel, y_rel)) {
+            if (child == _focused_widget) {
+                const auto x_rel = x - _focused_widget->pos_x();
+                const auto y_rel = y - _focused_widget->pos_y();
                 return _focused_widget->get()->on_mouse_move(x_rel, y_rel);
             }
             else {
-                auto *child = widget_at(x, y);
                 bool used_event =
                     _focused_widget->get()->on_mouse_exit();
 
