@@ -50,6 +50,8 @@ set(VIEW_COMMON_SRC
     drawing/cairo_helper.h
     drawing/cairo_helper.cpp
     drawing/color.h
+    drawing/text_helper.h
+    drawing/text_helper.cpp
     drawing/font.h
     drawing/named_colors.h
 
@@ -61,8 +63,12 @@ set(VIEW_COMMON_SRC
     widget/orientation.h
 
     widget_container/widget_container.h
+    widget_container/background.h
+    widget_container/background.cpp
     widget_container/layout_separator.h
     widget_container/layout_separator.cpp
+    widget_container/header.h
+    widget_container/header.cpp
     widget_container/panel.h
     widget_container/color_panel.h
     widget_container/pair_layout.h

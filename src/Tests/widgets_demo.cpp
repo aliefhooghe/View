@@ -7,20 +7,20 @@ int main()
 {
     using namespace View;
 
-    auto left_panel = std::make_unique<color_panel<>>(100, 100, size_constraint{50, 150}, free_size);
+    auto left_panel = std::make_unique<panel<>>(100, 100);
     left_panel->insert_widget(5, 5, std::make_unique<checkbox>(3));
-    left_panel->insert_widget(5, 15, std::make_unique<push_button>(15, 4));
+    left_panel->insert_widget(5, 15, std::make_unique<push_button>(16, 5, "Activate"));
     left_panel->insert_widget(5, 25, std::make_unique<knob>(8));
 
-    auto root =
+    auto content =
         std::make_unique<horizontal_pair_layout>(
-            std::move(left_panel),
-            std::make_unique<horizontal_pair_layout>(
-                std::make_unique<vertical_pair_layout>(
-                    std::make_unique<color_panel<>>(50, 50,  size_constraint{50, 75}, free_size, 0x00FF00FFu),
-                    std::make_unique<color_panel<>>(50, 50, free_size, free_size, 0x00FFE0FFu)),
-                std::make_unique<color_panel<>>(50, 50, free_size, free_size, 0xFF00FFFFu)
-            ));
+            std::make_unique<header>(std::move(left_panel)),
+            std::make_unique<vertical_pair_layout>(
+                    std::make_unique<header>(std::make_unique<panel<>>(50, 20, free_size, size_constraint{15, 30})),
+                    std::make_unique<header>(std::make_unique<panel<>>(50, 50))));
+
+    auto root =
+        std::make_unique<background>(std::move(content));
 
     //
     native_application_display dpy{*root, 6};

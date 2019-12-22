@@ -8,6 +8,8 @@
 //  Widget Container
 #include "widget_container/color_panel.h"
 #include "widget_container/pair_layout.h"
+#include "widget_container/header.h"
+#include "widget_container/background.h"
 
 //  Controls
 #include "controls/push_button.h"

@@ -22,7 +22,9 @@ namespace View {
 
     void circle(cairo_t *cr, float x, float y, float radius)
     {
+        cairo_new_sub_path(cr);
         cairo_arc(cr, x, y, radius, 0.0, 2.0 * M_PI);
+        cairo_close_path(cr);
     }
 
 }
