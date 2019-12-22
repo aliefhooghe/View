@@ -160,6 +160,7 @@ namespace View {
         //  Prepare drawing context
         _allocate_drawing_context(display_width(), display_height());
 
+        free(visual_info->visinfo);
         free(visual_info);
         free(found_screen_info);
 
@@ -174,6 +175,7 @@ namespace View {
 
         _free_cursors();
         XCloseDisplay(display);
+        free(visual);
     }
 
     void x11_window::set_cursor(cursor c)

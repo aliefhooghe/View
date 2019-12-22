@@ -19,10 +19,7 @@ namespace View {
         display_controler(widget& w)
         : _widget{&w}
         {
-            if (_widget->_display_ctl == nullptr)
-                _widget->_display_ctl = this;
-            else
-                throw std::runtime_error("Tried to construst a second display controler for a widget");
+            _widget->_display_ctl = this;
         }
 
         display_controler(const display_controler&) = delete;
@@ -34,10 +31,7 @@ namespace View {
         }
 
         virtual ~display_controler()
-        {
-            if (_widget)
-                _widget->_display_ctl = nullptr;
-        }
+        {}
 
         /**
          *  \brief Inform the display that the widget need to be redrawn
