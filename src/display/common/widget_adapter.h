@@ -60,10 +60,16 @@ namespace View {
         /**
          *  \brief Inform the underlying display that an area must be redrawn
          */
-        using draw_area = rectangle<unsigned int>;
+        using draw_area = rectangle<int>;
         virtual void sys_invalidate_rect(const draw_area& area) =0;
 
     private:
+        /**
+         *  Drawing helpers
+         */
+        void begin_drawing(cairo_t *cr);
+        void finish_drawing(cairo_t *cr);
+
         /**
          *  Display controler feature (called by root widget)
          */
@@ -73,8 +79,8 @@ namespace View {
         /**
          *  Display / Widget coordinate translation
          */
-        void _coord_display2widget(unsigned int x, unsigned int y, float &fx, float &fy);
-        void _coord_widget2display(float fx, float fy, unsigned int &x, unsigned int &y);
+        void _coord_display2widget(int x, int y, float &fx, float &fy);
+        void _coord_widget2display(float fx, float fy, int &x, int &y);
 
         widget& _root;
         unsigned int _display_width;

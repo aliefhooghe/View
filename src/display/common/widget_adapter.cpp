@@ -25,18 +25,20 @@ namespace View {
 
     void widget_adapter::sys_draw(cairo_t *cr)
     {
-        cairo_save(cr);
+        begin_drawing(cr);
+
         cairo_scale(
             cr,
             _pixel_per_unit,
             _pixel_per_unit);
         _root.draw(cr);
-        cairo_restore(cr);
+
+        finish_drawing(cr);
     }
 
     void widget_adapter::sys_draw_rect(cairo_t *cr, unsigned int top, unsigned int bottom, unsigned int left, unsigned int right)
     {
-        cairo_save(cr);
+        begin_drawing(cr);
 
         //  Clip the area that should be redrawn
         //  Clipping at interger coordinate allow Cairo optimzation
@@ -58,7 +60,8 @@ namespace View {
                 static_cast<float>(right) / _pixel_per_unit);
 
         _root.draw_rect(cr, redraw_rect);
-        cairo_restore(cr);
+
+        finish_drawing(cr);
     }
 
 	bool widget_adapter::sys_mouse_move(unsigned int cx, unsigned int cy)
@@ -137,6 +140,19 @@ namespace View {
         return _root.on_key_up(key);
     }
 
+    void widget_adapter::begin_drawing(cairo_t *cr)
+    {
+        cairo_save(cr);
+        cairo_push_group(cr);
+    }
+
+    void widget_adapter::finish_drawing(cairo_t *cr)
+    {
+        cairo_pop_group_to_source(cr);
+        cairo_paint(cr);
+        cairo_restore(cr);
+    }
+
     void widget_adapter::invalidate_widget()
     {
         sys_invalidate_rect(make_rectangle(0u, _display_height, 0, _display_width));
@@ -150,13 +166,13 @@ namespace View {
         sys_invalidate_rect(area);
     }
 
-    void widget_adapter::_coord_display2widget(unsigned int x, unsigned int y, float &fx, float &fy)
+    void widget_adapter::_coord_display2widget(int x, int y, float &fx, float &fy)
     {
         fx = x / _pixel_per_unit;
         fy = y / _pixel_per_unit;
     }
 
-    void widget_adapter::_coord_widget2display(float fx, float fy, unsigned int &x, unsigned int &y)
+    void widget_adapter::_coord_widget2display(float fx, float fy, int &x, int &y)
     {
         x = fx * _pixel_per_unit;
         y = fy * _pixel_per_unit;

@@ -57,8 +57,10 @@ namespace View {
 
         void _resize_window(unsigned int width, unsigned int height);
         bool _process_event(const XEvent& event, std::optional<draw_area>& redraw_area);
+
         void _redraw_area(draw_area area);
         void _redraw_window();
+        void _apply_draw_buffer();
 
         void _initialiaze_cursors();
         void _free_cursors();
@@ -70,8 +72,6 @@ namespace View {
         Atom wm_delete_message{0};
         std::array<Cursor, VIEW_CURSOR_COUNT> x11_cursors{};
 
-        //  Double buffering
-        XdbeBackBuffer back_buffer{0};
 
         //  Cairo members
         cairo_surface_t *cairo_surface{nullptr};
@@ -89,51 +89,21 @@ namespace View {
         display = XOpenDisplay(nullptr /* display name*/);
         Window root_window = DefaultRootWindow(display);
 
-        //  Check if XBde extension is supported
-        int major, minor;
-
-        if (XdbeQueryExtension(display, &major, &minor) == 0)
-            throw ::std::runtime_error("View::x11_window : Xbde extension is not supported");
-
-        //  Check if root window support double buffering
-        int drawable_count = 1;
-        XdbeScreenVisualInfo *visual_info =
-            XdbeGetVisualInfo(display, &root_window /* array of one element*/, &drawable_count);
-
-        if (visual_info == nullptr || visual_info->count == 0 || drawable_count != 1)
-            throw ::std::runtime_error("View::x11_window : root windows visual do not support double buffering");
-
-        //  Look for a screen that support double buffering
-        XVisualInfo screen_info_template;
-
-        screen_info_template.visualid = visual_info->visinfo[0].visual;
-        screen_info_template.screen = 0;
-        screen_info_template.depth = visual_info->visinfo[0].depth;
-
-        int found_screen_count = 0;
-        XVisualInfo *found_screen_info =
-            XGetVisualInfo(display,
-                VisualIDMask | VisualScreenMask | VisualDepthMask,
-                &screen_info_template, &found_screen_count);
-
-        if( found_screen_info == nullptr || found_screen_count < 1 )
-            throw std::runtime_error("View::x11_window : No Visual With Double Buffering\n");
-
-        visual = found_screen_info->visual;
+        visual = XDefaultVisual(display, DefaultScreen(display));
 
         //  Create the xindows
         const auto screen_id = DefaultScreen(display);
         XSetWindowAttributes xattributs;
         std::memset(&xattributs, 0, sizeof(xattributs));
 
-        xattributs.background_pixel = WhitePixel(display, screen_id);
+        xattributs.background_pixel = BlackPixel(display, screen_id);
 
         window =
             XCreateWindow(
                 display, root_window,
                 0, 0, width, height, 0,
                 CopyFromParent, CopyFromParent,
-                found_screen_info->visual,
+                visual,
                 CWBackPixel, &xattributs);
 
         //  Reparrent the windows if a parent was given
@@ -158,11 +128,11 @@ namespace View {
         } while (event.type != MapNotify);
 
         //  Prepare drawing context
-        _allocate_drawing_context(display_width(), display_height());
+        cairo_surface =
+            cairo_xlib_surface_create(
+                display, window, visual, width, height);
 
-        free(visual_info->visinfo);
-        free(visual_info);
-        free(found_screen_info);
+        cr = cairo_create(cairo_surface);
 
         //  Initial windows drawing
         _redraw_window();
@@ -170,12 +140,14 @@ namespace View {
 
     x11_window::~x11_window()
     {
-        _free_drawing_context();
+        cairo_destroy(cr);
+        cairo_surface_destroy(cairo_surface);
+
         XDestroyWindow(display, window);
 
         _free_cursors();
         XCloseDisplay(display);
-        free(visual);
+        XFree(visual);
     }
 
     void x11_window::set_cursor(cursor c)
@@ -214,41 +186,24 @@ namespace View {
                 }
 
                 if (redraw_area)
-                    _redraw_window();//_redraw_area(redraw_area.value());
+                    _redraw_area(redraw_area.value());
             }
         }
 
         return false;
     }
 
-    void x11_window::_allocate_drawing_context(unsigned int width, unsigned int height)
-    {
-        // Double buffering : BackBuffer is the Xlib Drawable we will draw on
-        back_buffer = XdbeAllocateBackBufferName(display, window, XdbeBackground);
-        cairo_surface =
-            cairo_xlib_surface_create(
-                display, back_buffer, visual, width, height);
-        cr = cairo_create(cairo_surface);
-    }
-
-    void x11_window::_free_drawing_context()
-    {
-        cairo_destroy(cr);
-        cairo_surface_destroy(cairo_surface);
-        XdbeDeallocateBackBufferName(display, back_buffer);
-    }
-
-
     void x11_window::_resize_window(unsigned int width, unsigned int height)
     {
-        //  Recreate a drawing context with the propper dimensions
-        /** \todo : optim : clip if sizes are reduced **/
-        _free_drawing_context();
-        _allocate_drawing_context(width, height);
-
         //  Notify the content that window size has changed
         resize_display(width, height);
-        _redraw_window();
+        cairo_xlib_surface_set_size(cairo_surface, width, height);
+
+        //  Recreate a drawing context with the propper dimensions
+        /** \todo : optim : clip if sizes are reduced **/
+        //_free_drawing_context();
+        //_allocate_drawing_context(width, height);
+        //_redraw_window();
     }
 
     bool x11_window::_process_event(const XEvent& event, std::optional<draw_area>& redraw_area)
@@ -338,6 +293,13 @@ namespace View {
     void x11_window::_redraw_area(draw_area area)
     {
         const auto window_area = make_rectangle(0, display_height(), 0, display_width());
+        const auto pixel_offset = 3;    //  TODO : This value should be a setting
+
+        //  MAke sure large border are well redrawn
+        area.left -= pixel_offset;
+        area.right += pixel_offset;
+        area.top -= pixel_offset;
+        area.bottom += pixel_offset;
 
         //  Compute intesection beetween area and windows (what we actually need to redraw)
         draw_area drawing_area;
@@ -346,23 +308,14 @@ namespace View {
 
             //  Redraw
             sys_draw_rect(cr, drawing_area.top, drawing_area.bottom, drawing_area.left, drawing_area.right);
-
-            // Double buffering : Swap Buffers
-            XdbeSwapInfo info;
-            info.swap_window = window;
-            info.swap_action = XdbeBackground;
-            XdbeSwapBuffers(display, &info, 1);
             XFlush(display);
         }
     }
 
     void x11_window::_redraw_window()
     {
+        //  Redraw
         sys_draw(cr);
-        XdbeSwapInfo info;
-        info.swap_window = window;
-        info.swap_action = XdbeBackground;
-        XdbeSwapBuffers(display, &info, 1);
         XFlush(display);
     }
 
@@ -377,7 +330,7 @@ namespace View {
         ev.xexpose.y = area.top;
         ev.xexpose.width = area.right - area.left;
         ev.xexpose.height = area.bottom - area.top;
-        ev.xexpose.window = back_buffer;
+        ev.xexpose.window = window;
 
         XSendEvent(display, window, true, ExposureMask, &ev);
     }
