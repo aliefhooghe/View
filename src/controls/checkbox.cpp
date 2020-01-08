@@ -8,6 +8,7 @@ namespace View {
     checkbox::checkbox(float size, bool checked)
     : control{size, size}, _checked{checked}
     {
+        apply_color_theme(default_color_theme);
     }
 
     bool checkbox::on_mouse_button_up(mouse_button button, float x, float y)
@@ -25,35 +26,41 @@ namespace View {
 
     void checkbox::draw(cairo_t *cr)
     {
-        /**
-         *  \todo Prise en charge des thèmes : Probablement seulement les couleurs
-         */
-
         const auto unit = width() / 8.f;
 
         rounded_rectangle(cr, 0, 0, width(), height(), unit);
 
-        //  Draw background
-        set_source(cr, 0x1E1E1EFF);
-        cairo_fill_preserve(cr);
-
-        //  Draw border
-        set_source(cr, hovered() ? 0x45A1FFFF : named_colors::gray);
-        cairo_set_line_width(cr, width() / 10.f);
-        cairo_stroke(cr);
-
-        //  Draw check
         if (_checked) {
+            //  Draw background
+            set_source(cr, _background);
+            cairo_fill(cr);
+
+            //  Draw check
             cairo_move_to(cr, 2.f * unit, 5.f * unit);
             cairo_line_to(cr, 3.f * unit, 6.f * unit);
             cairo_line_to(cr, 6.f * unit, 3.f * unit);
 
-            set_source(cr, 0x45A1FFFF);
+            set_source(cr, _check_color);
             cairo_set_line_width(cr, width() / 6.f);
             cairo_set_line_cap(cr, CAIRO_LINE_CAP_ROUND);
             cairo_set_line_join(cr, CAIRO_LINE_JOIN_MITER);
             cairo_stroke(cr);
         }
+        else {
+            //  Draw border
+            set_source(cr, hovered() ? _hovered_color : _border);
+            cairo_set_line_width(cr, width() / 10.f);
+            cairo_stroke(cr);
+        }
+
+    }
+
+    void checkbox::apply_color_theme(const View::color_theme& theme)
+    {
+        _background = theme.secondary;
+        _border = theme.on_surface;
+        _hovered_color = theme.secondary_dark;
+        _check_color = theme.on_secondary;
     }
 
     void checkbox::_switch_state()

@@ -12,13 +12,14 @@ namespace View {
     public:
         header(
             std::unique_ptr<widget>&& root,
-            float header_size = 4.f, float border_size = 1.f,
-            color background_color = 0x2A2A2EFFu, color header_color = 0x23D18BFF);
+            float header_size = 4.f, float border_size = 1.f);
 
         ~header() override = default;
 
         bool resize(float width, float height) override;
         void draw(cairo_t *cr) override;
+
+        void apply_color_theme(const color_theme& theme) override;
     protected:
         template <typename TFunction>
         void foreach_holder(TFunction func) { func(_root); }

@@ -22,11 +22,17 @@ namespace View {
 
             void draw(cairo_t*) override;
 
+            void apply_color_theme(const color_theme& theme) override;
+
         private:
             void _update_pushed(bool);
 
             bool _pushed{false};
             callback _callback{[](push_button&){}};
+
+            color _border_color;
+            color _hovered_border_color;
+            color _pushed_background_color;
     };
 
 }

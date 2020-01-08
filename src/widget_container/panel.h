@@ -11,6 +11,8 @@ namespace View {
     class panel : public widget_container<panel<TChildren>, TChildren> {
         friend class widget_container<panel<TChildren>, TChildren>;
     public:
+        using typename widget_container<panel<TChildren>, TChildren>::widget_holder;
+
         panel(float width, float height)
         :   widget_container<panel<TChildren>, TChildren>{width, height}
         {}
@@ -39,11 +41,6 @@ namespace View {
             draw_foreground(cr);
         }
 
-    protected:
-        using widget_holder = typename widget_container<panel<TChildren>, TChildren>::widget_holder;
-
-        virtual void draw_background(cairo_t *cr) {}
-        virtual void draw_foreground(cairo_t *cr) {}
 
         widget_holder& insert_widget(float x, float y, std::unique_ptr<TChildren>&& w)
         {
@@ -64,6 +61,10 @@ namespace View {
             // if (_focused_widget == children)
             //     _focused_widget = nullptr;
         }
+
+    protected:
+        virtual void draw_background(cairo_t *cr) {}
+        virtual void draw_foreground(cairo_t *cr) {}
 
         widget_holder *widget_at(float x, float y)
         {

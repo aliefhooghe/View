@@ -9,6 +9,7 @@ namespace View {
         _root{*this, 0, 0, std::move(root)},
         _background_color{background_color}
     {
+        apply_color_theme(default_color_theme);
     }
 
     bool background::resize(float width, float height)
@@ -36,4 +37,9 @@ namespace View {
         draw_widgets(cr);
     }
 
+    void background::apply_color_theme(const View::color_theme &theme)
+    {
+        widget_container<background>::apply_color_theme(theme);
+        _background_color = theme.background;
+    }
 }

@@ -1,16 +1,14 @@
 
 #include "push_button.h"
-#include "drawing/color.h"
 #include "drawing/cairo_helper.h"
-#include "drawing/named_colors.h"
-
 #include <iostream>
 
 namespace View {
 
-    push_button::push_button(float width, float heigh)
-    : control{width, heigh}
+    push_button::push_button(float width, float height)
+    : control{width, height}
     {
+        apply_color_theme(default_color_theme);
     }
 
     void push_button::set_callback(callback c)
@@ -49,18 +47,28 @@ namespace View {
         return true;
     }
 
-    void push_button::draw(cairo_t* cr)
+    void push_button::draw(cairo_t *cr)
     {
-        rounded_rectangle(cr, 0, 0, width(), height(), 0.3);
+        rounded_rectangle(cr, 0, 0, width(), height(), 1.f);
 
         //  Draw background
-        set_source(cr, _pushed ? 0x525252FF : 0x424242FF);
-        cairo_fill_preserve(cr);
+        if (_pushed) {
+            set_source(cr, _pushed_background_color);
+            cairo_fill_preserve(cr);
+        }
 
         //  Draw border
-        set_source(cr, hovered() ? 0x45A1FFFF: named_colors::gray);
+        set_source(cr, hovered() ? _hovered_border_color : _border_color);
         cairo_set_line_width(cr, 0.3);
         cairo_stroke(cr);
+    }
+
+    void push_button::apply_color_theme(const View::color_theme& theme)
+    {
+        _border_color = theme.on_surface;
+        _hovered_border_color = theme.secondary;
+        _pushed_background_color = theme.secondary_dark;
+        invalidate();
     }
 
     void push_button::_update_pushed(bool pushed)

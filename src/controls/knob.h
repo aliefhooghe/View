@@ -11,7 +11,7 @@ namespace View {
     public:
         using callback = std::function<void(float)>;
 
-        knob(float size, float initial_value = 0.5f);
+        knob(float size, float initial_value = 0.5f, bool display_value = true);
         ~knob() override = default;
 
         void set_callback(callback);
@@ -23,9 +23,18 @@ namespace View {
         bool on_mouse_wheel(float) override;
         void draw(cairo_t*) override;
 
+        void apply_color_theme(const color_theme& theme) override;
+
     private:
         callback _callback{[](float){}};
         float _value;
+        bool _display_value;
+
+        /** \todo background ? **/
+        color _track_color;
+        color _border_color;
+        color _hovered_border_color;
+        color _text_color;
     };
 
 }

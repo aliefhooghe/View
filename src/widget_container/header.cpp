@@ -8,8 +8,7 @@ namespace View {
 
     header::header(
         std::unique_ptr<widget>&& root,
-        float header_size, float border_size,
-        color background_color, color header_color)
+        float header_size, float border_size)
     :   widget_container{
             root->width() + 2.f * border_size,
             root->height() + header_size + 2.f * border_size,
@@ -21,10 +20,10 @@ namespace View {
                 root->height_constraint().max + header_size + 2.f * border_size}},
         _root{*this, border_size, border_size + header_size, std::move(root)},
         _header_size{header_size},
-        _border_size{border_size},
-        _background_color{background_color},
-        _header_color{header_color}
-    {}
+        _border_size{border_size}
+    {
+        apply_color_theme(default_color_theme);
+    }
 
     bool header::resize(float width, float height)
     {
@@ -57,7 +56,7 @@ namespace View {
 
         //  Draw Border
         set_source(cr, _header_color);
-        cairo_set_line_width(cr, 0.3f);
+        cairo_set_line_width(cr, 0.6f);
         cairo_stroke_preserve(cr);
 
         //  Ensure _root don't draw outsied
@@ -78,7 +77,11 @@ namespace View {
         draw_widgets(cr);
     }
 
-
-
+    void header::apply_color_theme(const View::color_theme &theme)
+    {
+        widget_container<header>::apply_color_theme(theme);
+        _header_color = theme.primary;
+        _background_color = theme.surface;
+    }
 
 }

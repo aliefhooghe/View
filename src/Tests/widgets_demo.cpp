@@ -7,10 +7,10 @@ int main()
 {
     using namespace View;
 
-    auto left_panel = std::make_unique<panel<>>(100, 100);
+    auto left_panel = std::make_unique<panel<>>(100, 100, size_constraint{30, 150}, free_size);
     left_panel->insert_widget(5, 5, std::make_unique<checkbox>(3));
-    left_panel->insert_widget(5, 15, std::make_unique<push_button>(16, 5, "Activate"));
-    left_panel->insert_widget(5, 25, std::make_unique<knob>(8));
+    left_panel->insert_widget(5, 15, std::make_unique<text_push_button>("Save", 16, 5));
+    left_panel->insert_widget(5, 25, std::make_unique<knob>(10));
 
     auto content =
         std::make_unique<horizontal_pair_layout>(

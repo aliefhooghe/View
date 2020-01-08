@@ -90,6 +90,8 @@ namespace View {
 		bool on_mouse_drag_end(const mouse_button button, float x, float y) override;
         bool on_mouse_drag_cancel() override;
 
+        void apply_color_theme(const color_theme& theme) override;
+
     protected:
         void draw_widgets(cairo_t *cr);
         void draw_widgets(cairo_t *cr, const rectangle<>& rect);
@@ -288,6 +290,14 @@ namespace View {
         else {
             return false;
         }
+    }
+
+    template <typename TDerived, typename TChildren>
+    void widget_container<TDerived, TChildren>::apply_color_theme(const color_theme& theme)
+    {
+        foreach_holder([&theme](widget_holder& holder) {
+            holder.get()->apply_color_theme(theme);
+        });
     }
 
     template <typename TDerived, typename TChildren>

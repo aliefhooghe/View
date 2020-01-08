@@ -21,11 +21,19 @@ namespace View {
         bool on_mouse_drag_end(const mouse_button button, float x, float y) override;
         void draw(cairo_t*) override;
 
+        void apply_color_theme(const color_theme& theme) override;
     private:
         void _switch_state();
 
+        //  state
         bool _checked;
         callback _callback{[](bool){}};
+
+        //  colors
+        color _background;
+        color _border;
+        color _hovered_color;
+        color _check_color;
     };
 
 }

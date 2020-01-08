@@ -6,6 +6,7 @@
 #include "event.h"
 #include "display/common/cursor.h"
 #include "size_constraint.h"
+#include "color_theme.h"
 
 namespace View {
 
@@ -55,6 +56,9 @@ namespace View {
 
         virtual void draw(cairo_t*) {}
         virtual void draw_rect(cairo_t* cr, const rectangle<>&) { draw(cr); }
+
+        //  Color theme handling
+        virtual void apply_color_theme(const color_theme& theme) {}
 
     protected:
         /** display control helpers **/
