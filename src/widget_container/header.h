@@ -18,6 +18,7 @@ namespace View {
 
         bool resize(float width, float height) override;
         void draw(cairo_t *cr) override;
+        void draw_rect(cairo_t* cr, const rectangle<>&) override;
 
         void apply_color_theme(const color_theme& theme) override;
     protected:

@@ -77,6 +77,31 @@ namespace View {
         draw_widgets(cr);
     }
 
+    void header::draw_rect(cairo_t* cr, const rectangle<>& area)
+    {
+        auto root_area =
+            make_rectangle(
+                _border_size + _header_size,
+                _border_size + _header_size + _root.get()->height(),
+                _border_size, _border_size + _root.get()->height());
+
+        if (root_area.contains(area))
+        {
+            //  Draw background on area (Header footer ???)
+            cairo_rectangle(cr, area.left, area.top, area.width(), area.height());
+            set_source(cr, _background_color);
+            cairo_fill(cr);
+
+            //  Draw content on area
+            draw_widgets(cr, area);
+        }
+        else
+        {
+            //  Redraw Everythin : TODO optimize me !!
+            draw(cr);
+        }
+    }
+
     void header::apply_color_theme(const View::color_theme &theme)
     {
         widget_container<header>::apply_color_theme(theme);

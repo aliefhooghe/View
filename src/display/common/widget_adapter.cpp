@@ -40,11 +40,6 @@ namespace View {
     {
         begin_drawing(cr);
 
-        //  Clip the area that should be redrawn
-        //  Clipping at interger coordinate allow Cairo optimzation
-        cairo_rectangle(cr, left, top, right - left, bottom - top);
-        cairo_clip(cr);
-
         //  Scale to widget coordinate
         cairo_scale(
             cr,

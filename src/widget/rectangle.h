@@ -89,6 +89,12 @@ namespace View {
                 bounding_right};
         }
 
+        constexpr auto contains(const rectangle& rect) const
+        {
+            return
+                (rect.top >= top && rect.bottom <= bottom && rect.left >= left && rect.right <= right);
+        }
+
         T top{}, bottom{}, left{}, right{};
     };
 

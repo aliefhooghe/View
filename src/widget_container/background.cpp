@@ -37,6 +37,17 @@ namespace View {
         draw_widgets(cr);
     }
 
+    void background::draw_rect(cairo_t* cr, const rectangle<>& area)
+    {
+        //  Draw background on area (Header footer ???)
+        cairo_rectangle(cr, area.left, area.top, area.width(), area.height());
+        set_source(cr, _background_color);
+        cairo_fill(cr);
+
+        //  Draw content on area
+        draw_widgets(cr, area);
+    }
+
     void background::apply_color_theme(const View::color_theme &theme)
     {
         widget_container<background>::apply_color_theme(theme);

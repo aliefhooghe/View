@@ -5,10 +5,7 @@
 
 #include <sys/select.h>
 #include <X11/Xlib.h>
-#include <X11/Xatom.h>
-#include <X11/Xutil.h>
 #include <X11/cursorfont.h>
-#include <X11/extensions/Xdbe.h>
 
 #include "display/common/display_controler.h"
 #include "display/common/widget_adapter.h"
@@ -147,7 +144,6 @@ namespace View {
 
         _free_cursors();
         XCloseDisplay(display);
-        XFree(visual);
     }
 
     void x11_window::set_cursor(cursor c)
@@ -198,12 +194,6 @@ namespace View {
         //  Notify the content that window size has changed
         resize_display(width, height);
         cairo_xlib_surface_set_size(cairo_surface, width, height);
-
-        //  Recreate a drawing context with the propper dimensions
-        /** \todo : optim : clip if sizes are reduced **/
-        //_free_drawing_context();
-        //_allocate_drawing_context(width, height);
-        //_redraw_window();
     }
 
     bool x11_window::_process_event(const XEvent& event, std::optional<draw_area>& redraw_area)
@@ -293,13 +283,13 @@ namespace View {
     void x11_window::_redraw_area(draw_area area)
     {
         const auto window_area = make_rectangle(0, display_height(), 0, display_width());
-        const auto pixel_offset = 3;    //  TODO : This value should be a setting
 
-        //  MAke sure large border are well redrawn
-        area.left -= pixel_offset;
-        area.right += pixel_offset;
+        //  Add security pixels to be sure border are correctly redrawn
+        const auto pixel_offset = 2;
         area.top -= pixel_offset;
         area.bottom += pixel_offset;
+        area.left -= pixel_offset;
+        area.right += pixel_offset;
 
         //  Compute intesection beetween area and windows (what we actually need to redraw)
         draw_area drawing_area;
@@ -308,12 +298,18 @@ namespace View {
 
             //  Redraw
             sys_draw_rect(cr, drawing_area.top, drawing_area.bottom, drawing_area.left, drawing_area.right);
+
+            //cairo_rectangle(cr, drawing_area.left, drawing_area.top, drawing_area.width(), drawing_area.height());
+            //cairo_set_source_rgba(cr, 1, 0, 0, 1);
+            //cairo_stroke(cr);
+
             XFlush(display);
         }
     }
 
     void x11_window::_redraw_window()
     {
+        std::cout << "Redraw window" << std::endl;
         //  Redraw
         sys_draw(cr);
         XFlush(display);

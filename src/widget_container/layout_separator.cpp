@@ -4,7 +4,7 @@
 namespace View {
 
     layout_separator::layout_separator(float width, float height, orientation orient)
-    :    control{width, height, make_size_cursor(orthogonal(orient))},
+    :    control{width, height, make_size_cursor(orthogonal(orient)), false /*do not redraw when hovered*/},
         _orientation{orient}
     {
     }
