@@ -56,6 +56,8 @@ set(VIEW_COMMON_SRC
     drawing/text_helper.cpp
     drawing/named_colors.h
 
+    helpers/directory_model.h
+
     widget/event.h
     widget/widget.cpp
     widget/widget.h
