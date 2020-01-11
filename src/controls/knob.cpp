@@ -29,13 +29,13 @@ namespace View {
 
     bool knob::on_mouse_drag(mouse_button, float, float, float, float dy)
     {
-        set_value(_value - 0.1f * dy);
+        set_value(_value - 0.02f * dy);
         return true;
     }
 
     bool knob::on_mouse_wheel(float distance)
     {
-        set_value(_value + 0.02f * distance);
+        set_value(_value + 0.004f * distance);
         return true;
     }
 
