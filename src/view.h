@@ -12,6 +12,7 @@
 #include "widget_container/background.h"
 
 //  Controls
+#include "controls/label.h"
 #include "controls/push_button.h"
 #include "controls/text_push_button.h"
 #include "controls/checkbox.h"
