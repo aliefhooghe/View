@@ -41,6 +41,8 @@ set(VIEW_COMMON_SRC
     controls/knob.cpp
     controls/push_button.h
     controls/push_button.cpp
+    controls/text_push_button.cpp
+    controls/text_push_button.h
 
     display/display_types/application_display.h
     display/common/display_controler.h
@@ -52,7 +54,6 @@ set(VIEW_COMMON_SRC
     drawing/color.h
     drawing/text_helper.h
     drawing/text_helper.cpp
-    drawing/font.h
     drawing/named_colors.h
 
     widget/event.h
