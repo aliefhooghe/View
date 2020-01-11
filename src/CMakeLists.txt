@@ -75,7 +75,7 @@ set(VIEW_COMMON_SRC
     widget_container/panel.h
     widget_container/color_panel.h
     widget_container/pair_layout.h
-)
+    helpers/alphabetical_compare.h)
 
 ##  View Library
 add_library(View STATIC ${VIEW_COMMON_SRC})

@@ -94,7 +94,7 @@ namespace View {
         }
 
     private:
-        std::map<Key, item> _childrens{};
+        std::map<Key, item, Compare> _childrens{};
     };
 
 
