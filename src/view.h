@@ -13,6 +13,7 @@
 
 //  Controls
 #include "controls/push_button.h"
+#include "controls/text_push_button.h"
 #include "controls/checkbox.h"
 #include "controls/knob.h"
 
