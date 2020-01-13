@@ -15,7 +15,7 @@ namespace View {
         color on_primary = 0xFFFFFFFF;
 
         color secondary = 0xE74C3CFF;
-        color seconday_light = 0xE67E22FF;
+        color secondary_light = 0xE67E22FF;
         color secondary_dark = 0xD35400FF;
         color on_secondary = 0xFFFFFFFF;
 
