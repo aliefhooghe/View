@@ -12,6 +12,8 @@ namespace View {
         const char *txt,
         color c = 0x000000FFu,
         bool bold = false);
+
+    void list_fonts();
 }
 
 #endif

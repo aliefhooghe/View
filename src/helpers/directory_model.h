@@ -20,6 +20,9 @@ namespace View {
                 Derived,  /** = sub directory **/
                 Value>;
 
+        using node =
+            std::pair<const Key, item>;
+
         auto size() const { return self().size(); }
 
         auto begin() { return self().begin(); }
@@ -28,8 +31,8 @@ namespace View {
         auto end() { return self().end(); }
         auto end() const { return self().end(); }
 
-        auto find() { return self().find(); }
-        auto find() const { return self().find(); }
+        auto find(const Key& k) { return self().find(k); }
+        auto find(const Key& k) const { return self().find(k); }
 
         item& operator[](const Key& k) { return self()[k]; }
         const item& operator[](const Key& k) const { return self()[k]; }
@@ -54,11 +57,11 @@ namespace View {
         }
     };
 
-    template <typename Key, typename Value, typename Compare = std::less<Key>>
-    class storage_directory_model : public directory_model<Key, Value, storage_directory_model<Key, Value, Compare>> {
+    template <typename Key, typename Value, typename Compare, typename Derived>
+    class abstract_storage_directory_model : public directory_model<Key, Value, Derived> {
 
     public:
-        using item = typename directory_model<Key, Value, storage_directory_model>::item;
+        using item = typename directory_model<Key, Value, Derived>::item;
 
         auto size() const { return _childrens.size(); }
 
@@ -68,24 +71,24 @@ namespace View {
         auto end() { return _childrens.end(); }
         auto end() const { return _childrens.end(); }
 
-        auto find() { return _childrens.find(); }
-        auto find() const { return _childrens.find(); }
+        auto find(const Key& k) { return _childrens.find(k); }
+        auto find(const Key& k) const { return _childrens.find(k); }
 
         item& operator[](const Key& k) { return _childrens[k]; }
         const item& operator[](const Key& k) const { return _childrens[k]; }
 
-        storage_directory_model& add_directory(const Key& k)
+        Derived& add_directory(const Key& k)
         {
             auto& new_item = _childrens[k];
-            new_item = storage_directory_model{};
-            return std::get<storage_directory_model>(new_item);
+            new_item = Derived{};
+            return std::get<Derived>(new_item);
         }
 
-        storage_directory_model& add_directory(const Key& k, storage_directory_model&& dir)
+        Derived& add_directory(const Key& k, Derived&& dir)
         {
             auto& new_item = _childrens[k];
             new_item = std::move(dir);
-            return std::get<storage_directory_model>(new_item);
+            return std::get<Derived>(new_item);
         }
 
         void add_value(const Key& k, Value&& v)
@@ -97,6 +100,10 @@ namespace View {
         std::map<Key, item, Compare> _childrens{};
     };
 
+
+    template <typename Key, typename Value, typename Compare = std::less<Key>>
+    class storage_directory_model : public abstract_storage_directory_model<Key, Value, Compare, storage_directory_model<Key, Value, Compare>> {
+    };
 
 }
 

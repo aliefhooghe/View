@@ -17,6 +17,7 @@
 #include "controls/text_push_button.h"
 #include "controls/checkbox.h"
 #include "controls/knob.h"
+#include "controls/directory_view.h"
 
 namespace View {
 
