@@ -127,6 +127,8 @@ namespace View {
             const color content_color =
                 (hovered() && idx == _hoverred_cell) ? _hoverred_color : _default_color;
 
+            set_source(cr, content_color);
+
             //  Arrow
             if (c.type == cell_type::directory) {
                 const auto arrow_offset = 0.35f * _cell_height;
@@ -141,15 +143,14 @@ namespace View {
                     cairo_line_to(cr, width_offset + _cell_height - arrow_offset, height_offset + _cell_height / 2.f);
                 }
 
-                set_source(cr, content_color);
                 cairo_fill(cr);
                 //std::cout << "fill ARROW" << std::endl;
             }
 
             //  Text
-            draw_centered_text(
-                cr, width_offset + _cell_height, height_offset, width(), _cell_height, _font_size, c.caption.c_str(),
-                content_color, false);
+            draw_text(
+                cr, width_offset + _cell_height, height_offset, width(), _cell_height, _font_size, c.caption.c_str(), false,
+                horizontal_alignment::left, vertical_alignment::top);
         }
     }
 

@@ -6,12 +6,21 @@
 
 namespace View {
 
-    void draw_centered_text(
+    enum class horizontal_alignment {
+        left, center, right
+    };
+
+    enum class vertical_alignment {
+        top, center, bottom
+    };
+
+    void draw_text(
         cairo_t *cr,
         float x, float y, float width, float height, float font_size,
         const char *txt,
-        color c = 0x000000FFu,
-        bool bold = false);
+        bool bold = false,
+        horizontal_alignment ha = horizontal_alignment::center,
+        vertical_alignment va = vertical_alignment::center);
 
     void list_fonts();
 }

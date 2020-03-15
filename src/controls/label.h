@@ -26,7 +26,8 @@ namespace View {
 
         void draw(cairo_t *cr) override
         {
-            draw_centered_text(cr, 0, 0, width(), height(), _font_size, _text.c_str(), _color, _bold);
+            set_source(cr, _color);
+            draw_text(cr, 0, 0, width(), height(), _font_size, _text.c_str(), _bold);
         }
 
     private:

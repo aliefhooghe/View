@@ -67,7 +67,9 @@ namespace View {
         if (_display_value) {
             char text[5];
             std::snprintf(text, sizeof(text), "%.2f", _value);
-            draw_centered_text(cr, 0, 0, width(), height(), height() / 5.f, text, _text_color, true);
+            set_source(cr, _text_color);
+            draw_text(
+                cr, 0, 0, width(), height(), height() / 5.f, text, true);
         }
     }
 
