@@ -183,8 +183,9 @@ namespace View {
     {
         if (_cells.size() > 0) {
             _display_cell_begin = std::clamp(
-                static_cast<int>(_display_cell_begin) + static_cast<int>(distance),
+                static_cast<int>(_display_cell_begin) - static_cast<int>(distance),
                 0, static_cast<int>(_cells.size() - 1));
+            invalidate();
             return true;
         }
         else {
