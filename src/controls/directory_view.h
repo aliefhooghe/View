@@ -15,7 +15,7 @@ namespace View {
     class directory_view;
 
     template <typename Key, typename Value, typename Derived>
-    auto make_directory_view(directory_model<Key, Value, Derived>& model, float width, float height, float cell_height = 3, float font_size = 2)
+    auto make_directory_view(directory_model<Key, Value, Derived>& model, float width, float height, float cell_height = 3, float font_size = 2.5)
     {
         return std::make_unique<directory_view<Key, Value, Derived>>(model, width, height, cell_height, font_size);
     }
@@ -126,8 +126,11 @@ namespace View {
             const auto height_offset = static_cast<float>(i) * _cell_height;
             const color content_color =
                 (hovered() && idx == _hoverred_cell) ? _hoverred_color : _default_color;
+            bool bold_text = false;
 
             set_source(cr, content_color);
+
+
 
             //  Arrow
             if (c.type == cell_type::directory) {
@@ -144,12 +147,12 @@ namespace View {
                 }
 
                 cairo_fill(cr);
-                //std::cout << "fill ARROW" << std::endl;
+                bold_text = true;
             }
 
             //  Text
             draw_text(
-                cr, width_offset + _cell_height, height_offset, width(), _cell_height, _font_size, c.caption.c_str(), false,
+                cr, width_offset + _cell_height, height_offset, width(), _cell_height, _font_size, c.caption.c_str(), bold_text,
                 horizontal_alignment::left, vertical_alignment::top);
         }
     }
@@ -234,8 +237,6 @@ namespace View {
     {
         _cells.emplace_back(&dir, level, caption_by_key(k), cell_type::directory);
 
-        std::cout << "add_cells(" << k << ") : open_dir.count(dir) = " << _open_dirs.count(&dir) << std::endl;
-
         //  if this directory is open
         if (_open_dirs.count(&dir) != 0) {
 
@@ -260,12 +261,8 @@ namespace View {
     void directory_view<Key, Value, Derived>::on_cell_click(const unsigned int idx)
     {
         const auto& c = _cells[idx];
-        std::cout << "[directory_view] on_cell_click : idx = " << idx << " : " << c.caption << std::endl;
 
         if (c.type == cell_type::directory && c.dir != nullptr) {
-
-            std::cout << "Swap state of " << c.caption << std::endl;
-
             //  Swap open state
             if (is_open(c))
                 _open_dirs.erase(c.dir);
@@ -273,6 +270,10 @@ namespace View {
                 _open_dirs.insert(c.dir);
 
             update();
+        }
+        else
+        {
+            /** \todo Click on value event **/
         }
     }
 

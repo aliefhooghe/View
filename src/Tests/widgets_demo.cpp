@@ -8,9 +8,6 @@ int main()
 {
     using namespace View;
 
-    list_fonts();
-    //
-
     auto left_panel = std::make_unique<panel<>>(100, 100, size_constraint{30, 150}, free_size);
     left_panel->insert_widget(5, 5, std::make_unique<checkbox>(3));
     left_panel->insert_widget(5, 15, std::make_unique<text_push_button>("Save", 16, 5));

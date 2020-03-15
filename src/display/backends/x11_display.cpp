@@ -294,15 +294,8 @@ namespace View {
         //  Compute intesection beetween area and windows (what we actually need to redraw)
         draw_area drawing_area;
         if (area.intersect(window_area, drawing_area)) {
-            std::cout << "Redraw area " << drawing_area << std::endl;
-
             //  Redraw
             sys_draw_rect(cr, drawing_area.top, drawing_area.bottom, drawing_area.left, drawing_area.right);
-
-            //cairo_rectangle(cr, drawing_area.left, drawing_area.top, drawing_area.width(), drawing_area.height());
-            //cairo_set_source_rgba(cr, 1, 0, 0, 1);
-            //cairo_stroke(cr);
-
             XFlush(display);
         }
     }
