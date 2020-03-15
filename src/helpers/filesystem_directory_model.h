@@ -22,17 +22,6 @@ namespace View {
             : _root{root}
             {}
 
-            filesystem_directory_model(filesystem_directory_model&&) noexcept = default;
-
-
-            auto& operator=(filesystem_directory_model&& other)
-            {
-                _root = other._root;
-                storage::operator=(std::move(other));
-                return *this;
-            }
-
-            //  Interaction  avec _scan ?
             //  directory model interface
             auto size()
             {
