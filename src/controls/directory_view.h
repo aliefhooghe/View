@@ -126,15 +126,12 @@ namespace View {
             const auto height_offset = static_cast<float>(i) * _cell_height;
             const color content_color =
                 (hovered() && idx == _hoverred_cell) ? _hoverred_color : _default_color;
-            bool bold_text = false;
 
             set_source(cr, content_color);
 
-
-
             //  Arrow
             if (c.type == cell_type::directory) {
-                const auto arrow_offset = 0.35f * _cell_height;
+                const auto arrow_offset = 0.2f * _cell_height;
                 cairo_move_to(cr, width_offset + arrow_offset, height_offset + arrow_offset);
 
                 if (is_open(c)) {
@@ -147,12 +144,11 @@ namespace View {
                 }
 
                 cairo_fill(cr);
-                bold_text = true;
             }
 
             //  Text
             draw_text(
-                cr, width_offset + _cell_height, height_offset, width(), _cell_height, _font_size, c.caption.c_str(), bold_text,
+                cr, width_offset + _cell_height, height_offset, width(), _cell_height, _font_size, c.caption.c_str(), true,
                 horizontal_alignment::left, vertical_alignment::top);
         }
     }
@@ -177,8 +173,8 @@ namespace View {
     template<typename Key, typename Value, typename Derived>
     void directory_view<Key, Value, Derived>::apply_color_theme(const color_theme &theme)
     {
-        _selected_color = theme.secondary_light;
-        _hoverred_color = theme.secondary;
+        _selected_color = theme.primary_light;
+        _hoverred_color = theme.secondary_light;
         _default_color = theme.on_surface;
     }
 
