@@ -131,7 +131,7 @@ namespace View {
 
             //  Arrow
             if (c.type == cell_type::directory) {
-                const auto arrow_offset = 0.2f * _cell_height;
+                const auto arrow_offset = 0.3f * _cell_height;
                 cairo_new_sub_path(cr);
                 cairo_move_to(cr, width_offset + arrow_offset, height_offset + arrow_offset);
 
