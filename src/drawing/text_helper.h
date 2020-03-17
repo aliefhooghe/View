@@ -1,7 +1,6 @@
 #ifndef VIEW8TEXT_HELPER_H_
 #define VIEW8TEXT_HELPER_H_
 
-#include <pango/pangocairo.h>
 #include "cairo_helper.h"
 
 namespace View {
@@ -22,7 +21,6 @@ namespace View {
         horizontal_alignment ha = horizontal_alignment::center,
         vertical_alignment va = vertical_alignment::center);
 
-    void list_fonts();
 }
 
 #endif

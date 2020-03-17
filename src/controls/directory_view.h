@@ -132,6 +132,7 @@ namespace View {
             //  Arrow
             if (c.type == cell_type::directory) {
                 const auto arrow_offset = 0.2f * _cell_height;
+                cairo_new_sub_path(cr);
                 cairo_move_to(cr, width_offset + arrow_offset, height_offset + arrow_offset);
 
                 if (is_open(c)) {
@@ -143,13 +144,14 @@ namespace View {
                     cairo_line_to(cr, width_offset + _cell_height - arrow_offset, height_offset + _cell_height / 2.f);
                 }
 
+                cairo_close_path(cr);
                 cairo_fill(cr);
             }
 
             //  Text
             draw_text(
-                cr, width_offset + _cell_height, height_offset, width(), _cell_height, _font_size, c.caption.c_str(), true,
-                horizontal_alignment::left, vertical_alignment::top);
+                cr, width_offset + _cell_height, height_offset, width(), _cell_height, _font_size, c.caption.c_str(), c.type == cell_type::directory,
+                horizontal_alignment::left, vertical_alignment::center);
         }
     }
 

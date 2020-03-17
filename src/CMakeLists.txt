@@ -26,7 +26,6 @@ option(VIEW_X11_BACKEND "" ON)
 ## Dependencies
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake_modules")
 find_package(Cairo REQUIRED)
-find_package(PangoCairo REQUIRED)
 
 ## Common Sources
 set(VIEW_COMMON_SRC
