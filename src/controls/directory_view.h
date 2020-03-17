@@ -56,6 +56,8 @@ namespace View {
         // todo : void draw_rect(cairo_t *cr, const rectangle<>& area) override;
 
         void update();
+        void close_all_directories();
+
         void apply_color_theme(const color_theme&) override;
 
         bool on_mouse_wheel(float distance) override ;
@@ -170,6 +172,14 @@ namespace View {
         }
 
         invalidate();
+    }
+
+
+    template<typename Key, typename Value, typename Derived>
+    void directory_view<Key, Value, Derived>::close_all_directories()
+    {
+        _open_dirs.clear();
+        update();
     }
 
     template<typename Key, typename Value, typename Derived>
