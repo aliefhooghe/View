@@ -11,19 +11,19 @@
 
 namespace View {
 
-    template <typename Key, typename Value, typename Derived>
+    template <typename Key, typename Value, typename Model>
     class directory_view;
 
-    template <typename Key, typename Value, typename Derived>
-    auto make_directory_view(directory_model<Key, Value, Derived>& model, float width, float height, float cell_height = 3, float font_size = 2.5)
+    template <typename Key, typename Value, typename Model>
+    auto make_directory_view(directory_model<Key, Value, Model>& model, float width, float height, float cell_height = 3, float font_size = 2.5)
     {
-        return std::make_unique<directory_view<Key, Value, Derived>>(model, width, height, cell_height, font_size);
+        return std::make_unique<directory_view<Key, Value, Model>>(model, width, height, cell_height, font_size);
     }
 
-    template <typename Key, typename Value, typename Derived>
+    template <typename Key, typename Value, typename Model>
     class directory_view : public control {
 
-        using model = directory_model<Key, Value, Derived>;
+        using model = directory_model<Key, Value, Model>;
         using item = typename model::item;
         using node = typename model::node;
 
@@ -94,8 +94,8 @@ namespace View {
         color _default_color;
     };
 
-    template<typename Key, typename Value, typename Derived>
-    directory_view<Key, Value, Derived>::directory_view(
+    template<typename Key, typename Value, typename Model>
+    directory_view<Key, Value, Model>::directory_view(
         directory_view::model &m,
         float width, float height,
         float cell_height, float font_size)
@@ -108,8 +108,8 @@ namespace View {
         update();
     }
 
-    template<typename Key, typename Value, typename Derived>
-    void directory_view<Key, Value, Derived>::draw(cairo_t *cr)
+    template<typename Key, typename Value, typename Model>
+    void directory_view<Key, Value, Model>::draw(cairo_t *cr)
     {
         //  The max number of cell that can fit in widget rectangle
         const auto max_display_cell_count =
@@ -157,8 +157,8 @@ namespace View {
         }
     }
 
-    template<typename Key, typename Value, typename Derived>
-    void directory_view<Key, Value, Derived>::update()
+    template<typename Key, typename Value, typename Model>
+    void directory_view<Key, Value, Model>::update()
     {
         _cells.clear();
 
@@ -175,23 +175,23 @@ namespace View {
     }
 
 
-    template<typename Key, typename Value, typename Derived>
-    void directory_view<Key, Value, Derived>::close_all_directories()
+    template<typename Key, typename Value, typename Model>
+    void directory_view<Key, Value, Model>::close_all_directories()
     {
         _open_dirs.clear();
         update();
     }
 
-    template<typename Key, typename Value, typename Derived>
-    void directory_view<Key, Value, Derived>::apply_color_theme(const color_theme &theme)
+    template<typename Key, typename Value, typename Model>
+    void directory_view<Key, Value, Model>::apply_color_theme(const color_theme &theme)
     {
         _selected_color = theme.primary_light;
         _hoverred_color = theme.secondary_light;
         _default_color = theme.on_surface;
     }
 
-    template<typename Key, typename Value, typename Derived>
-    bool directory_view<Key, Value, Derived>::on_mouse_wheel(float distance)
+    template<typename Key, typename Value, typename Model>
+    bool directory_view<Key, Value, Model>::on_mouse_wheel(float distance)
     {
         if (_cells.size() > 0) {
             _display_cell_begin = std::clamp(
@@ -205,8 +205,8 @@ namespace View {
         }
     }
 
-    template<typename Key, typename Value, typename Derived>
-    bool directory_view<Key, Value, Derived>::on_mouse_move(float x, float y)
+    template<typename Key, typename Value, typename Model>
+    bool directory_view<Key, Value, Model>::on_mouse_move(float x, float y)
     {
         if (!cell_at(y, _hoverred_cell))
             _hoverred_cell = _cells.size();
@@ -214,8 +214,8 @@ namespace View {
         return true;
     }
 
-    template<typename Key, typename Value, typename Derived>
-    bool directory_view<Key, Value, Derived>::on_mouse_button_up(const mouse_button button, float x, float y)
+    template<typename Key, typename Value, typename Model>
+    bool directory_view<Key, Value, Model>::on_mouse_button_up(const mouse_button button, float x, float y)
     {
         unsigned int idx;
         if (button == mouse_button::left && cell_at(y, idx)) {
@@ -227,8 +227,8 @@ namespace View {
         }
     }
 
-    template<typename Key, typename Value, typename Derived>
-    bool directory_view<Key, Value, Derived>::on_mouse_drag_end(const mouse_button button, float x, float y)
+    template<typename Key, typename Value, typename Model>
+    bool directory_view<Key, Value, Model>::on_mouse_drag_end(const mouse_button button, float x, float y)
     {
         unsigned int idx;
         if (button == mouse_button::left && cell_at(y, idx)) {
@@ -240,8 +240,8 @@ namespace View {
         }
     }
 
-    template<typename Key, typename Value, typename Derived>
-    void directory_view<Key, Value, Derived>::add_cells(const Key &k, model &dir, unsigned int level)
+    template<typename Key, typename Value, typename Model>
+    void directory_view<Key, Value, Model>::add_cells(const Key &k, model &dir, unsigned int level)
     {
         _cells.emplace_back(&dir, level, caption_by_key(k), cell_type::directory);
 
@@ -259,14 +259,14 @@ namespace View {
         }
     }
 
-    template<typename Key, typename Value, typename Derived>
-    void directory_view<Key, Value, Derived>::add_cells(const Key &k, const Value &, unsigned int level)
+    template<typename Key, typename Value, typename Model>
+    void directory_view<Key, Value, Model>::add_cells(const Key &k, const Value &, unsigned int level)
     {
         _cells.emplace_back(nullptr, level, caption_by_key(k), cell_type::value);
     }
 
-    template<typename Key, typename Value, typename Derived>
-    void directory_view<Key, Value, Derived>::on_cell_click(const unsigned int idx)
+    template<typename Key, typename Value, typename Model>
+    void directory_view<Key, Value, Model>::on_cell_click(const unsigned int idx)
     {
         const auto& c = _cells[idx];
 
@@ -285,8 +285,8 @@ namespace View {
         }
     }
 
-    template<typename Key, typename Value, typename Derived>
-    bool directory_view<Key, Value, Derived>::cell_at(float y, unsigned int& idx)
+    template<typename Key, typename Value, typename Model>
+    bool directory_view<Key, Value, Model>::cell_at(float y, unsigned int& idx)
     {
         const auto i =
             static_cast<unsigned int>(y / _cell_height) + _display_cell_begin;
