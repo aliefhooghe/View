@@ -8,6 +8,12 @@ namespace View {
 
     struct size_constraint
     {
+        float clamp_delta(float x, float &delta) const noexcept
+        {
+            auto v = std::clamp(x + delta, min, max);
+            delta -= (v - x);
+            return v;
+        }
 
         bool contains(float x) const noexcept
         {

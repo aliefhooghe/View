@@ -43,12 +43,27 @@ namespace View {
         }
 
         template <orientation O>
-        auto match_size_constrain(widget* p, float size)
+        const auto& get_size_constrain(widget* p)
         {
             if constexpr (O == orientation::horizontal)
-                return p->width_constraint().contains(size);
+                return p->width_constraint();
             else
-                return p->height_constraint().contains(size);
+                return p->height_constraint();
+        }
+
+        template <orientation O>
+        const auto match_size_constrain(widget* p, float size)
+        {
+            const auto& constrain = get_size_constrain<O>(p);
+            return constrain.contains(size);
+        }
+
+        template <orientation O>
+        void resize_clamp_delta(widget* p, float& delta)
+        {
+            const auto& size_constraint = get_size_constrain<O>(p);
+            const auto size = widget_size<O>(p);
+            resize<O>(p, size_constraint.clamp_delta(size, delta));
         }
 
         auto layout_width(widget* pleft, widget* pright)
@@ -159,38 +174,24 @@ namespace View {
                 const auto target_orientation_size = choose_dim<Orientation>(width, height);
                 const auto target_orthogonal_size = choose_dim<orthogonal(Orientation)>(width, height);
 
-                auto first_orthogonal_size = widget_size<orthogonal(Orientation)>(_first().get());
-                auto second_orthogonal_size = widget_size<orthogonal(Orientation)>(_second().get());
-
-                const auto initial_second_orthogonal_size = second_orthogonal_size;
-
                 if (target_orthogonal_size != widget_size<orthogonal(Orientation)>(this)) {
-                    const auto orthogonal_delta =
-                        target_orthogonal_size - widget_size<orthogonal(Orientation)>(this);
-                    const auto target_second_orthogonal_size =
-                        second_orthogonal_size + orthogonal_delta;
+                    auto orthogonal_delta = target_orthogonal_size - widget_size<orthogonal(Orientation)>(this);
 
-                    //  First step : try to resize second widget
-                    if (match_size_constrain<orthogonal(Orientation)>(_second().get(), target_second_orthogonal_size)) {
-                        second_orthogonal_size = target_second_orthogonal_size;
-                    }
-                    else {  //  If we can't, try first widget
-                        const auto target_first_orthogonal_size =
-                            first_orthogonal_size + orthogonal_delta;
+                    //  Resize second as much as possible and then first
+                    resize_clamp_delta<orthogonal(Orientation)>(_second().get(), orthogonal_delta);
+                    resize_clamp_delta<orthogonal(Orientation)>(_first().get(), orthogonal_delta);
 
-                        if (match_size_constrain<orthogonal(Orientation)>(_first().get(), target_first_orthogonal_size)) {
-                            first_orthogonal_size = target_first_orthogonal_size;
-                            //  Second and separator need to be moved when fisrt is resized
-                            set_position<orthogonal(Orientation)>(_second(), target_first_orthogonal_size);
-                            set_position<orthogonal(Orientation)>(_separator(), target_first_orthogonal_size - _separator_orthogonal_size / 2.f);
-                        }
-                    }
+                    //  Second and separator need to be moved
+                    const auto first_orthogonal_size = widget_size<orthogonal(Orientation)>(_first().get());
+                    set_position<orthogonal(Orientation)>(_second(), first_orthogonal_size);
+                    set_position<orthogonal(Orientation)>(_separator(), first_orthogonal_size - _separator_orthogonal_size / 2.f);
                 }
 
-                //  Set new sizes
-                resize<Orientation>(_first().get(), target_orientation_size, first_orthogonal_size);
-                resize<Orientation>(_second().get(), target_orientation_size, second_orthogonal_size);
+                //  Resize along Orientation
+                resize<Orientation>(_first().get(), target_orientation_size);
+                resize<Orientation>(_second().get(), target_orientation_size);
                 resize<Orientation>(_separator().get(), target_orientation_size);
+
 
                 panel<>::resize(width, height);
 
