@@ -124,7 +124,7 @@ namespace View {
             const cell& c = _cells[idx];
 
             //  Draw Cell Background
-            const auto width_offset = c.level * _cell_height;
+            const auto width_offset = c.level * _cell_height * 0.5f;
             const auto height_offset = static_cast<float>(i) * _cell_height;
             const color content_color =
                 (hovered() && idx == _hoverred_cell) ? _hoverred_color : _default_color;
