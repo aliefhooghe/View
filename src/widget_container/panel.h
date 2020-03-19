@@ -8,26 +8,26 @@
 namespace View {
 
     template <typename TChildren = widget>
-    class panel : public widget_container<panel<TChildren>, TChildren> {
-        friend class widget_container<panel<TChildren>, TChildren>;
+    class panel_implementation : public widget_container<panel_implementation<TChildren>, TChildren> {
+        friend class widget_container<panel_implementation<TChildren>, TChildren>;
     public:
-        using typename widget_container<panel<TChildren>, TChildren>::widget_holder;
+        using typename widget_container<panel_implementation<TChildren>, TChildren>::widget_holder;
 
-        panel(float width, float height)
-        :   widget_container<panel<TChildren>, TChildren>{width, height}
+        panel_implementation(float width, float height)
+        :   widget_container<panel_implementation<TChildren>, TChildren>{width, height}
         {}
 
-        panel(float width, float height, size_constraint width_constraint, size_constraint height_constraint)
-        :   widget_container<panel<TChildren>, TChildren>{width, height, width_constraint, height_constraint}
+        panel_implementation(float width, float height, size_constraint width_constraint, size_constraint height_constraint)
+        :   widget_container<panel_implementation<TChildren>, TChildren>{width, height, width_constraint, height_constraint}
         {}
 
-        ~panel() override = default;
+        ~panel_implementation() override = default;
 
         // drawing funcs
         void draw(cairo_t* cr) override
         {
             draw_background(cr);
-            widget_container<panel<TChildren>, TChildren>::draw_widgets(cr);
+            widget_container<panel_implementation<TChildren>, TChildren>::draw_widgets(cr);
             draw_foreground(cr);
         }
 
@@ -37,11 +37,12 @@ namespace View {
              * \todo : this does not work
              **/
             draw_background(cr);
-            widget_container<panel<TChildren>, TChildren>::draw_widgets(cr, rect);
+            widget_container<panel_implementation<TChildren>, TChildren>::draw_widgets(cr, rect);
             draw_foreground(cr);
         }
 
 
+    protected:
         widget_holder& insert_widget(float x, float y, std::unique_ptr<TChildren>&& w)
         {
             return _childrens.emplace_back(*this, x, y, std::move(w));
@@ -62,7 +63,6 @@ namespace View {
             //     _focused_widget = nullptr;
         }
 
-    protected:
         virtual void draw_background(cairo_t *cr) {}
         virtual void draw_foreground(cairo_t *cr) {}
 
@@ -87,6 +87,23 @@ namespace View {
         }
 
         std::vector<widget_holder> _childrens{};
+    };
+
+
+    template <typename TChildren = widget>
+    class panel : public panel_implementation<TChildren> {
+
+        public:
+            panel(float width, float height)
+            :   panel_implementation<TChildren>(width, height)
+            {}
+
+            panel(float width, float height, size_constraint width_constraint, size_constraint height_constraint)
+            : panel_implementation<TChildren>(width, height, width_constraint, height_constraint)
+            {}
+
+            using panel_implementation<TChildren>::insert_widget;
+            using panel_implementation<TChildren>::remove_widget;
     };
 
 }

@@ -7,9 +7,9 @@
 namespace View {
 
     template <orientation Orientation /* Separator Orientation */>
-    class pair_layout : public panel<> {
+    class pair_layout : public panel_implementation<> {
 
-        using widget_holder = panel<>::widget_holder;
+        using widget_holder = panel_implementation<>::widget_holder;
         static constexpr auto _separator_orthogonal_size = 4.0f;
 
         /**
@@ -102,7 +102,7 @@ namespace View {
 
     public:
         pair_layout(std::unique_ptr<widget>&& first, std::unique_ptr<widget>&& second)
-        : panel<>{layout_width(first.get(), second.get()), layout_height(first.get(), second.get())}
+        : panel_implementation<>{layout_width(first.get(), second.get()), layout_height(first.get(), second.get())}
         {
             //  Size along 'Orientation'
             const auto orientation_size = widget_size<Orientation>(this);
@@ -193,7 +193,7 @@ namespace View {
                 resize<Orientation>(_separator().get(), target_orientation_size);
 
 
-                panel<>::resize(width, height);
+                panel_implementation<>::resize(width, height);
 
                 return true;
             }
