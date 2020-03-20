@@ -18,7 +18,6 @@ namespace View {
         bool is_checked() const noexcept { return _checked; }
 
         bool on_mouse_button_up(mouse_button button, float x, float y) override;
-        bool on_mouse_drag_end(const mouse_button button, float x, float y) override;
         void draw(cairo_t*) override;
 
         void apply_color_theme(const color_theme& theme) override;

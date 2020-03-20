@@ -29,17 +29,6 @@ namespace View {
         return true;
     }
 
-    bool push_button::on_mouse_drag_end(const mouse_button button, float x, float y)
-    {
-        std::cout << "Push button drag end" << std::endl;
-        _update_pushed(false);
-
-        if (contains(x, y))
-            _callback(*this);
-
-        return true;
-    }
-
     bool push_button::on_mouse_drag_cancel()
     {
         std::cout << "Push button drag cancel" << std::endl;

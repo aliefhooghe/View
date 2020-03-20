@@ -17,13 +17,6 @@ namespace View {
         return true;
     }
 
-    bool checkbox::on_mouse_drag_end(const mouse_button button, float x, float y)
-    {
-        if (contains(x, y))
-            _switch_state();
-        return true;
-    }
-
     void checkbox::draw(cairo_t *cr)
     {
         const auto unit = width() / 8.f;

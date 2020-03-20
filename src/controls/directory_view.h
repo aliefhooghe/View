@@ -73,7 +73,6 @@ namespace View {
         bool on_mouse_move(float x, float y) override;
 
         bool on_mouse_button_up(const mouse_button button, float x, float y) override;
-        bool on_mouse_drag_end(const mouse_button button, float x, float y) override;
 
     private:
         bool cell_at(float y, unsigned int &idx);
@@ -237,19 +236,6 @@ namespace View {
 
     template<typename Key, typename Value, typename Model>
     bool directory_view<Key, Value, Model>::on_mouse_button_up(const mouse_button button, float x, float y)
-    {
-        unsigned int idx;
-        if (button == mouse_button::left && cell_at(y, idx)) {
-            on_cell_click(idx);
-            return true;
-        }
-        else {
-            return false;
-        }
-    }
-
-    template<typename Key, typename Value, typename Model>
-    bool directory_view<Key, Value, Model>::on_mouse_drag_end(const mouse_button button, float x, float y)
     {
         unsigned int idx;
         if (button == mouse_button::left && cell_at(y, idx)) {

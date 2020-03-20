@@ -17,7 +17,6 @@ namespace View {
 
             bool on_mouse_button_up(const mouse_button button, float x, float y) override;
             bool on_mouse_button_down(const mouse_button button, float x, float y) override;
-            bool on_mouse_drag_end(const mouse_button button, float x, float y) override;
             bool on_mouse_drag_cancel() override;
 
             void draw(cairo_t*) override;
