@@ -56,7 +56,7 @@ namespace View {
                 _childrens.begin(), _childrens.end(),
                 [children](const auto& holder)
                 {
-                    return holder.is(children);
+                    return (holder.get() == children);
                 }),
                 _childrens.end());
 

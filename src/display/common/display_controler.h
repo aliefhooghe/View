@@ -30,8 +30,17 @@ namespace View {
             other._widget = nullptr;
         }
 
+        void set_widget(widget& w)
+        {
+            _widget->_display_ctl = nullptr;
+            _widget = &w;
+            _widget->_display_ctl = this;
+        }
+
         virtual ~display_controler()
-        {}
+        {
+            _widget->_display_ctl = nullptr;
+        }
 
         /**
          *  \brief Inform the display that the widget need to be redrawn

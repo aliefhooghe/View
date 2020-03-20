@@ -18,12 +18,22 @@ namespace View {
             widget_holder(
                 widget_container& parent,
                 float x, float y, std::unique_ptr<TChildren>&& w)
-            :   _parent{parent}, display_controler{*w},
+            :   _parent{&parent}, display_controler{*w},
                 _pos_x{x}, _pos_y{y}, _widget_instance{std::move(w)}
             {}
 
             widget_holder(const widget_holder& x) noexcept = delete;
             widget_holder(widget_holder&& other) noexcept = default;
+
+            widget_holder& operator=(widget_holder&& other) noexcept
+            {
+                _parent = other._parent;
+                _pos_x = other._pos_x;
+                _pos_y = other._pos_y;
+                _widget_instance = std::move(other._widget_instance);
+                set_widget(*_widget_instance);   //  assign this widget to the display_ctl interface
+                return *this;
+            }
 
             void set_pos(float x, float y) noexcept { _pos_x = x; _pos_y = y; }
             void set_pos_x(float x) noexcept { _pos_x = x; }
@@ -32,10 +42,11 @@ namespace View {
             auto pos_x() const noexcept { return _pos_x; }
             auto pos_y() const noexcept { return _pos_y; }
 
-            auto get() noexcept
-            {
-                return _widget_instance.get();
-            }
+            auto get() noexcept { return _widget_instance.get(); }
+            auto get() const noexcept { return _widget_instance.get(); }
+
+            auto operator->() noexcept { return get(); }
+            auto operator->() const noexcept { return get(); }
 
         private:
             /**
@@ -44,7 +55,7 @@ namespace View {
 
             void invalidate_widget() override
             {
-                _parent.invalidate_rect(
+                _parent->invalidate_rect(
                     make_rectangle(
                         _pos_y, _pos_y + _widget_instance->height(),
                         _pos_x, _pos_x + _widget_instance->width()));
@@ -52,18 +63,18 @@ namespace View {
 
             void invalidate_rect(const rectangle<>& rect) override
             {
-                _parent.invalidate_rect(rect.translate(_pos_x, _pos_y));
+                _parent->invalidate_rect(rect.translate(_pos_x, _pos_y));
             }
 
             void set_cursor(cursor c) override
             {
-                _parent.set_cursor(c);
+                _parent->set_cursor(c);
             }
 
             float _pos_x;
             float _pos_y;
             std::unique_ptr<TChildren> _widget_instance;
-            widget_container& _parent;
+            widget_container *_parent;
         };
 
     public:
@@ -95,6 +106,7 @@ namespace View {
     protected:
         void draw_widgets(cairo_t *cr);
         void draw_widgets(cairo_t *cr, const rectangle<>& rect);
+        auto focused_widget() const noexcept { return _focused_widget; }
 
     private:
         widget_holder *widget_at(float x, float y)
@@ -295,18 +307,18 @@ namespace View {
     template <typename TDerived, typename TChildren>
     void widget_container<TDerived, TChildren>::apply_color_theme(const color_theme& theme)
     {
-        foreach_holder([&theme](widget_holder& holder) {
-            holder.get()->apply_color_theme(theme);
+        foreach_holder([&theme](auto& holder) {
+            holder->apply_color_theme(theme);
         });
     }
 
     template <typename TDerived, typename TChildren>
     void widget_container<TDerived, TChildren>::draw_widgets(cairo_t *cr)
     {
-        foreach_holder([cr](widget_holder& holder) {
+        foreach_holder([cr](auto& holder) {
             cairo_save(cr);
             cairo_translate(cr, holder.pos_x(), holder.pos_y());
-            holder.get()->draw(cr);
+            holder->draw(cr);
             cairo_restore(cr);
         });
     }
@@ -314,10 +326,10 @@ namespace View {
     template <typename TDerived, typename TChildren>
     void widget_container<TDerived, TChildren>::draw_widgets(cairo_t *cr, const rectangle<>& rect)
     {
-        foreach_holder([cr, &rect](widget_holder& holder) {
+        foreach_holder([cr, &rect](auto& holder) {
             const auto child_rect = make_rectangle(
-                holder.pos_y(),  holder.pos_y() + holder.get()->height(),
-                holder.pos_x(), holder.pos_x() + holder.get()->width());
+                holder.pos_y(),  holder.pos_y() + holder->height(),
+                holder.pos_x(), holder.pos_x() + holder->width());
 
             rectangle<> drawing_rect;
 
