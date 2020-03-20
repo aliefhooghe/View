@@ -45,7 +45,9 @@ namespace View {
     protected:
         widget_holder& insert_widget(float x, float y, std::unique_ptr<TChildren>&& w)
         {
-            return _childrens.emplace_back(*this, x, y, std::move(w));
+            auto& ret = _childrens.emplace_back(*this, x, y, std::move(w));
+            widget_container<panel_implementation<TChildren>, TChildren>::invalidate();
+            return ret;
         }
 
         void remove_widget(TChildren *children)
@@ -57,6 +59,8 @@ namespace View {
                     return holder.is(children);
                 }),
                 _childrens.end());
+
+            widget_container<panel_implementation<TChildren>, TChildren>::invalidate();
 
             /** \todo : find a solution **/
             // if (_focused_widget == children)
