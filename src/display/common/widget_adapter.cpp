@@ -162,6 +162,16 @@ namespace View {
         sys_invalidate_rect(area);
     }
 
+    float widget_adapter::widget_pos_x()
+    {
+        return 0.f;
+    }
+
+    float widget_adapter::widget_pos_y()
+    {
+        return 0.f;
+    }
+
     void widget_adapter::_coord_display2widget(int x, int y, float &fx, float &fy)
     {
         fx = x / _pixel_per_unit;

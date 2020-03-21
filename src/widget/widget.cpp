@@ -64,4 +64,20 @@ namespace View {
             _display_ctl->set_cursor(c);
     }
 
+    float widget::pos_x() const
+    {
+        if (_display_ctl)
+            return _display_ctl->widget_pos_x();
+        else
+            return 0.f;
+    }
+
+    float widget::pos_y() const
+    {
+        if (_display_ctl)
+            return _display_ctl->widget_pos_y();
+        else
+            return 0.f;
+    }
+
 }

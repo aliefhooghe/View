@@ -75,7 +75,8 @@ namespace View {
          */
         void invalidate_widget() override;
         void invalidate_rect(const rectangle<>& rect) override;
-
+        float widget_pos_x() override;
+        float widget_pos_y() override;
         /**
          *  Display / Widget coordinate translation
          */

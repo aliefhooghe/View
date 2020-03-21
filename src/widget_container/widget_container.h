@@ -71,6 +71,17 @@ namespace View {
                 _parent->set_cursor(c);
             }
 
+            float widget_pos_x() override
+            {
+                return _pos_x;
+            }
+
+            float widget_pos_y() override
+            {
+                return _pos_y;
+            }
+
+
             float _pos_x;
             float _pos_y;
             std::unique_ptr<TChildren> _widget_instance;

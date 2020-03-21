@@ -61,6 +61,12 @@ namespace View {
          **/
         virtual void set_cursor(cursor /* = default */) =0;
 
+        /**
+         *  \brief Allow the widget top know its position
+         **/
+        virtual float widget_pos_x() =0;
+        virtual float widget_pos_y() =0;
+
     private:
         widget *_widget{nullptr};
     };

@@ -60,6 +60,9 @@ namespace View {
         //  Color theme handling
         virtual void apply_color_theme(const color_theme& theme) {}
 
+        //  Position in parent
+        float pos_x() const;
+        float pos_y() const;
     protected:
         /** display control helpers **/
         void invalidate();
