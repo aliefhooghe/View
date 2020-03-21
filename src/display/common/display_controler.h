@@ -23,7 +23,6 @@ namespace View {
             _widget->_display_ctl = this;
         }
 
-        display_controler(const display_controler&) = delete;
         display_controler(display_controler&& other) noexcept
         {
             _widget = other._widget;
@@ -33,15 +32,14 @@ namespace View {
 
         void set_widget(widget& w)
         {
-            _widget->_display_ctl = nullptr;
+            _detach();
             _widget = &w;
             _widget->_display_ctl = this;
         }
 
         virtual ~display_controler()
         {
-            if (_widget)
-               _widget->_display_ctl = nullptr;
+            _detach();
         }
 
         /**
@@ -66,8 +64,14 @@ namespace View {
          **/
         virtual float widget_pos_x() =0;
         virtual float widget_pos_y() =0;
-
     private:
+        void _detach()
+        {
+            if (_widget && _widget->_display_ctl == this) {
+                _widget->_display_ctl = nullptr;
+                _widget = nullptr;
+            }
+        }
         widget *_widget{nullptr};
     };
 

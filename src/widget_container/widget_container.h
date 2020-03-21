@@ -23,7 +23,12 @@ namespace View {
             {}
 
             widget_holder(const widget_holder& x) noexcept = delete;
-            widget_holder(widget_holder&& other) noexcept = default;
+            widget_holder(widget_holder&& other) noexcept
+            :   display_controler{*other._widget_instance},
+                _parent{other._parent},
+                _pos_x{other._pos_x}, _pos_y{other._pos_y},
+                _widget_instance{std::move(other._widget_instance)}
+            {}
 
             widget_holder& operator=(widget_holder&& other) noexcept
             {
@@ -117,7 +122,9 @@ namespace View {
     protected:
         void draw_widgets(cairo_t *cr);
         void draw_widgets(cairo_t *cr, const rectangle<>& rect);
+
         auto focused_widget() const noexcept { return _focused_widget; }
+        void reset_focused_widget() noexcept { _focused_widget = nullptr; }
 
     private:
         widget_holder *widget_at(float x, float y)

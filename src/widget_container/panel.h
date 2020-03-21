@@ -10,15 +10,16 @@ namespace View {
     template <typename TChildren = widget>
     class panel_implementation : public widget_container<panel_implementation<TChildren>, TChildren> {
         friend class widget_container<panel_implementation<TChildren>, TChildren>;
+        using implementation = widget_container<panel_implementation<TChildren>, TChildren>;
     public:
         using typename widget_container<panel_implementation<TChildren>, TChildren>::widget_holder;
 
         panel_implementation(float width, float height)
-        :   widget_container<panel_implementation<TChildren>, TChildren>{width, height}
+        :   implementation{width, height}
         {}
 
         panel_implementation(float width, float height, size_constraint width_constraint, size_constraint height_constraint)
-        :   widget_container<panel_implementation<TChildren>, TChildren>{width, height, width_constraint, height_constraint}
+        :   implementation{width, height, width_constraint, height_constraint}
         {}
 
         ~panel_implementation() override = default;
@@ -27,7 +28,7 @@ namespace View {
         void draw(cairo_t* cr) override
         {
             draw_background(cr);
-            widget_container<panel_implementation<TChildren>, TChildren>::draw_widgets(cr);
+            implementation::draw_widgets(cr);
             draw_foreground(cr);
         }
 
@@ -37,7 +38,7 @@ namespace View {
              * \todo : this does not work
              **/
             draw_background(cr);
-            widget_container<panel_implementation<TChildren>, TChildren>::draw_widgets(cr, rect);
+            implementation::draw_widgets(cr, rect);
             draw_foreground(cr);
         }
 
@@ -46,12 +47,19 @@ namespace View {
         widget_holder& insert_widget(float x, float y, std::unique_ptr<TChildren>&& w)
         {
             auto& ret = _childrens.emplace_back(*this, x, y, std::move(w));
-            widget_container<panel_implementation<TChildren>, TChildren>::invalidate();
+            implementation::invalidate();
             return ret;
         }
 
         void remove_widget(TChildren *children)
         {
+            /**
+             *  Removing an element from _childrens will invalidate any holder pointer or reference
+             **/
+            auto focused_widget =implementation::focused_widget();
+            if (focused_widget != nullptr && focused_widget->get() == children)
+                implementation::reset_focused_widget();
+
             _childrens.erase(std::remove_if(
                 _childrens.begin(), _childrens.end(),
                 [children](const auto& holder)
@@ -60,11 +68,7 @@ namespace View {
                 }),
                 _childrens.end());
 
-            widget_container<panel_implementation<TChildren>, TChildren>::invalidate();
-
-            /** \todo : find a solution **/
-            // if (_focused_widget == children)
-            //     _focused_widget = nullptr;
+            implementation::invalidate();
         }
 
         virtual void draw_background(cairo_t *cr) {}
