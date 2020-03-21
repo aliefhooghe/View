@@ -4,10 +4,9 @@
 
 namespace View {
 
-    background::background(std::unique_ptr<widget>&& root, color background_color)
+    background::background(std::unique_ptr<widget>&& root)
     :   widget_container<background>{root->width(), root->height(), root->width_constraint(), root->height_constraint()},
-        _root{*this, 0, 0, std::move(root)},
-        _background_color{background_color}
+        _root{*this, 0, 0, std::move(root)}
     {
         apply_color_theme(default_color_theme);
     }

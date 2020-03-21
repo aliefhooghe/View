@@ -10,7 +10,7 @@ namespace View {
         friend class widget_container<background>;
         using widget_container<background>::widget_holder;
     public:
-        background(std::unique_ptr<widget>&& root, color background_color = 0x1e272eff);
+        background(std::unique_ptr<widget>&& root);
         ~background() override = default;
 
         bool resize(float width, float height) override;
