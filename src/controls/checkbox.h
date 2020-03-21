@@ -11,7 +11,7 @@ namespace View {
     public:
         using callback = std::function<void(bool checked)>;
 
-        checkbox(float size, bool checked = false);
+        checkbox(float size = 1.f, bool checked = false);
         ~checkbox() override = default;
 
         void set_callback(callback c) { _callback = c; }

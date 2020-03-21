@@ -8,10 +8,10 @@ int main()
 {
     using namespace View;
 
-    auto left_panel = std::make_unique<panel<>>(100, 100, size_constraint{30, 150}, free_size);
-    left_panel->insert_widget(5, 5, std::make_unique<checkbox>(3));
-    left_panel->insert_widget(5, 15, std::make_unique<text_push_button>("Save", 16, 5));
-    left_panel->insert_widget(5, 25, std::make_unique<knob>(10));
+    auto left_panel = std::make_unique<panel<>>(20, 20, size_constraint{10, 150}, free_size);
+    left_panel->insert_widget(5, 5, std::make_unique<checkbox>());
+    left_panel->insert_widget(5, 15, std::make_unique<text_push_button>("Save"));
+    left_panel->insert_widget(5, 25, std::make_unique<knob>());
 
     // tree structure
     filesystem_directory_model model{"/home/aliefhooghe"};
@@ -29,7 +29,7 @@ int main()
         std::make_unique<background>(std::move(content));
 
     //
-    native_application_display dpy{*root, 6};
+    native_application_display dpy{*root, 14};
     dpy.open("");
     dpy.wait();
 

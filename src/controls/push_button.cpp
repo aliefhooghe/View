@@ -38,7 +38,7 @@ namespace View {
 
     void push_button::draw(cairo_t *cr)
     {
-        rounded_rectangle(cr, 0, 0, width(), height(), 1.f);
+        rounded_rectangle(cr, 0, 0, width(), height(), 0.3f);
 
         //  Draw background
         if (_pushed) {
@@ -48,7 +48,7 @@ namespace View {
 
         //  Draw border
         set_source(cr, hovered() ? _hovered_border_color : _border_color);
-        cairo_set_line_width(cr, 0.3);
+        cairo_set_line_width(cr, 0.1f);
         cairo_stroke(cr);
     }
 

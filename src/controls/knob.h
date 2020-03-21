@@ -11,7 +11,7 @@ namespace View {
     public:
         using callback = std::function<void(float)>;
 
-        knob(float size, float initial_value = 0.5f, bool display_value = true);
+        knob(float size = 4.f, float initial_value = 0.5f, bool display_value = true);
         ~knob() override = default;
 
         void set_callback(callback);
@@ -29,8 +29,6 @@ namespace View {
         callback _callback{[](float){}};
         float _value;
         bool _display_value;
-
-        /** \todo background ? **/
         color _track_color;
         color _border_color;
         color _hovered_border_color;

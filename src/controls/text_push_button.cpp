@@ -8,7 +8,7 @@ namespace View {
     {
         push_button::draw(cr);
         set_source(cr, _text_color);
-        draw_text(cr, 0, 0, width(), height(), 2.5f, _text.c_str(), true);
+        draw_text(cr, 0, 0, width(), height(), 1.0f, _text.c_str());
     }
 
     void text_push_button::apply_color_theme(const View::color_theme &theme)

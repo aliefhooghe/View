@@ -56,7 +56,7 @@ namespace View {
 
         //  Draw Border
         set_source(cr, _header_color);
-        cairo_set_line_width(cr, 0.6f);
+        cairo_set_line_width(cr, 0.3f);
         cairo_stroke_preserve(cr);
 
         //  Ensure _root don't draw outsied

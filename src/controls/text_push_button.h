@@ -9,7 +9,7 @@ namespace View {
 
     public:
         template <typename TText>
-        text_push_button(TText&& text, float width, float height)
+        text_push_button(TText&& text, float width = 4.f, float height = 1.5f)
         : push_button{width, height}, _text{std::forward<TText>(text)}
         {}
 

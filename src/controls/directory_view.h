@@ -15,7 +15,7 @@ namespace View {
     class directory_view;
 
     template <typename Key, typename Value, typename Model>
-    auto make_directory_view(directory_model<Key, Value, Model>& model, float width, float height, float cell_height = 3, float font_size = 2.5)
+    auto make_directory_view(directory_model<Key, Value, Model>& model, float width, float height, float cell_height = 1.2f, float font_size = 1.0f)
     {
         return std::make_unique<directory_view<Key, Value, Model>>(model, width, height, cell_height, font_size);
     }

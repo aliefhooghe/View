@@ -59,7 +59,7 @@ namespace View {
 
         cairo_arc(cr, half, half, 0.75f * half, start_angle, cur_angle);
         set_source(cr, _track_color);
-        cairo_set_line_width(cr, width() / 6.f);
+        cairo_set_line_width(cr, 0.5f);
         cairo_set_line_cap(cr, CAIRO_LINE_CAP_BUTT);
         cairo_stroke(cr);
 
@@ -69,7 +69,7 @@ namespace View {
             std::snprintf(text, sizeof(text), "%.2f", _value);
             set_source(cr, _text_color);
             draw_text(
-                cr, 0, 0, width(), height(), height() / 5.f, text, true);
+                cr, 0, 0, width(), height(), 1.f, text);
         }
     }
 
