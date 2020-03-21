@@ -106,8 +106,7 @@ namespace View {
         {
             //  Size along 'Orientation'
             const auto orientation_size = widget_size<Orientation>(this);
-
-            _border = widget_size<orthogonal(Orientation)>(first.get());
+            const auto first_width = widget_size<orthogonal(Orientation)>(first.get());
 
             resize<Orientation>(first.get(), orientation_size);
             resize<Orientation>(second.get(), orientation_size);
@@ -127,7 +126,7 @@ namespace View {
             //  Insert childrens
             insert_widget(0.f, 0.f, std::move(first));
             insert_widget(0.f, 0.f, std::move(second));
-            set_position<orthogonal(Orientation)>(_second(), _border);
+            set_position<orthogonal(Orientation)>(_second(), first_width);
 
             //Insert Separator
             auto separator =
@@ -161,7 +160,7 @@ namespace View {
 
             resize<Orientation>(separator.get(), orientation_size, _separator_orthogonal_size);
             insert_widget(0.f, 0.f, std::move(separator));
-            set_position<orthogonal(Orientation)>(_separator(), _border - _separator_orthogonal_size / 2.f);
+            set_position<orthogonal(Orientation)>(_separator(), first_width - _separator_orthogonal_size / 2.f);
         }
 
         ~pair_layout() override = default;
@@ -206,7 +205,6 @@ namespace View {
         widget_holder& _first() noexcept { return _childrens[0]; }
         widget_holder& _second() noexcept { return _childrens[1]; }
         widget_holder& _separator() noexcept { return _childrens[2]; }
-        float _border;
     };
 
     /**
