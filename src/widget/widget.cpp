@@ -14,7 +14,10 @@ namespace View {
     :   _width{width}, _height{height},
         _width_constraint{width_constraint},
         _height_constraint{height_constraint}
-    {}
+    {
+        if (!(_width_constraint.contains(_width) && _height_constraint.contains(_height)))
+            throw std::runtime_error("View::widget : initial size does not match size constrins");
+    }
 
     widget::~widget()
     {
