@@ -16,6 +16,12 @@ namespace View {
         _height_constraint{height_constraint}
     {}
 
+    widget::~widget()
+    {
+        if (_display_ctl)
+            _display_ctl->_widget = nullptr;
+    }
+
     void widget::freeze_size()
     {
         _width_constraint = size_constraint{width(), width()};

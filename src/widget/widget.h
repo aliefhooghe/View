@@ -20,7 +20,7 @@ namespace View {
         widget(float width, float height, size_constraint width_constraint, size_constraint height_constraint) noexcept;
         widget(widget&&) = default;
         widget(widget&) = delete;
-        virtual ~widget() = default;
+        virtual ~widget();
 
         float width() const noexcept    { return _width; }
         float height() const noexcept   { return _height; }

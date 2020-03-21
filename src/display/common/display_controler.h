@@ -15,6 +15,7 @@ namespace View {
      *  \brief Allow one widget to have some control of underlying display
      */
     class display_controler {
+        friend class widget;
     public:
         display_controler(widget& w)
         : _widget{&w}
@@ -39,7 +40,8 @@ namespace View {
 
         virtual ~display_controler()
         {
-            _widget->_display_ctl = nullptr;
+            if (_widget)
+               _widget->_display_ctl = nullptr;
         }
 
         /**
