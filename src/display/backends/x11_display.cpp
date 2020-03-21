@@ -69,6 +69,8 @@ namespace View {
         Atom wm_delete_message{0};
         std::array<Cursor, VIEW_CURSOR_COUNT> x11_cursors{};
 
+        //  dbl click detection
+        Time _last_click_time{};
 
         //  Cairo members
         cairo_surface_t *cairo_surface{nullptr};
@@ -204,7 +206,20 @@ namespace View {
         case ButtonPress:
             switch (event.xbutton.button)
             {
-                case 1: sys_mouse_button_down(mouse_button::left);  break;
+                case 1:
+                {
+                    //  DBL click detection
+                    const auto now = event.xbutton.time;
+                    const auto delta = now - _last_click_time;
+
+                    if (delta > 50 && delta < 250)
+                        sys_mouse_dbl_click();
+                    else
+                        sys_mouse_button_down(mouse_button::left);
+
+                    _last_click_time = now;
+                }
+                break;
                 case 2: sys_mouse_button_down(mouse_button::wheel); break;
                 case 3: sys_mouse_button_down(mouse_button::right); break;
                 case 4: sys_mouse_wheel(1.0f);  break;
