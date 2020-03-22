@@ -25,10 +25,7 @@ namespace View {
         void foreach_holder(TFunction func) { func(_root); }
         widget_holder *widget_at(float x, float y)
         {
-            if (_root.get()->contains(x, y))
-                return &_root;
-            else
-                return nullptr;
+            return &_root;
         }
 
         widget_holder _root;

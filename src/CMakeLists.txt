@@ -72,6 +72,8 @@ set(VIEW_COMMON_SRC
     widget_container/background.cpp
     widget_container/layout_separator.h
     widget_container/layout_separator.cpp
+    widget_container/map_wrapper.h
+    widget_container/map_wrapper.cpp
     widget_container/header.h
     widget_container/header.cpp
     widget_container/panel.h
