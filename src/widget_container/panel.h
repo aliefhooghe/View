@@ -32,15 +32,15 @@ namespace View {
             draw_foreground(cr);
         }
 
-        void draw_rect(cairo_t* cr, const rectangle<>&rect) override
-        {
-            /**
-             * \todo : this does not work
-             **/
-            draw_background(cr);
-            implementation::draw_widgets(cr, rect);
-            draw_foreground(cr);
-        }
+        // void draw_rect(cairo_t* cr, const rectangle<>&rect) override
+        // {
+        //     /**
+        //      * \todo : this does not work
+        //      **/
+        //     draw_background(cr);
+        //     implementation::draw_widgets(cr, rect);
+        //     draw_foreground(cr);
+        // }
 
 
     protected:
