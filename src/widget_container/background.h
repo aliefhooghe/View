@@ -1,14 +1,12 @@
 #ifndef VIEW_BACKGROUND_H_
 #define VIEW_BACKGROUND_H_
 
-#include "widget_container.h"
+#include "widget_wrapper_base.h"
 #include "drawing/color.h"
 
 namespace View {
 
-    class background : public widget_container<background> {
-        friend class widget_container<background>;
-        using widget_container<background>::widget_holder;
+    class background : public widget_wrapper_base {
     public:
         background(std::unique_ptr<widget>&& root);
         ~background() override = default;
@@ -18,19 +16,7 @@ namespace View {
         void draw_rect(cairo_t* cr, const rectangle<>& area) override;
 
         void apply_color_theme(const color_theme &theme) override;
-    protected:
-        template <typename TFunction>
-        void foreach_holder(TFunction func) { func(_root); }
-        widget_holder *widget_at(float x, float y)
-        {
-            if (_root.get()->contains(x, y))
-                return &_root;
-            else
-                return nullptr;
-        }
-
     private:
-        widget_holder _root;
         color _background_color;
     };
 }

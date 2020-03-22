@@ -9,7 +9,8 @@ namespace View {
     header::header(
         std::unique_ptr<widget>&& root,
         float header_size, float border_size)
-    :   widget_container{
+    :   widget_wrapper_base{
+            std::move(root),
             root->width() + 2.f * border_size,
             root->height() + header_size + 2.f * border_size,
             size_constraint{
@@ -18,11 +19,11 @@ namespace View {
             size_constraint{
                 root->height_constraint().min + 2.f * (border_size + header_size),
                 root->height_constraint().max + header_size + 2.f * border_size}},
-        _root{*this, border_size, border_size + header_size, std::move(root)},
         _header_size{header_size},
         _border_size{border_size}
     {
         apply_color_theme(default_color_theme);
+        _root.set_pos(_border_size, _border_size + _header_size);
     }
 
     bool header::resize(float width, float height)
@@ -33,7 +34,7 @@ namespace View {
             if (_root.get()->resize(
                 width - 2.f * _border_size,height - (_header_size + 2.f * _border_size)))
             {
-                widget_container<header>::resize(width, height);
+                widget_wrapper_base::resize(width, height);
                 return true;
             }
         }
@@ -74,7 +75,7 @@ namespace View {
         cairo_fill(cr);
 
         //  Draw content
-        draw_widgets(cr);
+        widget_wrapper_base::draw(cr);
     }
 
     void header::draw_rect(cairo_t* cr, const rectangle<>& area)
@@ -97,14 +98,14 @@ namespace View {
         }
         else
         {
-            //  Redraw Everythin : TODO optimize me !!
+            //  Redraw Everything : TODO optimize me !!
             draw(cr);
         }
     }
 
     void header::apply_color_theme(const View::color_theme &theme)
     {
-        widget_container<header>::apply_color_theme(theme);
+        widget_wrapper_base::apply_color_theme(theme);
         _header_color = theme.primary;
         _background_color = theme.surface;
     }
