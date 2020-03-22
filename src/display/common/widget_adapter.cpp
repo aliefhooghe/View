@@ -61,24 +61,26 @@ namespace View {
 
 	bool widget_adapter::sys_mouse_move(unsigned int cx, unsigned int cy)
     {
+        bool ret = false;
         float old_cursor_x = _cursor_fx;
         float old_cursor_y = _cursor_fy;
 
         _coord_display2widget(cx, cy, _cursor_fx, _cursor_fy);
+
+        if (!_is_draging && _pressed_button_count > 0) {
+            _is_draging = true;
+            ret = _root.on_mouse_drag_start(_draging_button, old_cursor_x, old_cursor_y);
+        }
 
         if (_is_draging) {
             return _root.on_mouse_drag(
                 _draging_button,
                 _cursor_fx, _cursor_fy,
                 _cursor_fx - old_cursor_x,
-                _cursor_fy - old_cursor_y);
-        }
-        else if (_pressed_button_count > 0) {
-            _is_draging = true;
-            return _root.on_mouse_drag_start(_draging_button, _cursor_fx, _cursor_fy);
+                _cursor_fy - old_cursor_y) || ret;
         }
         else {
-            return _root.on_mouse_move(_cursor_fx, _cursor_fy);
+            return _root.on_mouse_move(_cursor_fx, _cursor_fy) || ret;
         }
     }
 
