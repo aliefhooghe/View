@@ -10,7 +10,7 @@ namespace View {
         _height_constraint{free_size}
     {}
 
-    widget::widget(float width, float height, size_constraint width_constraint, size_constraint height_constraint) noexcept
+    widget::widget(float width, float height, size_constraint width_constraint, size_constraint height_constraint)
     :   _width{width}, _height{height},
         _width_constraint{width_constraint},
         _height_constraint{height_constraint}

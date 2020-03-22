@@ -17,7 +17,7 @@ namespace View {
         friend class display_controler;
     public:
         widget(float width, float height) noexcept;
-        widget(float width, float height, size_constraint width_constraint, size_constraint height_constraint) noexcept;
+        widget(float width, float height, size_constraint width_constraint, size_constraint height_constraint);
         widget(widget&&) = default;
         widget(widget&) = delete;
         virtual ~widget();
