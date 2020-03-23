@@ -6,7 +6,7 @@
 
 namespace View {
 
-    class header : public widget_wrapper_base {
+    class header : public widget_wrapper_base<header> {
     public:
         header(
             std::unique_ptr<widget>&& root,

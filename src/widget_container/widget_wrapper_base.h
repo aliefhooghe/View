@@ -5,9 +5,9 @@
 
 namespace View {
 
-    class widget_wrapper_base : public widget_container<widget_wrapper_base> {
+    template <typename Derived, typename TWidgetHolder = widget_holder<>>
+    class widget_wrapper_base : public widget_container<widget_wrapper_base<Derived, TWidgetHolder>> {
         friend class widget_container<widget_wrapper_base>;
-        using typename widget_container<widget_wrapper_base>::widget_holder;
     public:
         widget_wrapper_base(std::unique_ptr<widget>&& root);
         widget_wrapper_base(std::unique_ptr<widget>&& root, float width, float height);
@@ -23,14 +23,49 @@ namespace View {
     protected:
         template <typename TFunction>
         void foreach_holder(TFunction func) { func(_root); }
-        widget_holder *widget_at(float x, float y)
+        auto widget_at(float x, float y)
         {
             return &_root;
         }
 
-        widget_holder _root;
+        TWidgetHolder _root;
     };
 
+    template <typename Derived, typename TWidgetHolder>
+    widget_wrapper_base<Derived, TWidgetHolder>::widget_wrapper_base(std::unique_ptr<widget>&& root)
+    : widget_container<widget_wrapper_base<Derived, TWidgetHolder>> {root->width(), root->height(), root->width_constraint(), root->height_constraint()},
+        _root{static_cast<Derived&>(*this), 0, 0, std::move(root)}
+    {
+    }
+
+    template <typename Derived, typename TWidgetHolder>
+    widget_wrapper_base<Derived, TWidgetHolder>::widget_wrapper_base(std::unique_ptr<widget>&& root, float width, float height)
+    : widget_container<widget_wrapper_base<Derived, TWidgetHolder>>{width, height},
+        _root{static_cast<Derived&>(*this), 0, 0, std::move(root)}
+    {
+    }
+
+    template <typename Derived, typename TWidgetHolder>
+    widget_wrapper_base<Derived, TWidgetHolder>::widget_wrapper_base(
+        std::unique_ptr<widget>&& root,
+        float width, float height,
+        size_constraint width_constrain, size_constraint height_constrain)
+    :   widget_container<widget_wrapper_base<Derived, TWidgetHolder>>{width, height, width_constrain, height_constrain},
+        _root{static_cast<Derived&>(*this), 0, 0, std::move(root)}
+    {
+    }
+
+    template <typename Derived, typename TWidgetHolder>
+    void widget_wrapper_base<Derived, TWidgetHolder>::draw(cairo_t *cr)
+    {
+        widget_container<widget_wrapper_base<Derived, TWidgetHolder>>::draw_widgets(cr);
+    }
+
+    template <typename Derived, typename TWidgetHolder>
+    void widget_wrapper_base<Derived, TWidgetHolder>::draw_rect(cairo_t* cr, const rectangle<>& area)
+    {
+        widget_container<widget_wrapper_base<Derived, TWidgetHolder>>::draw_widgets(cr, area);
+    }
 }
 
 #endif

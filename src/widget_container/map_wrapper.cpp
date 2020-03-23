@@ -2,6 +2,23 @@
 
 namespace View {
 
+    map_wrapper_widget_holder::map_wrapper_widget_holder(
+            map_wrapper& parent, float x, float y,
+            std::unique_ptr<widget>&& children)
+    :   widget_holder<>{parent, x, y, std::move(children)},
+        _parent{&parent}
+    {
+    }
+
+    void map_wrapper_widget_holder::invalidate_rect(const rectangle<>& rect)
+    {
+        _parent->invalidate_rect(rect.translate(_pos_x - _parent->_origin_x, _pos_y - _parent->_origin_y));
+    }
+
+    /**
+     *  map wrapper implementation
+     **/
+
     map_wrapper::map_wrapper(
         std::unique_ptr<widget>&& root,
         float width, float height)
@@ -57,7 +74,6 @@ namespace View {
 
     void map_wrapper::draw(cairo_t *cr)
     {
-        std::cout << "map_panel draw\n";
         //  Clip the drawing area
         cairo_rectangle(cr, 0, 0, widget_wrapper_base::width(), widget_wrapper_base::height());
         cairo_clip(cr);

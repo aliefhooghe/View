@@ -5,7 +5,22 @@
 
 namespace View {
 
-    class map_wrapper : public widget_wrapper_base {
+    class map_wrapper;
+    class map_wrapper_widget_holder : public widget_holder<> {
+    public:
+        map_wrapper_widget_holder(
+            map_wrapper& parent, float x, float y,
+            std::unique_ptr<widget>&& children);
+
+    protected:
+        void invalidate_rect(const rectangle<>& rect) override;
+
+        map_wrapper *_parent;
+    };
+
+    class map_wrapper : public widget_wrapper_base<map_wrapper, map_wrapper_widget_holder> {
+        friend class map_wrapper_widget_holder;
+
     public:
         map_wrapper(
             std::unique_ptr<widget>&& root,

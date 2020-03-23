@@ -6,7 +6,7 @@
 
 namespace View {
 
-    class background : public widget_wrapper_base {
+    class background : public widget_wrapper_base<background> {
     public:
         background(std::unique_ptr<widget>&& root);
         ~background() override = default;

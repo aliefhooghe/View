@@ -71,9 +71,8 @@ namespace View {
         void finish_drawing(cairo_t *cr);
 
         /**
-         *  Display controler feature (called by root widget)
+         *  Display controller feature (called by root widget)
          */
-        void invalidate_widget() override;
         void invalidate_rect(const rectangle<>& rect) override;
         float widget_pos_x() override;
         float widget_pos_y() override;

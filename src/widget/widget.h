@@ -63,12 +63,13 @@ namespace View {
         //  Position in parent
         float pos_x() const;
         float pos_y() const;
-    protected:
+
         /** display control helpers **/
         void invalidate();
         void invalidate_rect(const rectangle<>&);
         void set_cursor(cursor cursor);
 
+    protected:
         void set_size_constraints(size_constraint width, size_constraint height) noexcept
         {
             _width_constraint = width;

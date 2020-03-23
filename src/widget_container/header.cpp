@@ -9,7 +9,7 @@ namespace View {
     header::header(
         std::unique_ptr<widget>&& root,
         float header_size, float border_size)
-    :   widget_wrapper_base{
+    :   widget_wrapper_base<header>{
             std::move(root),
             root->width() + 2.f * border_size,
             root->height() + header_size + 2.f * border_size,
@@ -34,7 +34,7 @@ namespace View {
             if (_root.get()->resize(
                 width - 2.f * _border_size,height - (_header_size + 2.f * _border_size)))
             {
-                widget_wrapper_base::resize(width, height);
+                widget_wrapper_base<header>::resize(width, height);
                 return true;
             }
         }
@@ -75,7 +75,7 @@ namespace View {
         cairo_fill(cr);
 
         //  Draw content
-        widget_wrapper_base::draw(cr);
+        widget_wrapper_base<header>::draw(cr);
     }
 
     void header::draw_rect(cairo_t* cr, const rectangle<>& area)
@@ -105,7 +105,7 @@ namespace View {
 
     void header::apply_color_theme(const View::color_theme &theme)
     {
-        widget_wrapper_base::apply_color_theme(theme);
+        widget_wrapper_base<header>::apply_color_theme(theme);
         _header_color = theme.primary;
         _background_color = theme.surface;
     }

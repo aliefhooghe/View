@@ -8,8 +8,6 @@ namespace View {
 
     template <orientation Orientation /* Separator Orientation */>
     class pair_layout : public panel_implementation<> {
-
-        using widget_holder = panel_implementation<>::widget_holder;
         static constexpr auto _separator_orthogonal_size = 4.0f;
 
         /**
@@ -83,7 +81,7 @@ namespace View {
         }
 
         template <orientation O>
-        auto set_position(widget_holder& w, float pos)
+        auto set_position(widget_holder<>& w, float pos)
         {
             if constexpr (O == orientation::horizontal)
                 return w.set_pos_x(pos);
@@ -202,9 +200,9 @@ namespace View {
         }
 
     private:
-        widget_holder& _first() noexcept { return _childrens[0]; }
-        widget_holder& _second() noexcept { return _childrens[1]; }
-        widget_holder& _separator() noexcept { return _childrens[2]; }
+        auto& _first() noexcept { return _childrens[0]; }
+        auto& _second() noexcept { return _childrens[1]; }
+        auto& _separator() noexcept { return _childrens[2]; }
     };
 
     /**

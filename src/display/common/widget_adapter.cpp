@@ -46,7 +46,7 @@ namespace View {
             _pixel_per_unit,
             _pixel_per_unit);
 
-        //  Compute redra rect in widget coordinate
+        //  Compute redraw rect in widget coordinate
         const auto redraw_rect =
             make_rectangle(
                 static_cast<float>(top) / _pixel_per_unit,
@@ -149,11 +149,6 @@ namespace View {
         cairo_pop_group_to_source(cr);
         cairo_paint(cr);
         cairo_restore(cr);
-    }
-
-    void widget_adapter::invalidate_widget()
-    {
-        sys_invalidate_rect(make_rectangle(0u, _display_height, 0, _display_width));
     }
 
     void widget_adapter::invalidate_rect(const rectangle<>& rect)

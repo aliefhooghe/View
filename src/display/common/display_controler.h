@@ -43,15 +43,21 @@ namespace View {
         }
 
         /**
-         *  \brief Inform the display that the widget need to be redrawn
-         **/
-        virtual void invalidate_widget() =0;
-
-        /**
          *  \brief Inform the display that a widget area need to be redrawn
          *  \param rect the are which need to be redrawn (widget coordinate)
          **/
         virtual void invalidate_rect(const rectangle<>& rect) =0;
+
+        /**
+         *  \brief Inform the display that the widget need to be redrawn
+         **/
+        virtual void invalidate_widget()
+        {
+            invalidate_rect(
+                make_rectangle(
+                    0u, _widget->height(),
+                    0u, _widget->width()));
+        }
 
         /**
          *  \brief Change the current cursor

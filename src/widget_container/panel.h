@@ -12,8 +12,6 @@ namespace View {
         friend class widget_container<panel_implementation<TChildren>, TChildren>;
         using implementation = widget_container<panel_implementation<TChildren>, TChildren>;
     public:
-        using typename widget_container<panel_implementation<TChildren>, TChildren>::widget_holder;
-
         panel_implementation(float width, float height)
         :   implementation{width, height}
         {}
@@ -44,7 +42,7 @@ namespace View {
 
 
     protected:
-        widget_holder& insert_widget(float x, float y, std::unique_ptr<TChildren>&& w)
+        widget_holder<TChildren>& insert_widget(float x, float y, std::unique_ptr<TChildren>&& w)
         {
             auto& ret = _childrens.emplace_back(*this, x, y, std::move(w));
             implementation::invalidate();
@@ -74,7 +72,7 @@ namespace View {
         virtual void draw_background(cairo_t *cr) {}
         virtual void draw_foreground(cairo_t *cr) {}
 
-        widget_holder *widget_at(float x, float y)
+        widget_holder<TChildren> *widget_at(float x, float y)
         {
             //  Last widget are in foreground
             // TODO : Optimize (kd-tree ?)
@@ -94,7 +92,7 @@ namespace View {
             std::for_each(_childrens.begin(), _childrens.end(), func);
         }
 
-        std::vector<widget_holder> _childrens{};
+        std::vector<widget_holder<TChildren>> _childrens{};
     };
 
 

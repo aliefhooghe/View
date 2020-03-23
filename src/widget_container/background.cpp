@@ -5,7 +5,7 @@
 namespace View {
 
     background::background(std::unique_ptr<widget>&& root)
-    :   widget_wrapper_base{std::move(root)}
+    :   widget_wrapper_base<background>{std::move(root)}
     {
         apply_color_theme(default_color_theme);
     }
@@ -16,7 +16,7 @@ namespace View {
             height_constraint().contains(height) &&
             _root->resize(width, height))
         {
-            widget_wrapper_base::resize(width, height);
+            widget_wrapper_base<background>::resize(width, height);
             return true;
         }
         else {
@@ -32,7 +32,7 @@ namespace View {
         cairo_fill(cr);
 
         //  Draw widgets
-        widget_wrapper_base::draw(cr);
+        widget_wrapper_base<background>::draw(cr);
     }
 
     void background::draw_rect(cairo_t* cr, const rectangle<>& area)
@@ -43,13 +43,13 @@ namespace View {
         cairo_fill(cr);
 
         //  Draw widgets
-        widget_wrapper_base::draw_rect(cr, area);
+        widget_wrapper_base<background>::draw_rect(cr, area);
     }
 
     void background::apply_color_theme(const View::color_theme &theme)
     {
         //  apply on childrens
-        widget_wrapper_base::apply_color_theme(theme);
+        widget_wrapper_base<background>::apply_color_theme(theme);
 
         //  set background color
         _background_color = theme.background;

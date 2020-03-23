@@ -8,90 +8,82 @@
 
 namespace View {
 
-    template <typename TDerived, typename TChildren = widget>
-    class widget_container : public widget {
+    template <typename TChildren = widget>
+    class widget_holder : private display_controler {
+
+    public:
+        widget_holder(widget& parent,
+            float x, float y, std::unique_ptr<TChildren>&& w)
+        :   _parent{&parent}, display_controler{*w},
+            _pos_x{x}, _pos_y{y}, _widget_instance{std::move(w)}
+        {}
+
+        widget_holder(widget_holder&& other) noexcept
+        :   display_controler{*other._widget_instance},
+            _parent{other._parent},
+            _pos_x{other._pos_x}, _pos_y{other._pos_y},
+            _widget_instance{std::move(other._widget_instance)}
+        {}
+
+        virtual ~widget_holder() = default;
+
+        widget_holder(const widget_holder& x) noexcept = delete;
+
+        widget_holder& operator=(widget_holder&& other) noexcept
+        {
+            _parent = other._parent;
+            _pos_x = other._pos_x;
+            _pos_y = other._pos_y;
+            _widget_instance = std::move(other._widget_instance);
+            set_widget(*_widget_instance);   //  assign this widget to the display_ctl interface
+            return *this;
+        }
+
+        void set_pos(float x, float y) noexcept { _pos_x = x; _pos_y = y; }
+        void set_pos_x(float x) noexcept { _pos_x = x; }
+        void set_pos_y(float y) noexcept { _pos_y = y; }
+
+        auto pos_x() const noexcept { return _pos_x; }
+        auto pos_y() const noexcept { return _pos_y; }
+
+        auto get() noexcept { return _widget_instance.get(); }
+        auto get() const noexcept { return _widget_instance.get(); }
+
+        auto operator->() noexcept { return get(); }
+        auto operator->() const noexcept { return get(); }
 
     protected:
-        class widget_holder : private display_controler {
+        /**
+         *      Display controler interface
+         */
+        void invalidate_rect(const rectangle<>& rect) override
+        {
+            _parent->invalidate_rect(rect.translate(_pos_x, _pos_y));
+        }
 
-        public:
-            widget_holder(
-                widget_container& parent,
-                float x, float y, std::unique_ptr<TChildren>&& w)
-            :   _parent{&parent}, display_controler{*w},
-                _pos_x{x}, _pos_y{y}, _widget_instance{std::move(w)}
-            {}
+        void set_cursor(cursor c) override
+        {
+            _parent->set_cursor(c);
+        }
 
-            widget_holder(const widget_holder& x) noexcept = delete;
-            widget_holder(widget_holder&& other) noexcept
-            :   display_controler{*other._widget_instance},
-                _parent{other._parent},
-                _pos_x{other._pos_x}, _pos_y{other._pos_y},
-                _widget_instance{std::move(other._widget_instance)}
-            {}
+        float widget_pos_x() override
+        {
+            return _pos_x;
+        }
 
-            widget_holder& operator=(widget_holder&& other) noexcept
-            {
-                _parent = other._parent;
-                _pos_x = other._pos_x;
-                _pos_y = other._pos_y;
-                _widget_instance = std::move(other._widget_instance);
-                set_widget(*_widget_instance);   //  assign this widget to the display_ctl interface
-                return *this;
-            }
+        float widget_pos_y() override
+        {
+            return _pos_y;
+        }
 
-            void set_pos(float x, float y) noexcept { _pos_x = x; _pos_y = y; }
-            void set_pos_x(float x) noexcept { _pos_x = x; }
-            void set_pos_y(float y) noexcept { _pos_y = y; }
+        float _pos_x;
+        float _pos_y;
+        std::unique_ptr<TChildren> _widget_instance;
+        widget *_parent;
+    };
 
-            auto pos_x() const noexcept { return _pos_x; }
-            auto pos_y() const noexcept { return _pos_y; }
-
-            auto get() noexcept { return _widget_instance.get(); }
-            auto get() const noexcept { return _widget_instance.get(); }
-
-            auto operator->() noexcept { return get(); }
-            auto operator->() const noexcept { return get(); }
-
-        private:
-            /**
-             *      Display controler interface
-             */
-
-            void invalidate_widget() override
-            {
-                _parent->invalidate_rect(
-                    make_rectangle(
-                        _pos_y, _pos_y + _widget_instance->height(),
-                        _pos_x, _pos_x + _widget_instance->width()));
-            }
-
-            void invalidate_rect(const rectangle<>& rect) override
-            {
-                _parent->invalidate_rect(rect.translate(_pos_x, _pos_y));
-            }
-
-            void set_cursor(cursor c) override
-            {
-                _parent->set_cursor(c);
-            }
-
-            float widget_pos_x() override
-            {
-                return _pos_x;
-            }
-
-            float widget_pos_y() override
-            {
-                return _pos_y;
-            }
-
-
-            float _pos_x;
-            float _pos_y;
-            std::unique_ptr<TChildren> _widget_instance;
-            widget_container *_parent;
-        };
+    template <typename TDerived, typename TChildren = widget>
+    class widget_container : public widget {
 
     public:
         widget_container(float width, float height) noexcept
@@ -127,7 +119,7 @@ namespace View {
         void reset_focused_widget() noexcept { _focused_widget = nullptr; }
 
     private:
-        widget_holder *widget_at(float x, float y)
+        widget_holder<TChildren> *widget_at(float x, float y)
         {
             return static_cast<TDerived*>(this)->widget_at(x, y);
         }
@@ -138,7 +130,7 @@ namespace View {
             static_cast<TDerived*>(this)->foreach_holder(func);
         }
 
-        widget_holder* _focused_widget{ nullptr };
+        widget_holder<TChildren>* _focused_widget{ nullptr };
         bool _draging{false};
     };
 
@@ -346,7 +338,7 @@ namespace View {
     {
         foreach_holder([cr, &rect](auto& holder) {
             const auto child_rect = make_rectangle(
-                holder.pos_y(),  holder.pos_y() + holder->height(),
+                holder.pos_y(), holder.pos_y() + holder->height(),
                 holder.pos_x(), holder.pos_x() + holder->width());
 
             rectangle<> drawing_rect;
