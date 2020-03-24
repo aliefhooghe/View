@@ -12,7 +12,14 @@ namespace View {
 
     void map_wrapper_widget_holder::invalidate_rect(const rectangle<>& rect)
     {
+        /** @todo optimize : Redraw rect if it overlap view ! **/
         _parent->invalidate_rect(rect.translate(_pos_x - _parent->_origin_x, _pos_y - _parent->_origin_y));
+    }
+
+    void map_wrapper_widget_holder::invalidate_widget()
+    {
+        //  Everything in content must be redrawn : Invalidate the map wrapper
+        _parent->invalidate();
     }
 
     /**

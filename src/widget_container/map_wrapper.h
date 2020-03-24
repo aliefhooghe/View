@@ -14,6 +14,7 @@ namespace View {
 
     protected:
         void invalidate_rect(const rectangle<>& rect) override;
+        void invalidate_widget() override;
 
         map_wrapper *_parent;
     };
