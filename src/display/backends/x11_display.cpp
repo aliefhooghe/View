@@ -306,11 +306,19 @@ namespace View {
         area.left -= pixel_offset;
         area.right += pixel_offset;
 
-        //  Compute intesection beetween area and windows (what we actually need to redraw)
+        //  Compute intersection beetween area and windows (what we actually need to redraw)
         draw_area drawing_area;
         if (area.intersect(window_area, drawing_area)) {
             //  Redraw
             sys_draw_rect(cr, drawing_area.top, drawing_area.bottom, drawing_area.left, drawing_area.right);
+
+#ifdef VIEW_DEBUG_HIGHLIGHT_REDRAW_AREA
+            cairo_rectangle(cr, area.left, area.top, area.right - area.left, area.bottom - area.top);
+            cairo_set_source_rgb(cr, 1, 0, 0);
+            cairo_set_line_width(cr, pixel_offset);
+            cairo_stroke(cr);
+#endif
+
             XFlush(display);
         }
     }
