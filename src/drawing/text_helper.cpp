@@ -42,10 +42,7 @@ namespace View {
         auto text_x = compute_txt_x(x, width, te.width, ha);
         auto text_y = compute_txt_y(y, height, te.height, va);
 
-        cairo_new_sub_path(cr);
         cairo_move_to(cr, text_x, text_y);
-
         cairo_show_text(cr, txt);
-        cairo_close_path(cr);
     }
 }
