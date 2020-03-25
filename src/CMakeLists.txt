@@ -38,6 +38,8 @@ set(VIEW_COMMON_SRC
     controls/checkbox.cpp
     controls/knob.h
     controls/knob.cpp
+    controls/label.h
+    controls/label.cpp
     controls/push_button.h
     controls/push_button.cpp
     controls/text_push_button.cpp
