@@ -18,6 +18,11 @@ namespace View {
             _pos_x{x}, _pos_y{y}, _widget_instance{std::move(w)}
         {}
 
+        widget_holder(widget& parent, float x, float y)
+        :   _parent{&parent},
+            _pos_x{x}, _pos_y{y}
+        {}
+
         widget_holder(widget_holder&& other) noexcept
         :   display_controler{*other._widget_instance},
             _parent{other._parent},
@@ -25,18 +30,22 @@ namespace View {
             _widget_instance{std::move(other._widget_instance)}
         {}
 
-        virtual ~widget_holder() = default;
-
         widget_holder(const widget_holder& x) noexcept = delete;
+        virtual ~widget_holder() = default;
 
         widget_holder& operator=(widget_holder&& other) noexcept
         {
             _parent = other._parent;
             _pos_x = other._pos_x;
             _pos_y = other._pos_y;
-            _widget_instance = std::move(other._widget_instance);
-            set_widget(*_widget_instance);   //  assign this widget to the display_ctl interface
+            set_widget(std::move(other._widget_instance));
             return *this;
+        }
+
+        void set_widget(std::unique_ptr<TChildren>&& w)
+        {
+            _widget_instance = std::move(w);
+            display_controler::set_widget(*_widget_instance);   //  assign this widget to the display_ctl interface
         }
 
         void set_pos(float x, float y) noexcept { _pos_x = x; _pos_y = y; }
@@ -78,7 +87,7 @@ namespace View {
 
         float _pos_x;
         float _pos_y;
-        std::unique_ptr<TChildren> _widget_instance;
+        std::unique_ptr<TChildren> _widget_instance{};
         widget *_parent;
     };
 

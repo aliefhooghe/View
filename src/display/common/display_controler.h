@@ -17,7 +17,11 @@ namespace View {
     class display_controler {
         friend class widget;
     public:
-        display_controler(widget& w)
+        display_controler() noexcept
+        : _widget{nullptr}
+        {}
+
+        display_controler(widget& w) noexcept
         : _widget{&w}
         {
             _widget->_display_ctl = this;
