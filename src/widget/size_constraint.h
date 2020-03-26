@@ -25,6 +25,13 @@ namespace View {
             return size_constraint{min + other.min, max + other.max};
         }
 
+        auto& operator += (const size_constraint& other) noexcept
+        {
+            min += other.min;
+            max += other.max;
+            return *this;
+        }
+
         auto intersect(const size_constraint& other) const noexcept
         {
             return size_constraint{std::max(min, other.min), std::min(max, other.max)};
