@@ -132,7 +132,8 @@ namespace View {
         using model = directory_model<Key, Value, Model>;
     public:
         owning_directory_view(std::unique_ptr<model>&& model, float width, float height, float cell_height, float font_size)
-        :   directory_view<Key, Value, Model>{*model, width, height, cell_height, font_size}
+        :   directory_view<Key, Value, Model>{*model, width, height, cell_height, font_size},
+            _model{std::move(model)}
         {}
 
     private:
