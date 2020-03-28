@@ -4,7 +4,6 @@
 #include <vector>
 #include <set>
 #include <cmath>
-
 #include "helpers/directory_model.h"
 #include "control.h"
 #include "drawing/text_helper.h"
@@ -15,9 +14,33 @@ namespace View {
     class directory_view;
 
     template <typename Key, typename Value, typename Model>
+    class owning_directory_view;
+
+    template <typename Key, typename Value, typename Model>
     auto make_directory_view(directory_model<Key, Value, Model>& model, float width, float height, float cell_height = 1.2f, float font_size = 1.0f)
     {
         return std::make_unique<directory_view<Key, Value, Model>>(model, width, height, cell_height, font_size);
+    }
+
+    namespace details {
+
+        template <typename Key, typename Value, typename Model>
+        constexpr auto& directory_model_type_helper(directory_model<Key, Value, Model>& impl) { return impl; }
+
+        template <typename T>
+        struct owning_directory_view_type;
+
+        template <typename Key, typename Value, typename Model>
+        struct owning_directory_view_type<directory_model<Key, Value, Model>> {
+            using type = owning_directory_view<Key, Value, Model>;
+        };
+    }
+
+    template <typename T>
+    auto make_directory_view(std::unique_ptr<T>&& model, float width, float height, float cell_height = 1.2f, float font_size = 1.0f)
+    {
+        using model_type = std::decay_t<decltype(details::directory_model_type_helper(*model))>;
+        return std::make_unique<typename details::owning_directory_view_type<model_type>::type>(std::move(model), width, height, cell_height, font_size);
     }
 
     template <typename Key, typename Value, typename Model>
@@ -101,6 +124,19 @@ namespace View {
         color _selected_color;
         color _hoverred_color;
         color _default_color;
+    };
+
+    template <typename Key, typename Value, typename Model>
+    class owning_directory_view : public directory_view<Key, Value, Model>
+    {
+        using model = directory_model<Key, Value, Model>;
+    public:
+        owning_directory_view(std::unique_ptr<model>&& model, float width, float height, float cell_height, float font_size)
+        :   directory_view<Key, Value, Model>{*model, width, height, cell_height, font_size}
+        {}
+
+    private:
+        std::unique_ptr<model> _model;
     };
 
     template<typename Key, typename Value, typename Model>
