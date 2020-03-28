@@ -96,6 +96,11 @@ namespace View {
             _childrens[k] = v;
         }
 
+        void clear()
+        {
+            _childrens.clear();
+        }
+
     private:
         std::map<Key, item, Compare> _childrens{};
     };
