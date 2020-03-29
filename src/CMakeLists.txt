@@ -88,6 +88,7 @@ set(VIEW_COMMON_SRC
 
 ##  View Library
 add_library(View STATIC ${VIEW_COMMON_SRC})
+set_target_properties(View PROPERTIES POSITION_INDEPENDENT_CODE ON)
 target_include_directories(View PUBLIC ${Cairo_INCLUDE_DIRS} ${PangoCairo_INCLUDE_DIRS} ${CMAKE_CURRENT_SOURCE_DIR})
 target_link_libraries(View PUBLIC ${Cairo_LIBRARIES} ${PangoCairo_LIBRARIES})
 
@@ -101,6 +102,8 @@ if (VIEW_X11_BACKEND)
         display/backends/x11_display.h
         display/implementations/x11_application_display.cpp
         display/implementations/x11_application_display.h
+        display/implementations/x11_vst2_display.cpp
+        display/implementations/x11_vst2_display.h
     )
 
 	target_include_directories(View PUBLIC

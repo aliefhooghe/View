@@ -11,7 +11,7 @@ namespace View {
     void x11_application_display::open(const std::string& title)
     {
         /** TODO TITLE **/
-        _create_window(0);
+        _create_window();
     }
     void x11_application_display::wait()
     {

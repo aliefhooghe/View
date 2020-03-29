@@ -3,6 +3,7 @@
 
 //  TODO multiplatform settup
 #include "display/implementations/x11_application_display.h"
+#include "display/implementations/x11_vst2_display.h"
 #include "widget/widget.h"
 
 //  Widget Container
@@ -23,6 +24,7 @@
 namespace View {
 
     using native_application_display = x11_application_display;
+    using native_vst2_display = x11_vst2_display;
 
 }
 

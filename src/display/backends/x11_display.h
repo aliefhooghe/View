@@ -17,6 +17,9 @@ namespace View {
         x11_display(widget& root, float pixel_per_unit);
         virtual ~x11_display() = default;
 
+        unsigned int px_width() const noexcept { return static_cast<unsigned int>(_root.width() * _pixel_per_unit); }
+        unsigned int px_height() const noexcept { return static_cast<unsigned int>(_root.height() * _pixel_per_unit); }
+
     protected:
         void _create_window(Window parent = 0);
         void _wait_window_thread();
