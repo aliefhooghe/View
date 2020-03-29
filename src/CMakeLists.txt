@@ -63,6 +63,7 @@ set(VIEW_COMMON_SRC
     helpers/filesystem_directory_model.cpp
 
     widget/event.h
+    widget/color_theme.h
     widget/widget.cpp
     widget/widget.h
     widget/rectangle.h

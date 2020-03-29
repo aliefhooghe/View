@@ -48,10 +48,14 @@ namespace View {
 
         const auto half = width() / 2.f;
 
-        //  External Circle
+        //  External Circle + background
         circle(cr, half, half, half);
+
+        set_source(cr, _background_color);
+        cairo_fill_preserve(cr);
+
         set_source(cr, hovered() ? _hovered_border_color: _border_color);
-        cairo_set_line_width(cr, width() / 30.f);
+        cairo_set_line_width(cr, 0.2f);
         cairo_stroke(cr);
 
         //  Light Indicator
@@ -75,9 +79,10 @@ namespace View {
 
     void knob::apply_color_theme(const View::color_theme& theme)
     {
-        _track_color = theme.secondary_dark;
-        _border_color = theme.on_surface;
-        _hovered_border_color = theme.secondary;
+        _background_color = theme.surface;
+        _track_color = theme.secondary;
+        _border_color = theme.surface_light;
+        _hovered_border_color = theme.secondary_light;
         _text_color = theme.on_surface;
         invalidate();
     }

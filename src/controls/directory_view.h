@@ -232,7 +232,7 @@ namespace View {
     template<typename Key, typename Value, typename Model>
     void directory_view<Key, Value, Model>::apply_color_theme(const color_theme &theme)
     {
-        _selected_color = theme.primary_light;
+        _selected_color = theme.secondary;
         _hoverred_color = theme.secondary_light;
         _default_color = theme.on_surface;
     }

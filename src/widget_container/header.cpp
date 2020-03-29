@@ -56,8 +56,7 @@ namespace View {
         cairo_fill_preserve(cr);
 
         //  Draw Border
-        set_source(cr, _header_color);
-        cairo_set_line_width(cr, 0.3f);
+        cairo_set_line_width(cr, 0.2f);
         cairo_stroke_preserve(cr);
 
         //  Ensure _root don't draw outsied
@@ -107,7 +106,7 @@ namespace View {
     {
         widget_wrapper_base<header>::apply_color_theme(theme);
         _header_color = theme.primary;
-        _background_color = theme.surface;
+        _background_color = theme.surface_dark;
     }
 
 }

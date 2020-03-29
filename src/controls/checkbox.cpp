@@ -51,8 +51,8 @@ namespace View {
     void checkbox::apply_color_theme(const View::color_theme& theme)
     {
         _background = theme.secondary_dark;
-        _border = theme.on_surface;
-        _hovered_color = theme.secondary;
+        _border = theme.surface_light;
+        _hovered_color = theme.secondary_light;
         _check_color = theme.on_secondary;
     }
 

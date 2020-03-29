@@ -31,7 +31,7 @@ namespace View {
 
             color _border_color;
             color _hovered_border_color;
-            color _pushed_background_color;
+            color _background_color;
     };
 
 }

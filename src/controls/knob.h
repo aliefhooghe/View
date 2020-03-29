@@ -29,6 +29,7 @@ namespace View {
         callback _callback{[](float){}};
         float _value;
         bool _display_value;
+        color _background_color;
         color _track_color;
         color _border_color;
         color _hovered_border_color;

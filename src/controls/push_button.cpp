@@ -41,22 +41,20 @@ namespace View {
         rounded_rectangle(cr, 0, 0, width(), height(), 0.3f);
 
         //  Draw background
-        if (_pushed) {
-            set_source(cr, _pushed_background_color);
-            cairo_fill_preserve(cr);
-        }
+        set_source(cr, _background_color);
+        cairo_fill_preserve(cr);
 
         //  Draw border
         set_source(cr, hovered() ? _hovered_border_color : _border_color);
-        cairo_set_line_width(cr, 0.1f);
+        cairo_set_line_width(cr, _pushed ? 0.3f : 0.2f);
         cairo_stroke(cr);
     }
 
     void push_button::apply_color_theme(const View::color_theme& theme)
     {
-        _border_color = theme.on_surface;
-        _hovered_border_color = theme.secondary;
-        _pushed_background_color = theme.secondary_dark;
+        _border_color = theme.surface_light;
+        _hovered_border_color = theme.secondary_light;
+        _background_color = theme.surface;
         invalidate();
     }
 

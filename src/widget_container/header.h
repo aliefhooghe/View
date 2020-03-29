@@ -10,7 +10,7 @@ namespace View {
     public:
         header(
             std::unique_ptr<widget>&& root,
-            float header_size = 1.2f, float border_size = 0.3f);
+            float header_size = 1.f, float border_size = 0.2f);
 
         ~header() override = default;
 

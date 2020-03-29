@@ -14,7 +14,6 @@ namespace View {
     template <typename Key, typename Value, typename Derived>
     class directory_model {
     public:
-
         using item =
             std::variant<
                 Derived,  /** = sub directory **/
@@ -79,9 +78,23 @@ namespace View {
 
         Derived& add_directory(const Key& k)
         {
-            auto& new_item = _childrens[k];
-            new_item = Derived{};
-            return std::get<Derived>(new_item);
+            auto it = _childrens.find(k);
+
+            if (it == _childrens.end()) {
+                //  emplace can't fail since k is not in the map
+                auto new_it = _childrens.emplace(k, Derived{}).first;
+                return std::get<Derived>(new_it->second);
+            }
+            else {
+                if (std::holds_alternative<Derived>(it->second)) {
+                    //  return existing directory
+                    return std::get<Derived>(it->second);
+                }
+                else {
+                    //  a value is stored with this key, can't create directory
+                    throw std::runtime_error("storage_directory_model::add_directory cant creat a directory on an existing value");
+                }
+            }
         }
 
         Derived& add_directory(const Key& k, Derived&& dir)
@@ -93,7 +106,7 @@ namespace View {
 
         void add_value(const Key& k, Value&& v)
         {
-            _childrens[k] = v;
+            _childrens[k] = std::move(v);
         }
 
         void clear()
