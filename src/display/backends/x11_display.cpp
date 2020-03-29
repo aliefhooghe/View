@@ -212,7 +212,7 @@ namespace View {
                     const auto now = event.xbutton.time;
                     const auto delta = now - _last_click_time;
 
-                    if (delta > 50 && delta < 250)
+                    if (delta < 350)
                         sys_mouse_dbl_click();
                     else
                         sys_mouse_button_down(mouse_button::left);
