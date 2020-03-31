@@ -9,6 +9,11 @@ namespace View {
 
     public:
         control(float width, float height, cursor c = cursor::hand, bool redraw_when_hoverred = true);
+        control(
+            float width, float height,
+            size_constraint width_constraint, size_constraint height_constraint,
+            cursor c = cursor::hand, bool redraw_when_hoverred = true);
+
         ~control() override = default;
 
         bool on_mouse_enter() override;

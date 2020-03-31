@@ -11,6 +11,17 @@ namespace View {
     {
     }
 
+    control::control(
+        float width, float height,
+        size_constraint width_constraint, size_constraint height_constraint,
+        cursor c, bool redraw_when_hoverred)
+    : widget{width, height, width_constraint, height_constraint},
+        _cursor{c},
+        _redraw_when_hoverred{redraw_when_hoverred}
+    {
+
+    }
+
     bool control::on_mouse_enter()
     {
         _hovered = true;
