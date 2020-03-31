@@ -17,11 +17,11 @@ namespace View {
         //  Compare starting from index
         bool cmp_from_idx(const std::string& a, const std::string& b, std::size_t idx) const noexcept
         {
-            if (idx == a.length()) {
-                return true;    //  a < b
-            }
-            else if (idx == b.length()) {
+            if (idx == b.length()) {
                 return false;
+            }
+            else if (idx == a.length()) {
+                return true; // a < b
             }
             else {
                 auto ac = std::tolower(a[idx]);
