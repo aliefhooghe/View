@@ -7,7 +7,7 @@
 #include "widget/widget.h"
 
 //  Widget Container
-#include "widget_container/color_panel.h"
+#include "widget_container/panel.h"
 #include "widget_container/pair_layout.h"
 #include "widget_container/header.h"
 #include "widget_container/background.h"

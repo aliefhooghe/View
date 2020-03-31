@@ -25,21 +25,13 @@ namespace View {
         // drawing funcs
         void draw(cairo_t* cr) override
         {
-            draw_background(cr);
             implementation::draw_widgets(cr);
-            draw_foreground(cr);
         }
 
-        // void draw_rect(cairo_t* cr, const rectangle<>&rect) override
-        // {
-        //     /**
-        //      * \todo : this does not work
-        //      **/
-        //     draw_background(cr);
-        //     implementation::draw_widgets(cr, rect);
-        //     draw_foreground(cr);
-        // }
-
+        void draw_rect(cairo_t* cr, const rectangle<>&rect) override
+        {
+            implementation::draw_widgets(cr, rect);
+        }
 
     protected:
         widget_holder<TChildren>& insert_widget(float x, float y, std::unique_ptr<TChildren>&& w)
@@ -68,9 +60,6 @@ namespace View {
 
             implementation::invalidate();
         }
-
-        virtual void draw_background(cairo_t *cr) {}
-        virtual void draw_foreground(cairo_t *cr) {}
 
         widget_holder<TChildren> *widget_at(float x, float y)
         {
