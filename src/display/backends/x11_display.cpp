@@ -65,6 +65,7 @@ namespace View {
         //  X11 members
         Display *display{nullptr};
         Window window{0};
+        Window _parent{0};
         Visual *visual{0};
         Atom wm_delete_message{0};
         std::array<Cursor, VIEW_CURSOR_COUNT> x11_cursors{};
@@ -106,6 +107,7 @@ namespace View {
                 CWBackPixel, &xattributs);
 
         //  Reparrent the windows if a parent was given
+        _parent = parent;
         if (parent != 0)
             XReparentWindow(display, window, parent, 0, 0);
 
@@ -267,12 +269,17 @@ namespace View {
             }
         break;
 
+        //  Do not send Mouse enter/exit event for children windows
+        //  because unwanted event are received from XLib.
+        /**  \todo investigate this */
         case EnterNotify:
-            sys_mouse_enter();
+            if (_parent == 0)
+                sys_mouse_enter();
         break;
 
         case LeaveNotify:
-            sys_mouse_exit();
+            if (_parent == 0)
+                sys_mouse_exit();
         break;
 
         case ClientMessage:
