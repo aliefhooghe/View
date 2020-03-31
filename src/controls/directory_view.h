@@ -145,7 +145,11 @@ namespace View {
         directory_view::model &m,
         float width, float height,
         float cell_height, float font_size)
-    :   control{width, height},
+    :   control{
+            width, height,
+            size_constraint{5, std::numeric_limits<float>::infinity()},
+            size_constraint{1, std::numeric_limits<float>::infinity()}
+        },
         _model{m},
         _cell_height{cell_height},
         _font_size{font_size}
