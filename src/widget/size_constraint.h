@@ -2,7 +2,7 @@
 #define VIEW_SIZE_CONSTRAINT_H_
 
 #include <algorithm>
-#include <variant>
+#include <limits>
 
 namespace View {
 
@@ -46,7 +46,7 @@ namespace View {
         float max;
     };
 
-    constexpr auto free_size = size_constraint{0.f, 1000000.f};
+    constexpr auto free_size = size_constraint{0.f, std::numeric_limits<float>::infinity()};
 
 }
 
