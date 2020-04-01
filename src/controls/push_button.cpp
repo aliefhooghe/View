@@ -19,7 +19,7 @@ namespace View {
     bool push_button::on_mouse_button_up(const mouse_button button, float x, float y)
     {
         _update_pushed(false);
-        _callback(*this);
+        _callback();
         return true;
     }
 

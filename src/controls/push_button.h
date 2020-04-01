@@ -8,7 +8,7 @@ namespace View {
 
     class push_button : public control {
         public:
-            using callback = std::function<void(push_button&)>;
+            using callback = std::function<void()>;
 
             push_button(float width, float height);
             ~push_button() override = default;
@@ -27,7 +27,7 @@ namespace View {
             void _update_pushed(bool);
 
             bool _pushed{false};
-            callback _callback{[](push_button&){}};
+            callback _callback{[](){}};
 
             color _border_color;
             color _hovered_border_color;
