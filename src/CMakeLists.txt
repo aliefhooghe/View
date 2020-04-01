@@ -80,7 +80,6 @@ set(VIEW_COMMON_SRC
     widget_container/header.h
     widget_container/header.cpp
     widget_container/panel.h
-    widget_container/color_panel.h
     widget_container/pair_layout.h
     widget_container/widget_wrapper_base.h
 
