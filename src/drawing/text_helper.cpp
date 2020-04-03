@@ -39,7 +39,7 @@ namespace View {
         cairo_set_font_size(cr, font_size);
         cairo_text_extents(cr, txt, &te);
 
-        auto text_x = compute_txt_x(x, width, te.width, ha);
+        auto text_x = compute_txt_x(x, width, te.x_advance, ha);
         auto text_y = compute_txt_y(y, height, te.height, va);
 
         cairo_move_to(cr, text_x, text_y);
