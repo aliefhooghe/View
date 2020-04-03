@@ -6,6 +6,9 @@
 #include <sys/select.h>
 #include <X11/Xlib.h>
 #include <X11/cursorfont.h>
+#include <X11/Xutil.h>
+#include <X11/Xresource.h>
+#include <X11/Xlocale.h>
 
 #include "display/common/display_controler.h"
 #include "display/common/widget_adapter.h"
@@ -242,7 +245,13 @@ namespace View {
         break;
 
         case KeyPress:
-            /** \todo **/
+        {
+            char buffer[8];
+            const auto size = XLookupString(
+                const_cast<XKeyEvent*>(&event.xkey), buffer, 7, nullptr, nullptr);
+            if (size > 0)
+                sys_text_input(std::string_view{buffer, static_cast<std::size_t>(size)});
+        }
         break;
 
         case KeyRelease:

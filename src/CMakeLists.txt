@@ -42,6 +42,8 @@ set(VIEW_COMMON_SRC
     controls/label.cpp
     controls/push_button.h
     controls/push_button.cpp
+    controls/text_input.h
+    controls/text_input.cpp
     controls/text_push_button.cpp
     controls/text_push_button.h
 

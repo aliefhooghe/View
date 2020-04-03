@@ -106,6 +106,7 @@ namespace View {
         //  Events
         bool on_key_up(const keycode key) override;
         bool on_key_down(const keycode key) override;
+        bool on_text_input(std::string_view txt) override;
         bool on_mouse_enter() override;
 		bool on_mouse_exit() override;
 		bool on_mouse_move(float x, float y) override;
@@ -157,6 +158,15 @@ namespace View {
     {
         if (_focused_widget)
             return _focused_widget->get()->on_key_up(key);
+        else
+            return false;
+    }
+
+    template <typename TDerived, typename TChildren>
+    bool  widget_container<TDerived, TChildren>::on_text_input(std::string_view txt)
+    {
+        if (_focused_widget)
+            return _focused_widget->get()->on_text_input(txt);
         else
             return false;
     }

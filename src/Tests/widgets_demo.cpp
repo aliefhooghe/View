@@ -11,6 +11,7 @@ int main()
     auto left_panel = std::make_unique<panel<>>(20, 20, size_constraint{10, 150}, free_size);
     left_panel->insert_widget(5, 1, std::make_unique<knob>());
     left_panel->insert_widget(12, 1, std::make_unique<text_push_button>("Save"));
+    left_panel->insert_widget(5, 8, std::make_unique<text_input>());
 
     for (auto i = 0u; i < 15u; ++i) {
         const float y = static_cast<float>(i) * 1.8f + 10;

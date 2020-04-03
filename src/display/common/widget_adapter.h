@@ -8,7 +8,7 @@ namespace View {
 
     /**
      *  \class widget_adapter
-     *  \brief widget_adapter is the brige beetween low level GUI api and View widget api
+     *  \brief widget_adapter is the bridge beetween low level GUI api and View widget api
      *  \details widget_adapter translate basic event and pixel coordinate into widget event and coordinates
      */
     class widget_adapter : private display_controler {
@@ -55,7 +55,7 @@ namespace View {
 		bool sys_mouse_dbl_click(void);
 		bool sys_key_down(const keycode key);
 		bool sys_key_up(const keycode key);
-
+        bool sys_text_input(std::string_view txt);
     protected:
         /**
          *  \brief Inform the underlying display that an area must be redrawn

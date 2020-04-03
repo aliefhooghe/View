@@ -1,12 +1,14 @@
 #ifndef VIEW_WIDGET_H_
 #define VIEW_WIDGET_H_
 
-#include "rectangle.h"
+#include <string_view>
+
 #include "cairo_definition.h"
-#include "event.h"
-#include "display/common/cursor.h"
-#include "size_constraint.h"
 #include "color_theme.h"
+#include "display/common/cursor.h"
+#include "event.h"
+#include "rectangle.h"
+#include "size_constraint.h"
 
 namespace View {
 
@@ -39,6 +41,7 @@ namespace View {
         //  Events
         virtual bool on_key_up(const keycode key)       { return false; }
         virtual bool on_key_down(const keycode key)     { return false; }
+        virtual bool on_text_input(std::string_view)    { return false; }
 
         virtual bool on_mouse_enter()                   { return false ; }
 		virtual bool on_mouse_exit()                    { return false ; }

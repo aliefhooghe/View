@@ -16,6 +16,7 @@
 //  Controls
 #include "controls/label.h"
 #include "controls/push_button.h"
+#include "controls/text_input.h"
 #include "controls/text_push_button.h"
 #include "controls/checkbox.h"
 #include "controls/knob.h"

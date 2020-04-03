@@ -138,6 +138,11 @@ namespace View {
         return _root.on_key_up(key);
     }
 
+    bool widget_adapter::sys_text_input(std::string_view txt)
+    {
+        return _root.on_text_input(txt);
+    }
+
     void widget_adapter::begin_drawing(cairo_t *cr)
     {
         cairo_save(cr);
