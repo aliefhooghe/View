@@ -98,6 +98,7 @@ namespace View {
         bool on_mouse_button_up(const mouse_button button, float x, float y) override;
 
     private:
+        void unfold();
         bool cell_at(float y, unsigned int &idx);
 
         //  update helper
@@ -155,7 +156,7 @@ namespace View {
         _font_size{font_size}
     {
         apply_color_theme(default_color_theme);
-        update();
+        unfold();
     }
 
     template<typename Key, typename Value, typename Model>
@@ -209,7 +210,7 @@ namespace View {
     }
 
     template<typename Key, typename Value, typename Model>
-    void directory_view<Key, Value, Model>::update()
+    void directory_view<Key, Value, Model>::unfold()
     {
         _cells.clear();
 
@@ -219,12 +220,20 @@ namespace View {
         invalidate();
     }
 
+    template<typename Key, typename Value, typename Model>
+    void directory_view<Key, Value, Model>::update()
+    {
+        _open_dirs.clear();
+        _selected_value = nullptr;
+        _model.update();
+        unfold();
+    }
 
     template<typename Key, typename Value, typename Model>
     void directory_view<Key, Value, Model>::close_all_directories()
     {
         _open_dirs.clear();
-        update();
+        unfold();
     }
 
     template<typename Key, typename Value, typename Model>
@@ -317,7 +326,7 @@ namespace View {
             else
                 _open_dirs.insert(c.ref);
 
-            update();
+            unfold();
         }
         else {
             if (_selected_value != c.ref) {

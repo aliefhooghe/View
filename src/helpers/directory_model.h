@@ -44,6 +44,11 @@ namespace View {
         bool is_directory(const Key& k) {   return std::holds_alternative<Derived>(self()[k]); }
         bool is_value(const Key& k) { return !is_directory(k); }
 
+        void update()
+        {
+            self().update();
+        }
+
     private:
         auto& self()
         {

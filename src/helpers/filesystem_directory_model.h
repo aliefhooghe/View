@@ -22,6 +22,8 @@ namespace View {
             : _root{root}
             {}
 
+            void update();
+
             //  directory model interface
             auto size()
             {

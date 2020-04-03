@@ -3,6 +3,13 @@
 
 namespace View {
 
+    void filesystem_directory_model::update()
+    {
+        clear();
+        _scanned = false;
+        _scan();
+    }
+
     void filesystem_directory_model::_scan()
     {
         if (_scanned)
