@@ -79,7 +79,7 @@ namespace View {
 
     void knob::apply_color_theme(const View::color_theme& theme)
     {
-        _background_color = theme.surface;
+        _background_color = theme.surface_light;
         _track_color = theme.secondary;
         _border_color = theme.surface_light;
         _hovered_border_color = theme.secondary_light;

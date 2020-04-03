@@ -42,19 +42,25 @@ namespace View {
 
         //  Draw background
         set_source(cr, _background_color);
-        cairo_fill_preserve(cr);
 
-        //  Draw border
-        set_source(cr, hovered() ? _hovered_border_color : _border_color);
-        cairo_set_line_width(cr, _pushed ? 0.3f : 0.2f);
-        cairo_stroke(cr);
+        if (hovered()) {
+            cairo_fill_preserve(cr);
+
+            //  Draw border
+            set_source(cr, _hovered_border_color);
+            cairo_set_line_width(cr, _pushed ? 0.3f : 0.2f);
+            cairo_stroke(cr);
+        }
+        else {
+            cairo_fill(cr);
+        }
     }
 
     void push_button::apply_color_theme(const View::color_theme& theme)
     {
-        _border_color = theme.surface_light;
+        _border_color = theme.on_surface;
         _hovered_border_color = theme.secondary_light;
-        _background_color = theme.surface;
+        _background_color = theme.surface_light;
         invalidate();
     }
 

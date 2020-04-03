@@ -4,7 +4,7 @@
 #include "widget/orientation.h"
 namespace View {
     /**
-     *  \brief PLatform independant cursors identifiers
+     *  \brief PLatform independent cursors identifiers
      *  \details Theses are mapped to closer platform cursors
      **/
     enum class cursor {
