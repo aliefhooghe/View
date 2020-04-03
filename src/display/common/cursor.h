@@ -17,6 +17,7 @@ namespace View {
         size_horizontal,
         size_vertical,
         move,
+        text,
 
         _count
     };

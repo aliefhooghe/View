@@ -374,6 +374,7 @@ namespace View {
         x11_cursors[static_cast<int>(cursor::size_horizontal)] = XCreateFontCursor(display, XC_sb_h_double_arrow);
         x11_cursors[static_cast<int>(cursor::size_vertical)] = XCreateFontCursor(display, XC_sb_v_double_arrow);
         x11_cursors[static_cast<int>(cursor::move)] = XCreateFontCursor(display, XC_fleur);
+        x11_cursors[static_cast<int>(cursor::text)] = XCreateFontCursor(display, XC_xterm);
     }
 
     void x11_window::_free_cursors()

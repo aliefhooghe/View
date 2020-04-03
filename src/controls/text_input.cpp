@@ -11,7 +11,7 @@
 namespace View {
 
     text_input::text_input(float width, float height)
-    :   control{width, height, cursor::cross}
+    :   control{width, height, cursor::text}
     {
         apply_color_theme(default_color_theme);
     }
