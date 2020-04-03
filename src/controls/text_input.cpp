@@ -1,9 +1,12 @@
 
+#include <cctype>
+#include <iostream>
+
 #include "text_input.h"
 #include "drawing/cairo_helper.h"
 #include "drawing/text_helper.h"
 
-#include <iostream>
+
 
 namespace View {
 
@@ -24,7 +27,7 @@ namespace View {
             else if (c == 13) {
                 std::cout << "enter!" << std::endl;
             }
-            else {
+            else if (std::isprint(c)) {
                 _text.append(1, c);
             }
         }
