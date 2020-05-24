@@ -211,20 +211,7 @@ namespace View {
         case ButtonPress:
             switch (event.xbutton.button)
             {
-                case 1:
-                {
-                    //  DBL click detection
-                    const auto now = event.xbutton.time;
-                    const auto delta = now - _last_click_time;
-
-                    if (delta < 350)
-                        sys_mouse_dbl_click();
-                    else
-                        sys_mouse_button_down(mouse_button::left);
-
-                    _last_click_time = now;
-                }
-                break;
+                case 1: sys_mouse_button_down(mouse_button::left); break;
                 case 2: sys_mouse_button_down(mouse_button::wheel); break;
                 case 3: sys_mouse_button_down(mouse_button::right); break;
                 case 4: sys_mouse_wheel(1.0f);  break;
@@ -237,7 +224,19 @@ namespace View {
             /** \todo DoubleClick !! **/
             switch (event.xbutton.button)
             {
-                case 1: sys_mouse_button_up(mouse_button::left);  break;
+                case 1:
+                {
+                    //  DBL click detection
+                    const auto now = event.xbutton.time;
+                    const auto delta = now - _last_click_time;
+
+                    sys_mouse_button_up(mouse_button::left);
+                    if (delta > 50 && delta < 250)
+                        sys_mouse_dbl_click();
+
+                    _last_click_time = now;
+                    break;
+                }
                 case 2: sys_mouse_button_up(mouse_button::wheel); break;
                 case 3: sys_mouse_button_up(mouse_button::right); break;
             }
