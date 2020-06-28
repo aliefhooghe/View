@@ -2,6 +2,7 @@
 #include <cstring>
 #include <optional>
 #include <array>
+#include <chrono>
 
 #include <sys/select.h>
 #include <X11/Xlib.h>
@@ -44,7 +45,7 @@ namespace View {
          **/
         bool process_events(unsigned int usec_wait_timeout);
 
-        //  display controler interface
+        //  display controller interface
         void set_cursor(cursor c) override;
 
     private:
@@ -62,7 +63,7 @@ namespace View {
         void _redraw_window();
         void _apply_draw_buffer();
 
-        void _initialiaze_cursors();
+        void _initialize_cursors();
         void _free_cursors();
 
         //  X11 members
@@ -94,7 +95,7 @@ namespace View {
 
         visual = XDefaultVisual(display, DefaultScreen(display));
 
-        //  Create the xindows
+        //  Create the windows
         const auto screen_id = DefaultScreen(display);
         XSetWindowAttributes xattributs;
         std::memset(&xattributs, 0, sizeof(xattributs));
@@ -121,8 +122,8 @@ namespace View {
         //  Select which type of event should be processed
         XSelectInput(display, window, X_EVENT_MASK);
 
-        //  Initialazie cursors
-        _initialiaze_cursors();
+        //  Initialize cursors
+        _initialize_cursors();
 
         //  Map (show) the windows and wait untile it is mapped
         XMapWindow(display, window);
@@ -137,6 +138,14 @@ namespace View {
                 display, window, visual, width, height);
 
         cr = cairo_create(cairo_surface);
+
+        const auto antialias_mode = CAIRO_ANTIALIAS_FAST;
+        auto font_options = cairo_font_options_create();
+
+        cairo_set_antialias(cr, antialias_mode);
+        cairo_font_options_set_antialias(font_options, antialias_mode);
+        cairo_set_font_options(cr, font_options);
+        cairo_font_options_destroy(font_options);
 
         //  Initial windows drawing
         _redraw_window();
@@ -167,10 +176,15 @@ namespace View {
         int event_queue_fd = ConnectionNumber(display);
 
         fd_set set;
+        int rc;
+
         FD_ZERO(&set);
         FD_SET(event_queue_fd, &set);
 
-        int rc;
+        auto frame_interval = std::chrono::duration<float>{1.f/50.f};
+        auto last_draw = std::chrono::steady_clock::now();
+
+        std::optional<draw_area> redraw_area = std::nullopt;
 
         while ((rc = select(event_queue_fd + 1, &set, 0, 0, &timeout)) != 0) {
             if (rc < 0) {
@@ -179,8 +193,6 @@ namespace View {
             }
             else {
                 //  There are some event to be processed
-                std::optional<draw_area> redraw_area;
-
                 while (XPending(display)) {
                     XEvent event;
                     XNextEvent(display, &event);
@@ -188,8 +200,16 @@ namespace View {
                         return true;
                 }
 
-                if (redraw_area)
-                    _redraw_area(redraw_area.value());
+                auto now = std::chrono::steady_clock::now();
+
+                if (redraw_area) {
+                    const auto current_interval = now - last_draw;
+                    if (frame_interval <= current_interval) {
+                        _redraw_area(redraw_area.value());
+                        last_draw = now;
+                        redraw_area = std::nullopt;
+                    }
+                }
             }
         }
 
@@ -360,9 +380,10 @@ namespace View {
         ev.xexpose.window = window;
 
         XSendEvent(display, window, true, ExposureMask, &ev);
+       XFlush(display);
     }
 
-    void x11_window::_initialiaze_cursors()
+    void x11_window::_initialize_cursors()
     {
         x11_cursors[static_cast<int>(cursor::standard)] = XCreateFontCursor(display, XC_left_ptr);
         x11_cursors[static_cast<int>(cursor::arrow)] = XCreateFontCursor(display, XC_left_ptr);
@@ -381,8 +402,6 @@ namespace View {
         for (auto cur : x11_cursors)
             XFreeCursor(display, cur);
     }
-
-
 
 
     /**

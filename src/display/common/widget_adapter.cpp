@@ -54,6 +54,11 @@ namespace View {
                 static_cast<float>(left) / _pixel_per_unit,
                 static_cast<float>(right) / _pixel_per_unit);
 
+        cairo_rectangle(cr,
+            redraw_rect.left, redraw_rect.top,
+            redraw_rect.width(), redraw_rect.height());
+        cairo_clip(cr);
+
         _root.draw_rect(cr, redraw_rect);
 
         finish_drawing(cr);
