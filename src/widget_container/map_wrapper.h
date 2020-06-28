@@ -32,6 +32,8 @@ namespace View {
             float width, float height,
             size_constraint width_constrain, size_constraint height_constrain);
 
+        void recenter() noexcept;
+
         //  Events with coordinate
 		bool on_mouse_move(float x, float y) override;
 		bool on_mouse_button_down(const mouse_button button, float x, float y) override;

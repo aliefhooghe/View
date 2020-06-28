@@ -39,6 +39,11 @@ namespace View {
     :   widget_wrapper_base{std::move(root), width, height, width_constrain, height_constrain}
     {}
 
+    void map_wrapper::recenter() noexcept
+    {
+        _set_origin(0.f, 0.f);
+    }
+
 	bool map_wrapper::on_mouse_move(float x, float y)
     {
         return widget_wrapper_base::on_mouse_move(_x_to_content(x), _y_to_content(y));
