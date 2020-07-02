@@ -4,7 +4,7 @@
 #include <array>
 #include <chrono>
 
-#include <sys/select.h>
+#include <poll.h>
 #include <X11/Xlib.h>
 #include <X11/cursorfont.h>
 #include <X11/Xutil.h>
@@ -39,11 +39,10 @@ namespace View {
         ~x11_window();
 
         /**
-         *  \brief wait and process some events
-         *  \param usec_wait_timeout the maximum event wait time allowed
-         *  \return true if windows must be closed else false
+         *  \brief manage the window
+         *  \param running ref to a boolean value looked after to close the windows
          **/
-        bool process_events(unsigned int usec_wait_timeout);
+        void process(const bool& running);
 
         //  display controller interface
         void set_cursor(cursor c) override;
@@ -57,12 +56,11 @@ namespace View {
         void _free_drawing_context();
 
         void _resize_window(unsigned int width, unsigned int height);
-        bool _process_event(const XEvent& event, std::optional<draw_area>& redraw_area);
+        bool _process_event(const XEvent& event, std::optional<draw_area>& redraw_area);    // return true if window should be closed
 
         void _redraw_area(draw_area area);
         void _redraw_window();
-        void _apply_draw_buffer();
-
+       
         void _initialize_cursors();
         void _free_cursors();
 
@@ -80,7 +78,6 @@ namespace View {
         //  Cairo members
         cairo_surface_t *cairo_surface{nullptr};
 		cairo_t *cr{nullptr};
-
     };
 
     x11_window::x11_window(Window parent, widget& root, float pixel_per_unit)
@@ -167,53 +164,52 @@ namespace View {
         XDefineCursor(display, window, x11_cursors[static_cast<int>(c)]);
     }
 
-    bool x11_window::process_events(unsigned int usec_wait_timeout)
+    void x11_window::process(const bool& running)
     {
-        struct timeval timeout = {
-                .tv_sec = 0,
-                .tv_usec = usec_wait_timeout };
+        int event_socket = ConnectionNumber(display);
+        pollfd fds = {
+            .fd = event_socket,
+            .events = POLLIN,
+            .revents = 0
+        };
 
-        int event_queue_fd = ConnectionNumber(display);
-
-        fd_set set;
-        int rc;
-
-        FD_ZERO(&set);
-        FD_SET(event_queue_fd, &set);
-
-        auto frame_interval = std::chrono::duration<float>{1.f/50.f};
-        auto last_draw = std::chrono::steady_clock::now();
-
+        constexpr auto frame_interval = std::chrono::duration<float>{1.f/60.f};
         std::optional<draw_area> redraw_area = std::nullopt;
 
-        while ((rc = select(event_queue_fd + 1, &set, 0, 0, &timeout)) != 0) {
+        auto last_draw = std::chrono::steady_clock::now();
+
+        while (running)
+        {
+            const auto rc = poll(&fds, 1, 50 /* ms */);
+
             if (rc < 0) {
-                //  Select failed, close windows
-                return true;
+                //  poll error, close window
+                return;
             }
-            else {
+            else if (rc != 0) {
                 //  There are some event to be processed
                 while (XPending(display)) {
                     XEvent event;
                     XNextEvent(display, &event);
                     if (_process_event(event, redraw_area))
-                        return true;
+                        return;
                 }
 
-                auto now = std::chrono::steady_clock::now();
-
+                //  Redraw if something need to be redrawn and a sufficient
+                //  amount of time have elapsed since last redraw
+                const auto now = std::chrono::steady_clock::now();
                 if (redraw_area) {
                     const auto current_interval = now - last_draw;
-                    if (frame_interval <= current_interval) {
+
+                    if (current_interval >= frame_interval) {
                         _redraw_area(redraw_area.value());
                         last_draw = now;
                         redraw_area = std::nullopt;
                     }
                 }
             }
+            // else : poll timeout
         }
-
-        return false;
     }
 
     void x11_window::_resize_window(unsigned int width, unsigned int height)
@@ -436,12 +432,7 @@ namespace View {
 
     void x11_display::_window_proc(x11_display *self, Window parent)
     {
-        constexpr auto event_timeout = 100000;
         x11_window win{parent, self->_root, self->_pixel_per_unit};
-
-        while (self->_running) {
-            if (win.process_events(event_timeout))
-                self->_running = false;
-        }
+        win.process(self->_running);
     }
 }
