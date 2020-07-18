@@ -9,7 +9,7 @@ namespace View {
     class x11_application_display : public application_display, private x11_display {
     public:
         x11_application_display(widget& root, float pixel_per_unit);
-        ~x11_application_display() override = default;
+        ~x11_application_display();
 
         void open(const std::string& title) override;
         void wait() override;

@@ -8,6 +8,12 @@ namespace View {
     {
     }
 
+    x11_application_display::~x11_application_display()
+    {
+        if (is_open())
+            close();
+    }
+
     void x11_application_display::open(const std::string& title)
     {
         /** TODO TITLE **/
