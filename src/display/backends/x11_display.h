@@ -7,6 +7,8 @@
 
 namespace View {
 
+    class x11_window;
+
     /**
      *  \class x11_display
      *  \brief

@@ -60,7 +60,7 @@ namespace View {
 
         void _redraw_area(draw_area area);
         void _redraw_window();
-       
+
         void _initialize_cursors();
         void _free_cursors();
 
@@ -180,7 +180,8 @@ namespace View {
 
         while (running)
         {
-            const auto rc = poll(&fds, 1, 50 /* ms */);
+            const auto timeout_ms = redraw_area ? 10 : 1000; // 1/100 sec - 1 sec
+            const auto rc = poll(&fds, 1, timeout_ms);
 
             if (rc < 0) {
                 //  poll error, close window
@@ -237,7 +238,6 @@ namespace View {
 
         case ButtonRelease:
         {
-            /** \todo DoubleClick !! **/
             switch (event.xbutton.button)
             {
                 case 1:
