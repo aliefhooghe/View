@@ -105,11 +105,14 @@ namespace View {
     {
         _pressed_button_count++;
         _draging_button = button;
+        _root.on_mouse_move(_cursor_fx, _cursor_fy);
         return _root.on_mouse_button_down(button, _cursor_fx, _cursor_fy);
     }
 
 	bool widget_adapter::sys_mouse_button_up(const mouse_button button)
     {
+        _root.on_mouse_move(_cursor_fx, _cursor_fy);
+
         if (_pressed_button_count > 0)
             _pressed_button_count--;
 
@@ -130,6 +133,7 @@ namespace View {
 
 	bool widget_adapter::sys_mouse_dbl_click(void)
     {
+        _root.on_mouse_move(_cursor_fx, _cursor_fy);
         return _root.on_mouse_dbl_click(_cursor_fx, _cursor_fy);
     }
 
