@@ -17,7 +17,7 @@ namespace View {
     class owning_directory_view;
 
     template <typename Key, typename Value, typename Model>
-    auto make_directory_view(directory_model<Key, Value, Model>& model, float width, float height, float cell_height = 1.2f, float font_size = 1.0f)
+    auto make_directory_view(directory_model<Key, Value, Model>& model, float width, float height, float cell_height = 16.f, float font_size = 14.f)
     {
         return std::make_unique<directory_view<Key, Value, Model>>(model, width, height, cell_height, font_size);
     }
@@ -37,7 +37,7 @@ namespace View {
     }
 
     template <typename T>
-    auto make_directory_view(std::unique_ptr<T>&& model, float width, float height, float cell_height = 1.2f, float font_size = 1.0f)
+    auto make_directory_view(std::unique_ptr<T>&& model, float width, float height, float cell_height = 16.f, float font_size = 14.f)
     {
         using model_type = std::decay_t<decltype(details::directory_model_type_helper(*model))>;
         return std::make_unique<typename details::owning_directory_view_type<model_type>::type>(std::move(model), width, height, cell_height, font_size);
@@ -83,7 +83,7 @@ namespace View {
         directory_view(model& m, float width, float height, float cell_height, float font_size);
         ~directory_view() override = default;
 
-        void draw(cairo_t *cr) override;
+        void draw(NVGcontext *vg) override;
         // todo : void draw_rect(cairo_t *cr, const rectangle<>& area) override;
 
         void update();
@@ -122,9 +122,9 @@ namespace View {
         const float _cell_height;
         const float _font_size;
 
-        color _selected_color;
-        color _hoverred_color;
-        color _default_color;
+        NVGcolor _selected_color;
+        NVGcolor _hoverred_color;
+        NVGcolor _default_color;
     };
 
     template <typename Key, typename Value, typename Model>
@@ -160,7 +160,7 @@ namespace View {
     }
 
     template<typename Key, typename Value, typename Model>
-    void directory_view<Key, Value, Model>::draw(cairo_t *cr)
+    void directory_view<Key, Value, Model>::draw(NVGcontext *vg)
     {
         //  The max number of cell that can fit in widget rectangle
         const auto max_display_cell_count =
@@ -177,34 +177,34 @@ namespace View {
             //  Draw Cell Background
             const auto width_offset = c.level * _cell_height * 0.5f;
             const auto height_offset = static_cast<float>(i) * _cell_height;
-            const color content_color =
+            const auto content_color =
                     _selected_value == c.ref ? _selected_color : (
                         hovered() && idx == _hoverred_cell ? _hoverred_color : _default_color);
 
-            set_source(cr, content_color);
+            nvgFillColor(vg, content_color);
 
             //  Arrow
             if (c.type == cell_type::directory) {
                 const auto arrow_offset = 0.3f * _cell_height;
-                cairo_new_sub_path(cr);
-                cairo_move_to(cr, width_offset + arrow_offset, height_offset + arrow_offset);
+                
+                nvgBeginPath(vg);
+                nvgMoveTo(vg, width_offset + arrow_offset, height_offset + arrow_offset);
 
                 if (is_open(c)) {
-                    cairo_line_to(cr, width_offset + _cell_height - arrow_offset, height_offset + arrow_offset);
-                    cairo_line_to(cr, width_offset + _cell_height / 2.f, height_offset + _cell_height - arrow_offset);
+                    nvgLineTo(vg, width_offset + _cell_height - arrow_offset, height_offset + arrow_offset);
+                    nvgLineTo(vg, width_offset + _cell_height / 2.f, height_offset + _cell_height - arrow_offset);
                 }
                 else {
-                    cairo_line_to(cr, width_offset + arrow_offset, height_offset + _cell_height - arrow_offset);
-                    cairo_line_to(cr, width_offset + _cell_height - arrow_offset, height_offset + _cell_height / 2.f);
+                    nvgLineTo(vg, width_offset + arrow_offset, height_offset + _cell_height - arrow_offset);
+                    nvgLineTo(vg, width_offset + _cell_height - arrow_offset, height_offset + _cell_height / 2.f);
                 }
-
-                cairo_close_path(cr);
-                cairo_fill(cr);
+                
+                nvgFill(vg);
             }
 
             //  Text
             draw_text(
-                cr, width_offset + _cell_height, height_offset, width(), _cell_height, _font_size, c.caption.c_str(), c.type == cell_type::directory,
+                vg, width_offset + _cell_height, height_offset, width(), _cell_height, _font_size, c.caption.c_str(), c.type == cell_type::directory,
                 horizontal_alignment::left, vertical_alignment::center);
         }
     }

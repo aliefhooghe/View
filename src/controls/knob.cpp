@@ -4,7 +4,6 @@
 #include <cstring>
 
 #include "knob.h"
-#include "drawing/cairo_helper.h"
 #include "drawing/text_helper.h"
 
 namespace View {
@@ -39,7 +38,7 @@ namespace View {
         return true;
     }
 
-    void knob::draw(cairo_t *cr)
+    void knob::draw(NVGcontext *vg)
     {
         constexpr auto theta = 0.5f;
 
@@ -49,31 +48,33 @@ namespace View {
         const auto half = width() / 2.f;
 
         //  External Circle + background
-        circle(cr, half, half, half);
+        nvgBeginPath(vg);
+        nvgCircle(vg, half, half, half);
+        
+        nvgFillColor(vg, _background_color);
+        nvgFill(vg);
 
-        set_source(cr, _background_color);
-        cairo_fill_preserve(cr);
-
-        set_source(cr, hovered() ? _hovered_border_color: _border_color);
-        cairo_set_line_width(cr, 0.2f);
-        cairo_stroke(cr);
+        nvgStrokeColor(vg, hovered() ? _hovered_border_color: _border_color);
+        nvgStrokeWidth(vg, 0.2f);
+        nvgStroke(vg);
 
         //  Light Indicator
         const auto cur_angle = start_angle + _value * delta_angle;
 
-        cairo_arc(cr, half, half, 0.75f * half, start_angle, cur_angle);
-        set_source(cr, _track_color);
-        cairo_set_line_width(cr, 0.5f);
-        cairo_set_line_cap(cr, CAIRO_LINE_CAP_BUTT);
-        cairo_stroke(cr);
+        nvgBeginPath(vg);
+        nvgArc(vg, half, half, 0.75f * half, start_angle, cur_angle, NVG_CW);
+        nvgStrokeColor(vg, _track_color);
+        nvgStrokeWidth(vg, 7.f);
+        // cairo_set_line_cap(cr, CAIRO_LINE_CAP_BUTT);
+        nvgStroke(vg);
 
         //  Value text
+        nvgFillColor(vg, _text_color);
         if (_display_value) {
             char text[5];
             std::snprintf(text, sizeof(text), "%.2f", _value);
-            set_source(cr, _text_color);
             draw_text(
-                cr, 0, 0, width(), height(), 1.f, text);
+                vg, 0, 0, width(), height(), 14.f, text);
         }
     }
 

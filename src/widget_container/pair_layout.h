@@ -220,9 +220,9 @@ namespace View {
             }
         }
 
-        void draw(cairo_t *cr) override
+        void draw(NVGcontext *vg) override
         {
-            widget_container<pair_layout<Orientation>>::draw_widgets(cr);
+            widget_container<pair_layout<Orientation>>::draw_widgets(vg);
         }
 
     private:

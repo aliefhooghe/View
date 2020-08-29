@@ -84,17 +84,16 @@ namespace View {
         return widget_wrapper_base::on_mouse_drag_end(button, _x_to_content(x), _y_to_content(y));
     }
 
-    void map_wrapper::draw(cairo_t *cr)
+    void map_wrapper::draw(NVGcontext *vg)
     {
         //  Clip the drawing area
-        cairo_rectangle(cr, 0, 0, widget_wrapper_base::width(), widget_wrapper_base::height());
-        cairo_clip(cr);
+        nvgIntersectScissor(vg, 0, 0, widget_wrapper_base::width(), widget_wrapper_base::height());
 
         //  Translate and draw
-        cairo_save(cr);
-        cairo_translate(cr, -_origin_x, -_origin_y);
-        widget_wrapper_base::draw(cr);
-        cairo_restore(cr);
+        nvgSave(vg);
+        nvgTranslate(vg, -_origin_x, -_origin_y);
+        widget_wrapper_base::draw(vg);
+        nvgRestore(vg);
     }
 
     void map_wrapper::_translate_origin(float dx, float dy) noexcept

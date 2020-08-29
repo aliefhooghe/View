@@ -3,6 +3,8 @@
 
 #include <thread>
 #include <memory>
+#include <X11/X.h>
+
 #include "widget/widget.h"
 
 namespace View {

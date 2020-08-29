@@ -1,8 +1,7 @@
 #ifndef VIEW8TEXT_HELPER_H_
 #define VIEW8TEXT_HELPER_H_
 
-#include "cairo_helper.h"
-
+#include <nanovg.h>
 namespace View {
 
     enum class horizontal_alignment {
@@ -14,7 +13,7 @@ namespace View {
     };
 
     void draw_text(
-        cairo_t *cr,
+        NVGcontext *,
         float x, float y, float width, float height, float font_size,
         const char *txt,
         bool bold = false,

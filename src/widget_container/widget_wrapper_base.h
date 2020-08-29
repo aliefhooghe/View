@@ -17,8 +17,8 @@ namespace View {
             size_constraint width_constrain, size_constraint height_constrain);
         ~widget_wrapper_base() override = default;
 
-        void draw(cairo_t *cr) override;
-        void draw_rect(cairo_t* cr, const rectangle<>& area) override;
+        void draw(NVGcontext *vg) override;
+        void draw_rect(NVGcontext* vg, const rectangle<>& area) override;
 
     protected:
         template <typename TFunction>
@@ -56,13 +56,13 @@ namespace View {
     }
 
     template <typename Derived, typename TWidgetHolder>
-    void widget_wrapper_base<Derived, TWidgetHolder>::draw(cairo_t *cr)
+    void widget_wrapper_base<Derived, TWidgetHolder>::draw(NVGcontext *vg)
     {
-        widget_container<widget_wrapper_base<Derived, TWidgetHolder>>::draw_widgets(cr);
+        widget_container<widget_wrapper_base<Derived, TWidgetHolder>>::draw_widgets(vg);
     }
 
     template <typename Derived, typename TWidgetHolder>
-    void widget_wrapper_base<Derived, TWidgetHolder>::draw_rect(cairo_t* cr, const rectangle<>& area)
+    void widget_wrapper_base<Derived, TWidgetHolder>::draw_rect(NVGcontext* cr, const rectangle<>& area)
     {
         widget_container<widget_wrapper_base<Derived, TWidgetHolder>>::draw_widgets(cr, area);
     }

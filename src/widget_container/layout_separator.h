@@ -6,8 +6,6 @@
 #include "controls/control.h"
 #include "widget/orientation.h"
 
-#include "drawing/cairo_helper.h"
-
 namespace View {
 
     class layout_separator : public control {

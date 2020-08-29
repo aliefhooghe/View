@@ -11,14 +11,14 @@ namespace View {
     public:
         using callback = std::function<void(bool checked)>;
 
-        checkbox(float size = 1.f, bool checked = false);
+        checkbox(float size = 14.f, bool checked = false);
         ~checkbox() override = default;
 
         void set_callback(callback c) { _callback = c; }
         bool is_checked() const noexcept { return _checked; }
 
         bool on_mouse_button_up(mouse_button button, float x, float y) override;
-        void draw(cairo_t*) override;
+        void draw(NVGcontext *) override;
 
         void apply_color_theme(const color_theme& theme) override;
     private:
@@ -29,10 +29,10 @@ namespace View {
         callback _callback{[](bool){}};
 
         //  colors
-        color _background;
-        color _border;
-        color _hovered_color;
-        color _check_color;
+        NVGcolor _background;
+        NVGcolor _border;
+        NVGcolor _hovered_color;
+        NVGcolor _check_color;
     };
 
 }

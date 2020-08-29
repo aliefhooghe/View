@@ -3,7 +3,7 @@
 
 #include <string_view>
 
-#include "cairo_definition.h"
+#include <nanovg.h>
 #include "color_theme.h"
 #include "display/common/cursor.h"
 #include "event.h"
@@ -57,8 +57,8 @@ namespace View {
 		virtual bool on_mouse_drag_end(const mouse_button button, float x, float y)                     { return false; }
         virtual bool on_mouse_drag_cancel()                                                             { return false; }
 
-        virtual void draw(cairo_t*) {}
-        virtual void draw_rect(cairo_t* cr, const rectangle<>&) { draw(cr); }
+        virtual void draw(NVGcontext*) {}
+        virtual void draw_rect(NVGcontext* vg, const rectangle<>&) { draw(vg); }
 
         //  Color theme handling
         virtual void apply_color_theme(const color_theme& theme) {}

@@ -1,7 +1,5 @@
 
 #include "push_button.h"
-#include "drawing/cairo_helper.h"
-#include <iostream>
 
 namespace View {
 
@@ -31,28 +29,24 @@ namespace View {
 
     bool push_button::on_mouse_drag_cancel()
     {
-        std::cout << "Push button drag cancel" << std::endl;
         _update_pushed(false);
         return true;
     }
 
-    void push_button::draw(cairo_t *cr)
+    void push_button::draw(NVGcontext *vg)
     {
-        rounded_rectangle(cr, 0, 0, width(), height(), 0.3f);
+        nvgBeginPath(vg);
+        nvgRoundedRect(vg, 0, 0, width(), height(), 4.2f);
 
         //  Draw background
-        set_source(cr, _background_color);
+        nvgFillColor(vg, _background_color);
+        nvgFill(vg);
 
         if (hovered()) {
-            cairo_fill_preserve(cr);
-
             //  Draw border
-            set_source(cr, _hovered_border_color);
-            cairo_set_line_width(cr, _pushed ? 0.3f : 0.2f);
-            cairo_stroke(cr);
-        }
-        else {
-            cairo_fill(cr);
+            nvgStrokeColor(vg, _hovered_border_color);
+            nvgStrokeWidth(vg, _pushed ? 4.2f : 2.8f);
+            nvgStroke(vg);
         }
     }
 

@@ -3,8 +3,10 @@
 #include <optional>
 #include <array>
 #include <chrono>
-
+#include <iostream>
 #include <poll.h>
+
+#include <X11/X.h>
 #include <X11/Xlib.h>
 #include <X11/cursorfont.h>
 #include <X11/Xutil.h>
@@ -15,7 +17,14 @@
 #include "display/common/widget_adapter.h"
 #include "x11_display.h"
 
-#include <iostream>
+#include <GL/glew.h>
+#include <GL/gl.h>
+#include <GL/glx.h>
+#include <GL/glu.h>
+
+#include "nanovg.h"
+#define NANOVG_GL2_IMPLEMENTATION	// Use GL2 implementation.
+#include "nanovg_gl.h"
 
 namespace View {
 
@@ -65,19 +74,18 @@ namespace View {
         void _free_cursors();
 
         //  X11 members
-        Display *display{nullptr};
-        Window window{0};
+        Display *_display{nullptr};
+        Window _window{0};
         Window _parent{0};
-        Visual *visual{0};
         Atom wm_delete_message{0};
         std::array<Cursor, VIEW_CURSOR_COUNT> x11_cursors{};
 
         //  dbl click detection
         Time _last_click_time{};
 
-        //  Cairo members
-        cairo_surface_t *cairo_surface{nullptr};
-		cairo_t *cr{nullptr};
+        //  Drawing context
+        GLXContext _glx;
+        NVGcontext *_vg;
     };
 
     x11_window::x11_window(Window parent, widget& root, float pixel_per_unit)
@@ -87,62 +95,75 @@ namespace View {
         const auto height = display_height();
 
         /** \todo check error **/
-        display = XOpenDisplay(nullptr /* display name*/);
-        Window root_window = DefaultRootWindow(display);
+        _display = XOpenDisplay(nullptr /* display name*/);
 
-        visual = XDefaultVisual(display, DefaultScreen(display));
+
+        int attributes[] = {GLX_RGBA, GLX_DEPTH_SIZE, 24, GLX_DOUBLEBUFFER, None};
+        Window root_window = DefaultRootWindow(_display);
+        XVisualInfo *visual_info =  glXChooseVisual(_display, 0, attributes);
 
         //  Create the windows
-        const auto screen_id = DefaultScreen(display);
+        const auto screen_id = DefaultScreen(_display);
+
         XSetWindowAttributes xattributs;
         std::memset(&xattributs, 0, sizeof(xattributs));
 
-        xattributs.background_pixel = BlackPixel(display, screen_id);
+        //xattributs.background_pixel = BlackPixel(_display, screen_id);
+        xattributs.colormap = XCreateColormap(_display, root_window, visual_info->visual, AllocNone);
 
-        window =
+        _window =
             XCreateWindow(
-                display, root_window,
+                _display, root_window,
                 0, 0, width, height, 0,
                 CopyFromParent, CopyFromParent,
-                visual,
-                CWBackPixel, &xattributs);
+                visual_info->visual,
+                CWColormap, &xattributs);
 
         //  Reparrent the windows if a parent was given
         _parent = parent;
         if (parent != 0)
-            XReparentWindow(display, window, parent, 0, 0);
+            XReparentWindow(_display, _window, parent, 0, 0);
 
         //  Handle windows manager close event
-        wm_delete_message = XInternAtom(display, "WM_DELETE_WINDOW", false);
-        XSetWMProtocols(display, window, &wm_delete_message, 1);
+        wm_delete_message = XInternAtom(_display, "WM_DELETE_WINDOW", false);
+        XSetWMProtocols(_display, _window, &wm_delete_message, 1);
 
         //  Select which type of event should be processed
-        XSelectInput(display, window, X_EVENT_MASK);
+        XSelectInput(_display, _window, X_EVENT_MASK);
 
         //  Initialize cursors
         _initialize_cursors();
 
         //  Map (show) the windows and wait untile it is mapped
-        XMapWindow(display, window);
+        XMapWindow(_display, _window);
         XEvent event;
         do {
-            XNextEvent(display, &event);
+            XNextEvent(_display, &event);
         } while (event.type != MapNotify);
 
         //  Prepare drawing context
-        cairo_surface =
-            cairo_xlib_surface_create(
-                display, window, visual, width, height);
 
-        cr = cairo_create(cairo_surface);
+        //  GLX + OpenGL
+        _glx = glXCreateContext(_display, visual_info, nullptr, 1);
+        glXMakeCurrent(_display, _window, _glx);
+        glewInit();
+        glEnable(GL_STENCIL_TEST);
+        glClearColor(0.0, 0.0, 0.0, 1.0);
 
-        const auto antialias_mode = CAIRO_ANTIALIAS_FAST;
-        auto font_options = cairo_font_options_create();
+        //  NanoVG
+        _vg = nvgCreateGL2(NVG_ANTIALIAS | NVG_STENCIL_STROKES | NVG_DEBUG);
 
-        cairo_set_antialias(cr, antialias_mode);
-        cairo_font_options_set_antialias(font_options, antialias_mode);
-        cairo_set_font_options(cr, font_options);
-        cairo_font_options_destroy(font_options);
+        //  Load fonts
+        const auto font_id = nvgCreateFontAtIndex(_vg, "regular", "./regular.ttf", 0);
+
+        std::cout << font_id << std::endl;
+
+        if (font_id < 0)
+        {
+            throw std::runtime_error("Cannot load font file");
+        }
+
+        nvgFontFaceId(_vg, font_id);
 
         //  Initial windows drawing
         _redraw_window();
@@ -150,23 +171,21 @@ namespace View {
 
     x11_window::~x11_window()
     {
-        cairo_destroy(cr);
-        cairo_surface_destroy(cairo_surface);
-
-        XDestroyWindow(display, window);
-
+        nvgDeleteGL2(_vg);
+        glXDestroyContext(_display, _glx);
+        XDestroyWindow(_display, _window);
         _free_cursors();
-        XCloseDisplay(display);
+        XCloseDisplay(_display);
     }
 
     void x11_window::set_cursor(cursor c)
     {
-        XDefineCursor(display, window, x11_cursors[static_cast<int>(c)]);
+        XDefineCursor(_display, _window, x11_cursors[static_cast<int>(c)]);
     }
 
     void x11_window::process(const bool& running)
     {
-        int event_socket = ConnectionNumber(display);
+        int event_socket = ConnectionNumber(_display);
         pollfd fds = {
             .fd = event_socket,
             .events = POLLIN,
@@ -180,7 +199,7 @@ namespace View {
 
         while (running)
         {
-            const auto timeout_ms = redraw_area ? 10 : 1000; // 1/100 sec - 1 sec
+            const auto timeout_ms = redraw_area ? 5 : 1000; // 1/100 sec - 1 sec
             const auto rc = poll(&fds, 1, timeout_ms);
 
             if (rc < 0) {
@@ -189,9 +208,9 @@ namespace View {
             }
             else if (rc != 0) {
                 //  There are some event to be processed
-                while (XPending(display)) {
+                while (XPending(_display)) {
                     XEvent event;
-                    XNextEvent(display, &event);
+                    XNextEvent(_display, &event);
                     if (_process_event(event, redraw_area))
                         return;
                 }
@@ -217,7 +236,8 @@ namespace View {
     {
         //  Notify the content that window size has changed
         resize_display(width, height);
-        cairo_xlib_surface_set_size(cairo_surface, width, height);
+        //  Update drawing context
+        glViewport(0, 0, width, height);
     }
 
     bool x11_window::_process_event(const XEvent& event, std::optional<draw_area>& redraw_area)
@@ -340,26 +360,37 @@ namespace View {
         //  Compute intersection beetween area and windows (what we actually need to redraw)
         draw_area drawing_area;
         if (area.intersect(window_area, drawing_area)) {
+            glClear(GL_COLOR_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+            nvgBeginFrame(_vg, display_width(), display_height(), 1.);
+
             //  Redraw
-            sys_draw_rect(cr, drawing_area.top, drawing_area.bottom, drawing_area.left, drawing_area.right);
+            sys_draw_rect(_vg, drawing_area.top, drawing_area.bottom, drawing_area.left, drawing_area.right);
 
 #ifdef VIEW_DEBUG_HIGHLIGHT_REDRAW_AREA
-            cairo_rectangle(cr, area.left, area.top, area.right - area.left, area.bottom - area.top);
-            cairo_set_source_rgb(cr, 1, 0, 0);
-            cairo_set_line_width(cr, pixel_offset);
-            cairo_stroke(cr);
+            nvgBeginPath(_vg);
+            nvgRect(_vg, area.left, area.top, area.right - area.left, area.bottom - area.top);
+            nvgStrokeColor(_vg, nvgRGBf(1., 0., 0.));
+            nvgStrokeWidth(_vg, pixel_offset);
+            nvgStroke(_vg);
 #endif
-
-            XFlush(display);
+            nvgEndFrame(_vg); 
+            glXSwapBuffers(_display, _window);
+            XFlush(_display);
         }
     }
 
     void x11_window::_redraw_window()
     {
-        std::cout << "Redraw window" << std::endl;
+        // std::cout << "Redraw window" << std::endl;
+        glClear(GL_COLOR_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+        nvgBeginFrame(_vg, display_width(), display_height(), 1.);
+
         //  Redraw
-        sys_draw(cr);
-        XFlush(display);
+        sys_draw(_vg);
+    
+        nvgEndFrame(_vg);   
+        glXSwapBuffers(_display, _window);
+        XFlush(_display);
     }
 
     void x11_window::sys_invalidate_rect(const draw_area& area)
@@ -373,30 +404,30 @@ namespace View {
         ev.xexpose.y = area.top;
         ev.xexpose.width = area.right - area.left;
         ev.xexpose.height = area.bottom - area.top;
-        ev.xexpose.window = window;
+        ev.xexpose.window = _window;
 
-        XSendEvent(display, window, true, ExposureMask, &ev);
-       XFlush(display);
+        XSendEvent(_display, _window, true, ExposureMask, &ev);
+        XFlush(_display);
     }
 
     void x11_window::_initialize_cursors()
     {
-        x11_cursors[static_cast<int>(cursor::standard)] = XCreateFontCursor(display, XC_left_ptr);
-        x11_cursors[static_cast<int>(cursor::arrow)] = XCreateFontCursor(display, XC_left_ptr);
-        x11_cursors[static_cast<int>(cursor::cross)] = XCreateFontCursor(display, XC_cross);
-        x11_cursors[static_cast<int>(cursor::noway)] = XCreateFontCursor(display, XC_circle);
-        x11_cursors[static_cast<int>(cursor::wait)] = XCreateFontCursor(display, XC_watch);
-        x11_cursors[static_cast<int>(cursor::hand)] = XCreateFontCursor(display, XC_hand1);
-        x11_cursors[static_cast<int>(cursor::size_horizontal)] = XCreateFontCursor(display, XC_sb_h_double_arrow);
-        x11_cursors[static_cast<int>(cursor::size_vertical)] = XCreateFontCursor(display, XC_sb_v_double_arrow);
-        x11_cursors[static_cast<int>(cursor::move)] = XCreateFontCursor(display, XC_fleur);
-        x11_cursors[static_cast<int>(cursor::text)] = XCreateFontCursor(display, XC_xterm);
+        x11_cursors[static_cast<int>(cursor::standard)] = XCreateFontCursor(_display, XC_left_ptr);
+        x11_cursors[static_cast<int>(cursor::arrow)] = XCreateFontCursor(_display, XC_left_ptr);
+        x11_cursors[static_cast<int>(cursor::cross)] = XCreateFontCursor(_display, XC_cross);
+        x11_cursors[static_cast<int>(cursor::noway)] = XCreateFontCursor(_display, XC_circle);
+        x11_cursors[static_cast<int>(cursor::wait)] = XCreateFontCursor(_display, XC_watch);
+        x11_cursors[static_cast<int>(cursor::hand)] = XCreateFontCursor(_display, XC_hand1);
+        x11_cursors[static_cast<int>(cursor::size_horizontal)] = XCreateFontCursor(_display, XC_sb_h_double_arrow);
+        x11_cursors[static_cast<int>(cursor::size_vertical)] = XCreateFontCursor(_display, XC_sb_v_double_arrow);
+        x11_cursors[static_cast<int>(cursor::move)] = XCreateFontCursor(_display, XC_fleur);
+        x11_cursors[static_cast<int>(cursor::text)] = XCreateFontCursor(_display, XC_xterm);
     }
 
     void x11_window::_free_cursors()
     {
         for (auto cur : x11_cursors)
-            XFreeCursor(display, cur);
+            XFreeCursor(_display, cur);
     }
 
 

@@ -3,9 +3,7 @@
 #include <iostream>
 
 #include "text_input.h"
-#include "drawing/cairo_helper.h"
 #include "drawing/text_helper.h"
-
 
 
 namespace View {
@@ -36,23 +34,25 @@ namespace View {
         return true;
     }
 
-    void text_input::draw(cairo_t *cr)
+    void text_input::draw(NVGcontext *vg)
     {
-        rounded_rectangle(cr, 0, 0, width(), height(), 0.3f);
-        set_source(cr, _background_color);
-        cairo_fill_preserve(cr);
+        nvgBeginPath(vg);
+        nvgRoundedRect(vg, 0, 0, width(), height(), 4.2f);
+        nvgFillColor(vg, _background_color);
+        nvgFill(vg);
 
         if (hovered()) {
             //  Draw border
-            set_source(cr, _hovered_border_color);
-            cairo_set_line_width(cr, 0.2f);
-            cairo_stroke_preserve(cr);
+            nvgStrokeColor(vg, _hovered_border_color);
+            nvgStrokeWidth(vg, 2.8f);
+            nvgStroke(vg);
         }
 
-        cairo_clip(cr);
+        //  Do not draw tecxt outside
+        nvgIntersectScissor(vg, 0, 0, width(), height());
 
-        set_source(cr, _text_color);
-        draw_text(cr, 0, 0, width() - 1.f, height(), 1.f, _text.c_str(), false,
+        nvgFillColor(vg, _text_color);
+        draw_text(vg, 0, 0, width() - 1.f, height(), 14.f, _text.c_str(), false,
             horizontal_alignment::right);
     }
 

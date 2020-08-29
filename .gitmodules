@@ -1,0 +1,3 @@
+[submodule "3rd_party/NanoVG/nanovg"]
+	path = 3rd_party/NanoVG/nanovg
+	url = https://github.com/memononen/nanovg.git

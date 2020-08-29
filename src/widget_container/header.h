@@ -2,7 +2,6 @@
 #define VIEW_HEADER_H_
 
 #include "widget_wrapper_base.h"
-#include "drawing/color.h"
 
 namespace View {
 
@@ -10,20 +9,20 @@ namespace View {
     public:
         header(
             std::unique_ptr<widget>&& root,
-            float header_size = 1.f, float border_size = 0.2f);
+            float header_size = 14.f, float border_size = 1.4f);
 
         ~header() override = default;
 
         bool resize(float width, float height) override;
-        void draw(cairo_t *cr) override;
-        void draw_rect(cairo_t* cr, const rectangle<>&) override;
+        void draw(NVGcontext *vg) override;
+        void draw_rect(NVGcontext *vg, const rectangle<>&) override;
 
         void apply_color_theme(const color_theme& theme) override;
     private:
         float _header_size;
         float _border_size;
-        color _background_color;
-        color _header_color;
+        NVGcolor _background_color;
+        NVGcolor _header_color;
     };
 
 }

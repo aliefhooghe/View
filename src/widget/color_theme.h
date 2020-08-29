@@ -1,34 +1,50 @@
 #ifndef VIEW_COLOR_THEME_H
 #define VIEW_COLOR_THEME_H
 
-#include "drawing/color.h"
+#include <nanovg.h>
+#include <cstdint>
 
 namespace View {
+
+    /**
+     * \brief Convert an integer into a color
+     * \note we do not use nanovg functions as we want to
+     * enable compile time comuitations
+     */
+    constexpr auto color_from_integer(const uint32_t n)
+    {
+        NVGcolor color;
+        color.r = ((n & 0xFF000000) >> 24) / 255.f;
+        color.g = ((n & 0x00FF0000) >> 16) / 255.f; 
+        color.b = ((n & 0x0000FF00) >> 8) / 255.f;
+        color.a = (n & 0x000000FF) / 255.f;
+        return color;
+    }
 
     /**
      * \brief
      */
     struct color_theme {
-        color primary = 0x1289A7FF;
-        color primary_light = 0x12CBC4FF;
-        color primary_dark = 0x0652DDFF;
-        color on_primary = 0xFFFFFFFF;
+        NVGcolor primary = color_from_integer(0x1289A7FF);
+        NVGcolor primary_light = color_from_integer(0x12CBC4FF);
+        NVGcolor primary_dark = color_from_integer(0x0652DDFF);
+        NVGcolor on_primary = color_from_integer(0xFFFFFFFF);
 
-        color secondary = 0xfa983aFF;
-        color secondary_light = 0xf6b93bFF;
-        color secondary_dark = 0xe58e26FF;
-        color on_secondary = 0xFFFFFFFF;
+        NVGcolor secondary = color_from_integer(0xfa983aFF);
+        NVGcolor secondary_light = color_from_integer(0xf6b93bFF);
+        NVGcolor secondary_dark = color_from_integer(0xe58e26FF);
+        NVGcolor on_secondary = color_from_integer(0xFFFFFFFF);
 
-        color surface = 0x404040FF;
-        color surface_light = 0x505050FF;
-        color surface_dark = 0x252525ff;
-        color on_surface = 0xFFFFFFFF;
+        NVGcolor surface = color_from_integer(0x404040FF);
+        NVGcolor surface_light = color_from_integer(0x505050FF);
+        NVGcolor surface_dark = color_from_integer(0x252525ff);
+        NVGcolor on_surface = color_from_integer(0xFFFFFFFF);
 
-        color background = 0x101010FF;
-        color on_background = 0xFFFFFFFF;
+        NVGcolor background = color_from_integer(0x101010FF);
+        NVGcolor on_background = color_from_integer(0xFFFFFFFF);
 
-        color error = 0xFF0000FF;
-        color on_error = 0x000000FF;
+        NVGcolor error = color_from_integer(0xFF0000FF);
+        NVGcolor on_error = color_from_integer(0x000000FF);
     };
 
     constexpr auto default_color_theme = color_theme{};

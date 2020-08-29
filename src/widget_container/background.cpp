@@ -1,6 +1,6 @@
 
 #include "background.h"
-#include "drawing/cairo_helper.h"
+#include "drawing/text_helper.h"
 
 namespace View {
 
@@ -24,26 +24,28 @@ namespace View {
         }
     }
 
-    void background::draw(cairo_t *cr)
+    void background::draw(NVGcontext *vg)
     {
         //  Draw background
-        cairo_rectangle(cr, 0, 0, width(), height());
-        set_source(cr, _background_color);
-        cairo_fill(cr);
+        nvgBeginPath(vg);
+        nvgRect(vg, 0, 0, width(), height());
+        nvgFillColor(vg, _background_color);
+        nvgFill(vg);
 
         //  Draw widgets
-        widget_wrapper_base<background>::draw(cr);
+        widget_wrapper_base<background>::draw(vg);
     }
 
-    void background::draw_rect(cairo_t* cr, const rectangle<>& area)
+    void background::draw_rect(NVGcontext *vg, const rectangle<>& area)
     {
         //  Draw background on area (Header footer ???)
-        cairo_rectangle(cr, area.left, area.top, area.width(), area.height());
-        set_source(cr, _background_color);
-        cairo_fill(cr);
+        nvgBeginPath(vg);
+        nvgRect(vg, area.left, area.top, area.width(), area.height());
+        nvgFillColor(vg, _background_color);
+        nvgFill(vg);
 
         //  Draw widgets
-        widget_wrapper_base<background>::draw_rect(cr, area);
+        widget_wrapper_base<background>::draw_rect(vg, area);
     }
 
     void background::apply_color_theme(const View::color_theme &theme)

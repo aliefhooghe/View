@@ -43,8 +43,8 @@ namespace View {
 		bool on_mouse_drag_start(const mouse_button button, float x, float y) override;
 		bool on_mouse_drag_end(const mouse_button button, float x, float y) override;
 
-        void draw(cairo_t *cr) override;
-        void draw_rect(cairo_t* cr, const rectangle<>& area) override { draw(cr); }
+        void draw(NVGcontext *) override;
+        void draw_rect(NVGcontext* vg, const rectangle<>& area) override { draw(vg); }
         /** @todo draw_rect ! **/
 
     protected:

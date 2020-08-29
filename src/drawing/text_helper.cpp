@@ -24,25 +24,22 @@ namespace View {
         }
     }
 
-
     void draw_text(
-        cairo_t *cr,
+        NVGcontext *vg,
         float x, float y, float width, float height, float font_size,
         const char *txt,
         bool bold,
         horizontal_alignment ha,
         vertical_alignment va)
     {
-        cairo_text_extents_t te;
+        float bounds[4]; // left, top, right, bottom
+        const float advance = nvgTextBounds(vg, 0, 0, txt, nullptr, bounds);
 
-        cairo_select_font_face(cr, "sans-serif", CAIRO_FONT_SLANT_NORMAL, bold ? CAIRO_FONT_WEIGHT_BOLD : CAIRO_FONT_WEIGHT_NORMAL);
-        cairo_set_font_size(cr, font_size);
-        cairo_text_extents(cr, txt, &te);
+        auto text_x = compute_txt_x(x, width, advance, ha);
+        auto text_y = compute_txt_y(y, height, bounds[3] - bounds[1], va);
 
-        auto text_x = compute_txt_x(x, width, te.x_advance, ha);
-        auto text_y = compute_txt_y(y, height, te.height, va);
-
-        cairo_move_to(cr, text_x, text_y);
-        cairo_show_text(cr, txt);
+        nvgFontFaceId(vg, 0);
+        nvgFontSize(vg, font_size);
+        nvgText(vg, text_x, text_y, txt, nullptr);
     }
 }

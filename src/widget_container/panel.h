@@ -23,14 +23,14 @@ namespace View {
         ~panel_implementation() override = default;
 
         // drawing funcs
-        void draw(cairo_t* cr) override
+        void draw(NVGcontext *vg) override
         {
-            implementation::draw_widgets(cr);
+            implementation::draw_widgets(vg);
         }
 
-        void draw_rect(cairo_t* cr, const rectangle<>&rect) override
+        void draw_rect(NVGcontext *vg, const rectangle<>&rect) override
         {
-            implementation::draw_widgets(cr, rect);
+            implementation::draw_widgets(vg, rect);
         }
 
     protected:

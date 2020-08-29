@@ -25,11 +25,10 @@ option(VIEW_X11_BACKEND "" ON)
 
 ## Dependencies
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake_modules")
-find_package(Cairo REQUIRED)
+add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/../3rd_party/NanoVG NanoVG)
 
 ## Common Sources
 set(VIEW_COMMON_SRC
-    cairo_definition.h
     view.h
 
     controls/control.h
@@ -52,12 +51,8 @@ set(VIEW_COMMON_SRC
     display/common/widget_adapter.cpp
     display/common/widget_adapter.h
 
-    drawing/cairo_helper.h
-    drawing/cairo_helper.cpp
-    drawing/color.h
     drawing/text_helper.h
     drawing/text_helper.cpp
-    drawing/named_colors.h
 
     helpers/alphabetical_compare.h
     helpers/directory_model.h
@@ -90,13 +85,12 @@ set(VIEW_COMMON_SRC
 ##  View Library
 add_library(View STATIC ${VIEW_COMMON_SRC})
 set_target_properties(View PROPERTIES POSITION_INDEPENDENT_CODE ON)
-target_include_directories(View PUBLIC ${Cairo_INCLUDE_DIRS} ${PangoCairo_INCLUDE_DIRS} ${CMAKE_CURRENT_SOURCE_DIR})
-target_link_libraries(View PUBLIC ${Cairo_LIBRARIES} ${PangoCairo_LIBRARIES})
+target_include_directories(View PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+target_link_libraries(View PUBLIC nanovg)
 
 ##  X11 Backend
 if (VIEW_X11_BACKEND)
     find_package(X11 REQUIRED)
-    find_package(Xext REQUIRED)
 
     target_sources(View PRIVATE
         display/backends/x11_display.cpp
@@ -106,15 +100,14 @@ if (VIEW_X11_BACKEND)
         display/implementations/x11_vst2_display.cpp
         display/implementations/x11_vst2_display.h
     )
-
-	target_include_directories(View PUBLIC
-		${X11_INCLUDE_DIR}
-		${Xext_INCLUDE_DIR}
-	)
+    
+    target_compile_definitions(View PUBLIC
+        NANOVG_GLEW
+    )
 
 	target_link_libraries(View PRIVATE
 		${X11_LIBRARIES}
-		${Xext_LIBRARY}
+		GL GLU GLEW
 		# stdc++fs			# filesystem
         pthread
 	)

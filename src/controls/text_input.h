@@ -10,19 +10,19 @@ namespace View {
      */
     class text_input : public control {
     public:
-        text_input(float width = 10, float height = 1.5);
+        text_input(float width = 140, float height = 21);
 
         bool on_text_input(std::string_view) override;
 
-        void draw(cairo_t *cr) override;
+        void draw(NVGcontext *vg) override;
         void apply_color_theme(const color_theme&) override;
 
         void clear_text();
         const auto& get_text() const noexcept { return _text; }
     private:
-        View::color _background_color;
-        View::color _text_color;
-        View::color _hovered_border_color;
+        NVGcolor _background_color;
+        NVGcolor _text_color;
+        NVGcolor _hovered_border_color;
         std::string _text{""};
     };
 

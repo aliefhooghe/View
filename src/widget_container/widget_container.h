@@ -122,8 +122,8 @@ namespace View {
         void apply_color_theme(const color_theme& theme) override;
 
     protected:
-        void draw_widgets(cairo_t *cr);
-        void draw_widgets(cairo_t *cr, const rectangle<>& rect);
+        void draw_widgets(NVGcontext *vg);
+        void draw_widgets(NVGcontext *vg, const rectangle<>& rect);
 
         auto focused_widget() const noexcept { return _focused_widget; }
         void reset_focused_widget() noexcept { _focused_widget = nullptr; }
@@ -342,20 +342,20 @@ namespace View {
     }
 
     template <typename TDerived, typename TChildren>
-    void widget_container<TDerived, TChildren>::draw_widgets(cairo_t *cr)
+    void widget_container<TDerived, TChildren>::draw_widgets(NVGcontext *vg)
     {
-        foreach_holder([cr](auto& holder) {
-            cairo_save(cr);
-            cairo_translate(cr, holder.pos_x(), holder.pos_y());
-            holder->draw(cr);
-            cairo_restore(cr);
+        foreach_holder([vg](auto& holder) {
+            nvgSave(vg);
+            nvgTranslate(vg, holder.pos_x(), holder.pos_y());
+            holder->draw(vg);
+            nvgRestore(vg);
         });
     }
 
     template <typename TDerived, typename TChildren>
-    void widget_container<TDerived, TChildren>::draw_widgets(cairo_t *cr, const rectangle<>& rect)
+    void widget_container<TDerived, TChildren>::draw_widgets(NVGcontext *vg, const rectangle<>& rect)
     {
-        foreach_holder([cr, &rect](auto& holder) {
+        foreach_holder([vg, &rect](auto& holder) {
             const auto child_rect = make_rectangle(
                 holder.pos_y(), holder.pos_y() + holder->height(),
                 holder.pos_x(), holder.pos_x() + holder->width());
@@ -364,11 +364,11 @@ namespace View {
 
             //  Redraw only widget that overlap with rect
             if (rect.intersect(child_rect, drawing_rect)) {
-                cairo_save(cr);
-                cairo_translate(cr, holder.pos_x(), holder.pos_y());
+                nvgSave(vg);
+                nvgTranslate(vg, holder.pos_x(), holder.pos_y());
                 holder.get()->draw_rect(
-                    cr, drawing_rect.translate(-holder.pos_x(), -holder.pos_y()));
-                cairo_restore(cr);
+                    vg, drawing_rect.translate(-holder.pos_x(), -holder.pos_y()));
+                nvgRestore(vg);
             }
         });
     }

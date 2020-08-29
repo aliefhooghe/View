@@ -2,7 +2,6 @@
 #define VIEW_BACKGROUND_H_
 
 #include "widget_wrapper_base.h"
-#include "drawing/color.h"
 
 namespace View {
 
@@ -12,12 +11,12 @@ namespace View {
         ~background() override = default;
 
         bool resize(float width, float height) override;
-        void draw(cairo_t *cr) override;
-        void draw_rect(cairo_t* cr, const rectangle<>& area) override;
+        void draw(NVGcontext *) override;
+        void draw_rect(NVGcontext *, const rectangle<>& area) override;
 
         void apply_color_theme(const color_theme &theme) override;
     private:
-        color _background_color;
+        NVGcolor _background_color;
     };
 }
 

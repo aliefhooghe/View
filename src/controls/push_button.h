@@ -19,7 +19,7 @@ namespace View {
             bool on_mouse_button_down(const mouse_button button, float x, float y) override;
             bool on_mouse_drag_cancel() override;
 
-            void draw(cairo_t*) override;
+            void draw(NVGcontext*) override;
 
             void apply_color_theme(const color_theme& theme) override;
 
@@ -29,9 +29,9 @@ namespace View {
             bool _pushed{false};
             callback _callback{[](){}};
 
-            color _border_color;
-            color _hovered_border_color;
-            color _background_color;
+            NVGcolor _border_color;
+            NVGcolor _hovered_border_color;
+            NVGcolor _background_color;
     };
 
 }
