@@ -53,6 +53,8 @@ set(VIEW_COMMON_SRC
 
     drawing/text_helper.h
     drawing/text_helper.cpp
+    drawing/shadowed.h
+    drawing/shadowed.cpp
 
     helpers/alphabetical_compare.h
     helpers/directory_model.h

@@ -21,8 +21,9 @@ namespace View {
         const auto& get_text() const noexcept { return _text; }
     private:
         NVGcolor _background_color;
+        NVGcolor _surface_color;
         NVGcolor _text_color;
-        NVGcolor _hovered_border_color;
+        NVGcolor _hoverred_border_color;
         std::string _text{""};
     };
 

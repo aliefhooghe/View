@@ -1,5 +1,6 @@
 
 #include "checkbox.h"
+#include "drawing/shadowed.h"
 
 namespace View {
 
@@ -17,15 +18,17 @@ namespace View {
 
     void checkbox::draw(NVGcontext *vg)
     {
-        const auto unit = width() / 8.f;
+        shadowed_down_rounded_rect(vg, 0, 0, width(), height(), 3.f, _background, _surface);
 
-        nvgBeginPath(vg);
-        nvgRoundedRect(vg, 0, 0, width(), height(), unit);
+        //  Draw border
+        if (hovered()) {
+            nvgStrokeColor(vg, _hovered_border);
+            nvgStrokeWidth(vg, 0.5f);
+            nvgStroke(vg);
+        }
 
         if (_checked) {
-            //  Draw background
-            nvgFillColor(vg, _background);
-            nvgFill(vg);
+            const auto unit = width() / 8.f;
 
             //  Draw check
             nvgBeginPath(vg);
@@ -37,21 +40,15 @@ namespace View {
             nvgStrokeWidth(vg, width() / 6.f);
             nvgStroke(vg);
         }
-        else {
-            //  Draw border
-            nvgStrokeColor(vg, hovered() ? _hovered_color : _border);
-            nvgStrokeWidth(vg, width() / 10.f);
-            nvgStroke(vg);
-        }
-
+        
     }
 
     void checkbox::apply_color_theme(const View::color_theme& theme)
     {
-        _background = theme.secondary_dark;
-        _border = theme.surface_light;
-        _hovered_color = theme.secondary_light;
-        _check_color = theme.on_secondary;
+        _background = theme.surface_dark;
+        _surface = theme.surface_light;
+        _hovered_border = theme.secondary_light;
+        _check_color = nvgTransRGBA(theme.on_secondary, 200);
     }
 
     void checkbox::_switch_state()

@@ -1,5 +1,6 @@
 
 #include "push_button.h"
+#include "drawing/shadowed.h"
 
 namespace View {
 
@@ -35,26 +36,27 @@ namespace View {
 
     void push_button::draw(NVGcontext *vg)
     {
-        nvgBeginPath(vg);
-        nvgRoundedRect(vg, 0, 0, width(), height(), 4.2f);
-
-        //  Draw background
-        nvgFillColor(vg, _background_color);
-        nvgFill(vg);
+        //  Background
+        if (_pushed) {
+            shadowed_down_rounded_rect(vg, 0, 0, width(), height(), 3.f, _background, _surface);
+        }
+        else {
+            shadowed_up_rounded_rect(vg, 0, 0, width(), height(), 3.f, _background, _surface);
+        }
 
         if (hovered()) {
             //  Draw border
-            nvgStrokeColor(vg, _hovered_border_color);
-            nvgStrokeWidth(vg, _pushed ? 4.2f : 2.8f);
+            nvgStrokeColor(vg, _hovered_border);
+            nvgStrokeWidth(vg, 0.5f);
             nvgStroke(vg);
         }
     }
 
     void push_button::apply_color_theme(const View::color_theme& theme)
     {
-        _border_color = theme.on_surface;
-        _hovered_border_color = theme.secondary_light;
-        _background_color = theme.surface_light;
+        _hovered_border = theme.secondary_light;
+        _background = theme.surface_dark;
+        _surface = theme.surface_light;
         invalidate();
     }
 

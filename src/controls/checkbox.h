@@ -30,8 +30,8 @@ namespace View {
 
         //  colors
         NVGcolor _background;
-        NVGcolor _border;
-        NVGcolor _hovered_color;
+        NVGcolor _surface;
+        NVGcolor _hovered_border;
         NVGcolor _check_color;
     };
 

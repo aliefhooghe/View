@@ -29,9 +29,9 @@ namespace View {
             bool _pushed{false};
             callback _callback{[](){}};
 
-            NVGcolor _border_color;
-            NVGcolor _hovered_border_color;
-            NVGcolor _background_color;
+            NVGcolor _hovered_border;
+            NVGcolor _surface;
+            NVGcolor _background;
     };
 
 }
