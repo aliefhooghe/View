@@ -18,7 +18,7 @@ namespace View {
 
     void checkbox::draw(NVGcontext *vg)
     {
-        shadowed_down_rounded_rect(vg, 0, 0, width(), height(), 3.f, _background, _surface);
+        shadowed_down_rounded_rect(vg, 0, 0, width(), height(), 3.f, _surface);
 
         //  Draw border
         if (hovered()) {
@@ -45,7 +45,6 @@ namespace View {
 
     void checkbox::apply_color_theme(const View::color_theme& theme)
     {
-        _background = theme.surface_dark;
         _surface = theme.surface_light;
         _hovered_border = theme.secondary_light;
         _check_color = nvgTransRGBA(theme.on_secondary, 200);

@@ -20,7 +20,6 @@ namespace View {
         void clear_text();
         const auto& get_text() const noexcept { return _text; }
     private:
-        NVGcolor _background_color;
         NVGcolor _surface_color;
         NVGcolor _text_color;
         NVGcolor _hoverred_border_color;

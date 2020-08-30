@@ -29,11 +29,12 @@ namespace View {
         callback _callback{[](float){}};
         float _value;
         bool _display_value;
-        NVGcolor _background_color;
-        NVGcolor _track_color;
-        NVGcolor _border_color;
-        NVGcolor _hovered_border_color;
-        NVGcolor _text_color;
+
+        NVGcolor _background;
+        NVGcolor _surface;
+        NVGcolor _hovered_border;
+        NVGcolor _track;
+        NVGcolor _text;
     };
 
 }

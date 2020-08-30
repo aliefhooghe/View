@@ -37,7 +37,7 @@ namespace View {
     void text_input::draw(NVGcontext *vg)
     {
         //  Background
-        shadowed_down_rounded_rect(vg, 0, 0, width(), height(), 3.f, _background_color, _surface_color);
+        shadowed_down_rounded_rect(vg, 0, 0, width(), height(), 3.f, _surface_color);
 
         //  Border
         if (hovered()) {
@@ -56,7 +56,6 @@ namespace View {
     void text_input::apply_color_theme(const color_theme& theme)
     {
         _text_color = theme.on_surface;
-        _background_color = theme.surface_dark;
         _surface_color = theme.surface_light;
         _hoverred_border_color = theme.secondary_light;
     }

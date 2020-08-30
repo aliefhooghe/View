@@ -38,7 +38,7 @@ namespace View {
     {
         //  Background
         if (_pushed) {
-            shadowed_down_rounded_rect(vg, 0, 0, width(), height(), 3.f, _background, _surface);
+            shadowed_down_rounded_rect(vg, 0, 0, width(), height(), 3.f, _surface);
         }
         else {
             shadowed_up_rounded_rect(vg, 0, 0, width(), height(), 3.f, _background, _surface);

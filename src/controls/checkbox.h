@@ -29,7 +29,6 @@ namespace View {
         callback _callback{[](bool){}};
 
         //  colors
-        NVGcolor _background;
         NVGcolor _surface;
         NVGcolor _hovered_border;
         NVGcolor _check_color;
