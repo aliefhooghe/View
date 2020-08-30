@@ -2,14 +2,15 @@
 #define VIEW8TEXT_HELPER_H_
 
 #include <nanovg.h>
+
 namespace View {
 
     enum class horizontal_alignment {
-        left, center, right
+        left, center, right, none
     };
 
     enum class vertical_alignment {
-        top, center, bottom
+        top, center, bottom, none
     };
 
     void draw_text(
