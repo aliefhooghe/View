@@ -165,6 +165,11 @@ namespace View {
 
         nvgFontFaceId(_vg, font_id);
 
+        //  Adapt windows content to the actual size
+        XWindowAttributes win_attrib;
+        XGetWindowAttributes(_display, _window, &win_attrib);
+        _resize_window(win_attrib.width, win_attrib.height);
+
         //  Initial windows drawing
         _redraw_window();
     }
