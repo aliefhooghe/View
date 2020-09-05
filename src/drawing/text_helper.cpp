@@ -36,13 +36,20 @@ namespace View {
         vertical_alignment va)
     {
         float bounds[4]; // left, top, right, bottom
-        nvgTextBounds(vg, 0, 0, txt, nullptr, bounds);
 
+        //  Set font
+        nvgFontFaceId(vg, 0);
+        nvgFontSize(vg, static_cast<int>(font_size));
+
+        //  Compute pos
+        nvgTextBounds(vg, 0, 0, txt, nullptr, bounds);
         auto text_x_offset = compute_txt_x_offset(width, bounds, ha);
         auto text_y_offset = compute_txt_y_offset(height, bounds, va);
 
-        nvgFontFaceId(vg, 0);
-        nvgFontSize(vg, font_size);
-        nvgText(vg, x + text_x_offset, y + text_y_offset, txt, nullptr);
+        //  Draw text
+        nvgText(
+            vg, static_cast<int>(x + text_x_offset),
+            static_cast<int>(y + text_y_offset),
+            txt, nullptr);
     }
 }
