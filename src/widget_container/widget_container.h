@@ -301,24 +301,33 @@ namespace View {
 	template <typename TDerived, typename TChildren>
     bool widget_container<TDerived, TChildren>::on_mouse_drag_end(const mouse_button button, float x, float y)
     {
-        if (_draging && _focused_widget) {
+        if (_draging) {
             bool used_event = false;
-            const auto x_rel = x - _focused_widget->pos_x();
-            const auto y_rel = y - _focused_widget->pos_y();
 
-            used_event = _focused_widget->get()->on_mouse_drag_end(button, x_rel, y_rel);
-
-            if (!(_focused_widget->get()->contains(x_rel, y_rel))) {
-                used_event |= _focused_widget->get()->on_mouse_exit();
-                _focused_widget = nullptr;
+            if (_focused_widget != nullptr) {
+                const auto x_rel = x - _focused_widget->pos_x();
+                const auto y_rel = y - _focused_widget->pos_y();
+                used_event |= _focused_widget->get()->on_mouse_drag_end(button, x_rel, y_rel);
             }
 
+            auto *child = widget_at(x, y);
+
+            if (child != _focused_widget) {
+                if (child != nullptr)
+                    used_event |= child->get()->on_mouse_enter();
+                if (_focused_widget != nullptr)
+                    used_event |= _focused_widget->get()->on_mouse_exit();
+            }
+
+            _focused_widget = child;
             _draging = false;
             return used_event;
         }
-        else {
+        else
+        {
             return false;
         }
+
     }
 
     template <typename TDerived, typename TChildren>
