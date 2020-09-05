@@ -8,7 +8,7 @@ namespace View {
     class header : public widget_wrapper_base<header> {
     public:
         header(
-            std::unique_ptr<widget>&& root,
+            std::unique_ptr<widget>&& root, color_theme::color background = color_theme::color::SURFACE,
             float header_size = 14, float border_size = 4);
 
         ~header() override = default;
@@ -21,6 +21,7 @@ namespace View {
     private:
         float _header_size;
         float _border_size;
+        const color_theme::color _background_color_id;
         NVGcolor _background_color;
         NVGcolor _header_color;
     };

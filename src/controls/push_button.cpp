@@ -52,8 +52,8 @@ namespace View {
 
     void push_button::apply_color_theme(const View::color_theme& theme)
     {
-        _background = theme.surface_dark;
         _hovered_border = nvgTransRGBA(theme.secondary_light, 48);
+        _background = theme.surface;
         _surface = theme.surface_light;
         invalidate();
     }

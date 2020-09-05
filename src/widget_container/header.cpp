@@ -7,9 +7,10 @@
 namespace View {
 
     header::header(
-        std::unique_ptr<widget>&& root,
+        std::unique_ptr<widget>&& root, color_theme::color background,
         float header_size, float border_size)
-    :   widget_wrapper_base<header>{
+    :   _background_color_id{background},
+        widget_wrapper_base<header>{
             std::move(root),
             root->width() + 2.f * border_size,
             root->height() + header_size + 2.f * border_size,
@@ -108,7 +109,7 @@ namespace View {
     {
         widget_wrapper_base<header>::apply_color_theme(theme);
         _header_color = theme.primary;
-        _background_color = theme.surface_dark;
+        _background_color = theme.get(_background_color_id);
     }
 
 }
