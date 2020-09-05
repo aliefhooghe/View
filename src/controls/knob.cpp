@@ -50,13 +50,7 @@ namespace View {
 
         //  External Circle + background
         shadowed_up_circle(vg, half, half, half, _background, _surface);
-        
-        if (hovered()) {
-            //  Draw Border
-            nvgStrokeColor(vg, _hovered_border);
-            nvgStrokeWidth(vg, 0.5f);
-            nvgStroke(vg);
-        }
+
 
         //  Light Indicator
         const auto cur_angle = start_angle + _value * delta_angle;
@@ -64,7 +58,7 @@ namespace View {
         nvgBeginPath(vg);
         nvgArc(vg, half, half, 0.75f * half, start_angle, cur_angle, NVG_CW);
         nvgStrokeColor(vg, _track);
-        nvgStrokeWidth(vg, 7.f);
+        nvgStrokeWidth(vg, hovered() ? 6 : 4);
         nvgStroke(vg);
 
         //  Value text
@@ -81,8 +75,8 @@ namespace View {
     {
         _background = theme.surface_dark;
         _surface = theme.surface_light;
-        _track = nvgTransRGBAf(theme.secondary, 0.4f);
-        _hovered_border = theme.secondary_light;
+        _track = theme.secondary_light;
+        _hovered_border = nvgTransRGBA(theme.secondary_light, 48);
         _text = theme.on_surface;
         invalidate();
     }

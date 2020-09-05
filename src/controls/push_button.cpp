@@ -45,17 +45,15 @@ namespace View {
         }
 
         if (hovered()) {
-            //  Draw border
-            nvgStrokeColor(vg, _hovered_border);
-            nvgStrokeWidth(vg, 0.5f);
-            nvgStroke(vg);
+            nvgFillColor(vg, _hovered_border);
+            nvgFill(vg);
         }
     }
 
     void push_button::apply_color_theme(const View::color_theme& theme)
     {
-        _hovered_border = theme.secondary_light;
         _background = theme.surface_dark;
+        _hovered_border = nvgTransRGBA(theme.secondary_light, 48);
         _surface = theme.surface_light;
         invalidate();
     }

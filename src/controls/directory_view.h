@@ -205,7 +205,7 @@ namespace View {
             //  Text
             draw_text(
                 vg, width_offset + _cell_height, height_offset, width(), _cell_height, _font_size, c.caption.c_str(), c.type == cell_type::directory,
-                horizontal_alignment::left, vertical_alignment::center);
+                horizontal_alignment::left, vertical_alignment::bottom);
         }
     }
 

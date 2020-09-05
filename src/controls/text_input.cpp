@@ -41,9 +41,8 @@ namespace View {
 
         //  Border
         if (hovered()) {
-            nvgStrokeWidth(vg, 0.5f);
-            nvgStrokeColor(vg, _hoverred_border_color);
-            nvgStroke(vg);
+            nvgFillColor(vg, _hoverred_border_color);
+            nvgFill(vg);
         }
 
         //  Draw text
@@ -57,7 +56,7 @@ namespace View {
     {
         _text_color = theme.on_surface;
         _surface_color = theme.surface_light;
-        _hoverred_border_color = theme.secondary_light;
+        _hoverred_border_color = nvgTransRGBA(theme.secondary_light, 48);
     }
 
     void text_input::clear_text()

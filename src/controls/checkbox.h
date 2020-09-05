@@ -11,7 +11,7 @@ namespace View {
     public:
         using callback = std::function<void(bool checked)>;
 
-        checkbox(float size = 14.f, bool checked = false);
+        checkbox(float size = 18.f, bool checked = false);
         ~checkbox() override = default;
 
         void set_callback(callback c) { _callback = c; }
@@ -30,7 +30,7 @@ namespace View {
 
         //  colors
         NVGcolor _surface;
-        NVGcolor _hovered_border;
+        NVGcolor _hovered_color;
         NVGcolor _check_color;
     };
 

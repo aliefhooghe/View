@@ -20,11 +20,9 @@ namespace View {
     {
         shadowed_down_rounded_rect(vg, 0, 0, width(), height(), 3.f, _surface);
 
-        //  Draw border
         if (hovered()) {
-            nvgStrokeColor(vg, _hovered_border);
-            nvgStrokeWidth(vg, 0.5f);
-            nvgStroke(vg);
+            nvgFillColor(vg, _hovered_color);
+            nvgFill(vg);
         }
 
         if (_checked) {
@@ -46,8 +44,8 @@ namespace View {
     void checkbox::apply_color_theme(const View::color_theme& theme)
     {
         _surface = theme.surface_light;
-        _hovered_border = theme.secondary_light;
-        _check_color = nvgTransRGBA(theme.on_secondary, 200);
+        _hovered_color = nvgTransRGBA(theme.secondary_light, 48);
+        _check_color = nvgTransRGBA(theme.secondary, 200);
     }
 
     void checkbox::_switch_state()

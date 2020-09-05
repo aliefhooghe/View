@@ -2,6 +2,7 @@
 #include <cmath>
 
 #include "header.h"
+#include "drawing/shadowed.h"
 
 namespace View {
 
@@ -44,29 +45,30 @@ namespace View {
 
     void header::draw(NVGcontext *vg)
     {
+        const auto rect_radius = _header_size / 3;
+
         nvgBeginPath(vg);
         
         // Main Shape
         nvgRoundedRect(vg,
             _border_size, _border_size,
             _root.get()->width(), _root.get()->height() + _header_size,
-            _header_size / 2.5f);
+            rect_radius);
 
         //  Draw Header
         nvgFillColor(vg, _header_color);
         nvgFill(vg);
 
         //  Draw Border
-        nvgStrokeWidth(vg, 3.f);
+        nvgStrokeWidth(vg, 3);
+        nvgStrokeColor(vg, _header_color);
         nvgStroke(vg);
 
         //  Draw background
-        nvgBeginPath(vg);
-        nvgRect(vg,
+        shadowed_down_rounded_rect(vg, 
             _border_size, _border_size + _header_size,
-            _root.get()->width(), _root.get()->height());
-        nvgFillColor(vg, _background_color);
-        nvgFill(vg);
+            _root.get()->width(), _root.get()->height(),
+            rect_radius, _background_color);
 
         //  Clip to ensure that child only draw on background
         nvgIntersectScissor(vg, 

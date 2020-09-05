@@ -10,7 +10,7 @@ namespace View {
     class pair_layout : public widget_container<pair_layout<Orientation>> {
         friend class widget_container<pair_layout<Orientation>>;
 
-        static constexpr auto _separator_width = 1.f;
+        static constexpr auto _separator_width = 14.f;
 
         /**
          * Orientation abstraction helpers
