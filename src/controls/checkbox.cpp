@@ -1,7 +1,6 @@
 
 #include "checkbox.h"
-#include "drawing/cairo_helper.h"
-#include "drawing/named_colors.h"
+#include "drawing/shadowed.h"
 
 namespace View {
 
@@ -17,43 +16,36 @@ namespace View {
         return true;
     }
 
-    void checkbox::draw(cairo_t *cr)
+    void checkbox::draw(NVGcontext *vg)
     {
-        const auto unit = width() / 8.f;
+        shadowed_down_rounded_rect(vg, 0, 0, width(), height(), 3.f, _surface);
 
-        rounded_rectangle(cr, 0, 0, width(), height(), unit);
+        if (hovered()) {
+            nvgFillColor(vg, _hovered_color);
+            nvgFill(vg);
+        }
 
         if (_checked) {
-            //  Draw background
-            set_source(cr, _background);
-            cairo_fill(cr);
+            const auto unit = width() / 8.f;
 
             //  Draw check
-            cairo_move_to(cr, 2.f * unit, 5.f * unit);
-            cairo_line_to(cr, 3.f * unit, 6.f * unit);
-            cairo_line_to(cr, 6.f * unit, 3.f * unit);
+            nvgBeginPath(vg);
+            nvgMoveTo(vg, 2.f * unit, 5.f * unit);
+            nvgLineTo(vg, 3.f * unit, 6.f * unit);
+            nvgLineTo(vg, 6.f * unit, 3.f * unit);
 
-            set_source(cr, _check_color);
-            cairo_set_line_width(cr, width() / 6.f);
-            cairo_set_line_cap(cr, CAIRO_LINE_CAP_ROUND);
-            cairo_set_line_join(cr, CAIRO_LINE_JOIN_MITER);
-            cairo_stroke(cr);
+            nvgStrokeColor(vg, _check_color);
+            nvgStrokeWidth(vg, width() / 6.f);
+            nvgStroke(vg);
         }
-        else {
-            //  Draw border
-            set_source(cr, hovered() ? _hovered_color : _border);
-            cairo_set_line_width(cr, width() / 10.f);
-            cairo_stroke(cr);
-        }
-
+        
     }
 
     void checkbox::apply_color_theme(const View::color_theme& theme)
     {
-        _background = theme.secondary_dark;
-        _border = theme.surface_light;
-        _hovered_color = theme.secondary_light;
-        _check_color = theme.on_secondary;
+        _surface = theme.surface_light;
+        _hovered_color = nvgTransRGBA(theme.secondary_light, 48);
+        _check_color = nvgTransRGBA(theme.secondary, 200);
     }
 
     void checkbox::_switch_state()

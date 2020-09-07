@@ -10,7 +10,7 @@ namespace View {
     class pair_layout : public widget_container<pair_layout<Orientation>> {
         friend class widget_container<pair_layout<Orientation>>;
 
-        static constexpr auto _separator_width = 1.f;
+        static constexpr auto _separator_width = 14.f;
 
         /**
          * Orientation abstraction helpers
@@ -220,9 +220,9 @@ namespace View {
             }
         }
 
-        void draw(cairo_t *cr) override
+        void draw(NVGcontext *vg) override
         {
-            widget_container<pair_layout<Orientation>>::draw_widgets(cr);
+            widget_container<pair_layout<Orientation>>::draw_widgets(vg);
         }
 
     private:

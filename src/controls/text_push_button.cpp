@@ -4,11 +4,11 @@
 
 namespace View {
 
-    void text_push_button::draw(cairo_t *cr)
+    void text_push_button::draw(NVGcontext *vg)
     {
-        push_button::draw(cr);
-        set_source(cr, _text_color);
-        draw_text(cr, 0, 0, width(), height(), 1.0f, _text.c_str());
+        push_button::draw(vg);
+        nvgFillColor(vg, _text_color);
+        draw_text(vg, 0, 0, width(), height(), 14.0f, _text.c_str());
     }
 
     void text_push_button::apply_color_theme(const View::color_theme &theme)

@@ -41,9 +41,9 @@ namespace View {
          *
          *  Coordinate are given in pixel.
          */
-        void sys_draw(cairo_t *cr);
+        void sys_draw(NVGcontext *vg);
         void sys_draw_rect(
-            cairo_t *cr, unsigned int top, unsigned int bottom,
+            NVGcontext *vg, unsigned int top, unsigned int bottom,
             unsigned int left, unsigned int right);
 
 		bool sys_mouse_move(unsigned int cx, unsigned int cy);
@@ -64,12 +64,6 @@ namespace View {
         virtual void sys_invalidate_rect(const draw_area& area) =0;
 
     private:
-        /**
-         *  Drawing helpers
-         */
-        void begin_drawing(cairo_t *cr);
-        void finish_drawing(cairo_t *cr);
-
         /**
          *  Display controller feature (called by root widget)
          */

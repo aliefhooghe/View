@@ -11,7 +11,7 @@ namespace View {
     class label : public widget {
     public:
         template <typename Ttext>
-        label(float width, float height, Ttext&& str, float font_size = 1.f, bool bold = false)
+        label(float width, float height, Ttext&& str, float font_size = 14.f, bool bold = false)
         : widget{width, height},
             _text{std::forward<Ttext>(str)},
             _bold{bold}, _font_size{font_size},
@@ -22,12 +22,12 @@ namespace View {
         }
 
         template <typename Ttext>
-        label(Ttext&& str, float font_size = 1.f, bool bold = false)
+        label(Ttext&& str, float font_size = 14.f, bool bold = false)
         : widget{1., font_size},
             _text{std::forward<Ttext>(str)},
             _bold{bold}, _font_size{font_size},
             _ha{horizontal_alignment::left},
-            _va{vertical_alignment::top}
+            _va{vertical_alignment::center}
         {
         }
 
@@ -39,14 +39,14 @@ namespace View {
         void set_text(Ttext text) noexcept { _text = text; invalidate(); }
 
         void set_bold(bool bold) noexcept;
-        void set_color(color c) noexcept;
+        void set_color(NVGcolor c) noexcept;
         void set_font_size(float size) noexcept;
 
-        void draw(cairo_t *cr) override;
+        void draw(NVGcontext *vg) override;
     private:
         std::string _text;
         bool _bold;
-        color _color;
+        NVGcolor _color;
         float _font_size;
         const horizontal_alignment _ha;
         const vertical_alignment _va;

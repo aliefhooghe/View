@@ -2,14 +2,15 @@
 #include <cmath>
 
 #include "header.h"
-#include "drawing/cairo_helper.h"
+#include "drawing/shadowed.h"
 
 namespace View {
 
     header::header(
-        std::unique_ptr<widget>&& root,
+        std::unique_ptr<widget>&& root, color_theme::color background,
         float header_size, float border_size)
-    :   widget_wrapper_base<header>{
+    :   _background_color_id{background},
+        widget_wrapper_base<header>{
             std::move(root),
             root->width() + 2.f * border_size,
             root->height() + header_size + 2.f * border_size,
@@ -43,41 +44,43 @@ namespace View {
 
     }
 
-    void header::draw(cairo_t *cr)
+    void header::draw(NVGcontext *vg)
     {
+        const auto rect_radius = _header_size / 3;
+
+        nvgBeginPath(vg);
+        
         // Main Shape
-        rounded_rectangle(cr,
+        nvgRoundedRect(vg,
             _border_size, _border_size,
             _root.get()->width(), _root.get()->height() + _header_size,
-            _header_size / 2.5f);
+            rect_radius);
 
         //  Draw Header
-        set_source(cr, _header_color);
-        cairo_fill_preserve(cr);
+        nvgFillColor(vg, _header_color);
+        nvgFill(vg);
 
         //  Draw Border
-        cairo_set_line_width(cr, 0.2f);
-        cairo_stroke_preserve(cr);
-
-        //  Ensure _root don't draw outsied
-        cairo_clip(cr);
-
-        //  Clip to not draw background on header
-        cairo_rectangle(
-            cr,
-            _border_size, _border_size + _header_size,
-            _root.get()->width(), _root.get()->height());
-        cairo_clip_preserve(cr);
+        nvgStrokeWidth(vg, 3);
+        nvgStrokeColor(vg, _header_color);
+        nvgStroke(vg);
 
         //  Draw background
-        set_source(cr, _background_color);
-        cairo_fill(cr);
+        shadowed_down_rounded_rect(vg, 
+            _border_size, _border_size + _header_size,
+            _root.get()->width(), _root.get()->height(),
+            rect_radius, _background_color);
 
-        //  Draw content
-        widget_wrapper_base<header>::draw(cr);
+        //  Clip to ensure that child only draw on background
+        nvgIntersectScissor(vg, 
+            _border_size, _border_size + _header_size,
+            _root.get()->width(), _root.get()->height());
+
+        //  Draw child
+        widget_wrapper_base<header>::draw(vg);
     }
 
-    void header::draw_rect(cairo_t* cr, const rectangle<>& area)
+    void header::draw_rect(NVGcontext *vg, const rectangle<>& area)
     {
         auto root_area =
             make_rectangle(
@@ -88,17 +91,17 @@ namespace View {
         if (root_area.contains(area))
         {
             //  Draw background on area (Header footer ???)
-            cairo_rectangle(cr, area.left, area.top, area.width(), area.height());
-            set_source(cr, _background_color);
-            cairo_fill(cr);
+            nvgRect(vg, area.left, area.top, area.width(), area.height());
+            nvgFillColor(vg, _background_color);
+            nvgFill(vg);
 
             //  Draw content on area
-            draw_widgets(cr, area);
+            draw_widgets(vg, area);
         }
         else
         {
             //  Redraw Everything : TODO optimize me !!
-            draw(cr);
+            draw(vg);
         }
     }
 
@@ -106,7 +109,7 @@ namespace View {
     {
         widget_wrapper_base<header>::apply_color_theme(theme);
         _header_color = theme.primary;
-        _background_color = theme.surface_dark;
+        _background_color = theme.get(_background_color_id);
     }
 
 }

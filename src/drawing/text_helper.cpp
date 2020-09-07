@@ -2,47 +2,54 @@
 
 namespace View {
 
-    static auto compute_txt_x(float x,float width,float text_width, horizontal_alignment align)
+    static auto compute_txt_x_offset(float width, const float bounds[4], horizontal_alignment align)
     {
+        const auto text_width = bounds[2];// - bounds[0];
         switch (align)
         {
-            case horizontal_alignment::left:    return x;
+            case horizontal_alignment::left:    return 0.f;
             default:
-            case horizontal_alignment::center:  return x + (width - text_width) / 2.f;
-            case horizontal_alignment::right:   return x + width - text_width;
+            case horizontal_alignment::center:  return (width - text_width) / 2.f;
+            case horizontal_alignment::right:   return width - text_width;
+            case horizontal_alignment::none:    return 0.f;
         }
     }
 
-    static auto compute_txt_y(float y,float height,float text_height, vertical_alignment align)
+    static auto compute_txt_y_offset(float height, const float bounds[4], vertical_alignment align)
     {
         switch (align)
         {
-            case vertical_alignment::top:       return y + text_height;
+            case vertical_alignment::top:       return -bounds[1];
             default:
-            case vertical_alignment::center:    return y + height - (height - text_height) / 2.f;
-            case vertical_alignment::bottom:    return y + height;
+            case vertical_alignment::center:    return (height - (bounds[1] + bounds[3])) / 2.f;
+            case vertical_alignment::bottom:    return (height - bounds[3]);
+            case vertical_alignment::none:      return height;
         }
     }
-
 
     void draw_text(
-        cairo_t *cr,
+        NVGcontext *vg,
         float x, float y, float width, float height, float font_size,
         const char *txt,
         bool bold,
         horizontal_alignment ha,
         vertical_alignment va)
     {
-        cairo_text_extents_t te;
+        float bounds[4]; // left, top, right, bottom
 
-        cairo_select_font_face(cr, "sans-serif", CAIRO_FONT_SLANT_NORMAL, bold ? CAIRO_FONT_WEIGHT_BOLD : CAIRO_FONT_WEIGHT_NORMAL);
-        cairo_set_font_size(cr, font_size);
-        cairo_text_extents(cr, txt, &te);
+        //  Set font
+        //nvgFontFaceId(vg, 0);
+        nvgFontSize(vg, static_cast<int>(font_size));
 
-        auto text_x = compute_txt_x(x, width, te.x_advance, ha);
-        auto text_y = compute_txt_y(y, height, te.height, va);
+        //  Compute pos
+        nvgTextBounds(vg, 0, 0, txt, nullptr, bounds);
+        auto text_x_offset = compute_txt_x_offset(width, bounds, ha);
+        auto text_y_offset = compute_txt_y_offset(height, bounds, va);
 
-        cairo_move_to(cr, text_x, text_y);
-        cairo_show_text(cr, txt);
+        //  Draw text
+        nvgText(
+            vg, static_cast<int>(x + text_x_offset),
+            static_cast<int>(y + text_y_offset),
+            txt, nullptr);
     }
 }

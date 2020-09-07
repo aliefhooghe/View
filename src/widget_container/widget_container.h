@@ -122,8 +122,8 @@ namespace View {
         void apply_color_theme(const color_theme& theme) override;
 
     protected:
-        void draw_widgets(cairo_t *cr);
-        void draw_widgets(cairo_t *cr, const rectangle<>& rect);
+        void draw_widgets(NVGcontext *vg);
+        void draw_widgets(NVGcontext *vg, const rectangle<>& rect);
 
         auto focused_widget() const noexcept { return _focused_widget; }
         void reset_focused_widget() noexcept { _focused_widget = nullptr; }
@@ -301,24 +301,33 @@ namespace View {
 	template <typename TDerived, typename TChildren>
     bool widget_container<TDerived, TChildren>::on_mouse_drag_end(const mouse_button button, float x, float y)
     {
-        if (_draging && _focused_widget) {
+        if (_draging) {
             bool used_event = false;
-            const auto x_rel = x - _focused_widget->pos_x();
-            const auto y_rel = y - _focused_widget->pos_y();
 
-            used_event = _focused_widget->get()->on_mouse_drag_end(button, x_rel, y_rel);
-
-            if (!(_focused_widget->get()->contains(x_rel, y_rel))) {
-                used_event |= _focused_widget->get()->on_mouse_exit();
-                _focused_widget = nullptr;
+            if (_focused_widget != nullptr) {
+                const auto x_rel = x - _focused_widget->pos_x();
+                const auto y_rel = y - _focused_widget->pos_y();
+                used_event |= _focused_widget->get()->on_mouse_drag_end(button, x_rel, y_rel);
             }
 
+            auto *child = widget_at(x, y);
+
+            if (child != _focused_widget) {
+                if (child != nullptr)
+                    used_event |= child->get()->on_mouse_enter();
+                if (_focused_widget != nullptr)
+                    used_event |= _focused_widget->get()->on_mouse_exit();
+            }
+
+            _focused_widget = child;
             _draging = false;
             return used_event;
         }
-        else {
+        else
+        {
             return false;
         }
+
     }
 
     template <typename TDerived, typename TChildren>
@@ -342,20 +351,20 @@ namespace View {
     }
 
     template <typename TDerived, typename TChildren>
-    void widget_container<TDerived, TChildren>::draw_widgets(cairo_t *cr)
+    void widget_container<TDerived, TChildren>::draw_widgets(NVGcontext *vg)
     {
-        foreach_holder([cr](auto& holder) {
-            cairo_save(cr);
-            cairo_translate(cr, holder.pos_x(), holder.pos_y());
-            holder->draw(cr);
-            cairo_restore(cr);
+        foreach_holder([vg](auto& holder) {
+            nvgSave(vg);
+            nvgTranslate(vg, holder.pos_x(), holder.pos_y());
+            holder->draw(vg);
+            nvgRestore(vg);
         });
     }
 
     template <typename TDerived, typename TChildren>
-    void widget_container<TDerived, TChildren>::draw_widgets(cairo_t *cr, const rectangle<>& rect)
+    void widget_container<TDerived, TChildren>::draw_widgets(NVGcontext *vg, const rectangle<>& rect)
     {
-        foreach_holder([cr, &rect](auto& holder) {
+        foreach_holder([vg, &rect](auto& holder) {
             const auto child_rect = make_rectangle(
                 holder.pos_y(), holder.pos_y() + holder->height(),
                 holder.pos_x(), holder.pos_x() + holder->width());
@@ -364,11 +373,11 @@ namespace View {
 
             //  Redraw only widget that overlap with rect
             if (rect.intersect(child_rect, drawing_rect)) {
-                cairo_save(cr);
-                cairo_translate(cr, holder.pos_x(), holder.pos_y());
+                nvgSave(vg);
+                nvgTranslate(vg, holder.pos_x(), holder.pos_y());
                 holder.get()->draw_rect(
-                    cr, drawing_rect.translate(-holder.pos_x(), -holder.pos_y()));
-                cairo_restore(cr);
+                    vg, drawing_rect.translate(-holder.pos_x(), -holder.pos_y()));
+                nvgRestore(vg);
             }
         });
     }

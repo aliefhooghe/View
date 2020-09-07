@@ -4,8 +4,8 @@
 #include <cstring>
 
 #include "knob.h"
-#include "drawing/cairo_helper.h"
 #include "drawing/text_helper.h"
+#include "drawing/shadowed.h"
 
 namespace View {
 
@@ -39,7 +39,7 @@ namespace View {
         return true;
     }
 
-    void knob::draw(cairo_t *cr)
+    void knob::draw(NVGcontext *vg)
     {
         constexpr auto theta = 0.5f;
 
@@ -49,41 +49,35 @@ namespace View {
         const auto half = width() / 2.f;
 
         //  External Circle + background
-        circle(cr, half, half, half);
+        shadowed_up_circle(vg, half, half, half, _background, _surface);
 
-        set_source(cr, _background_color);
-        cairo_fill_preserve(cr);
-
-        set_source(cr, hovered() ? _hovered_border_color: _border_color);
-        cairo_set_line_width(cr, 0.2f);
-        cairo_stroke(cr);
 
         //  Light Indicator
         const auto cur_angle = start_angle + _value * delta_angle;
 
-        cairo_arc(cr, half, half, 0.75f * half, start_angle, cur_angle);
-        set_source(cr, _track_color);
-        cairo_set_line_width(cr, 0.5f);
-        cairo_set_line_cap(cr, CAIRO_LINE_CAP_BUTT);
-        cairo_stroke(cr);
+        nvgBeginPath(vg);
+        nvgArc(vg, half, half, 0.75f * half, start_angle, cur_angle, NVG_CW);
+        nvgStrokeColor(vg, _track);
+        nvgStrokeWidth(vg, hovered() ? 6 : 4);
+        nvgStroke(vg);
 
         //  Value text
+        nvgFillColor(vg, _text);
         if (_display_value) {
             char text[5];
-            std::snprintf(text, sizeof(text), "%.2f", _value);
-            set_source(cr, _text_color);
+            std::snprintf(text, sizeof(text), "%.02f", _value);
             draw_text(
-                cr, 0, 0, width(), height(), 1.f, text);
+                vg, half/2, 0, width(), height(), 14.f, text, false, horizontal_alignment::none);
         }
     }
 
     void knob::apply_color_theme(const View::color_theme& theme)
     {
-        _background_color = theme.surface_light;
-        _track_color = theme.secondary;
-        _border_color = theme.surface_light;
-        _hovered_border_color = theme.secondary_light;
-        _text_color = theme.on_surface;
+        _background = theme.surface;
+        _surface = theme.surface_light;
+        _track = theme.secondary_light;
+        _hovered_border = nvgTransRGBA(theme.secondary_light, 48);
+        _text = theme.on_surface;
         invalidate();
     }
 }

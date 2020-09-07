@@ -9,10 +9,10 @@ namespace View {
         _color = theme.on_surface;
     }
 
-    void label::draw(cairo_t *cr)
+    void label::draw(NVGcontext *vg)
     {
-        set_source(cr, _color);
-        draw_text(cr, 0, 0, width(), height(), _font_size, _text.c_str(), _bold, _ha, _va);
+        nvgFillColor(vg, _color);
+        draw_text(vg, 0, 0, width(), height(), _font_size, _text.c_str(), _bold, _ha, _va);
     }
 
     void label::set_bold(bool bold) noexcept
@@ -21,7 +21,7 @@ namespace View {
         invalidate();
     }
 
-    void label::set_color(color c) noexcept
+    void label::set_color(NVGcolor c) noexcept
     {
         _color = c;
         invalidate();

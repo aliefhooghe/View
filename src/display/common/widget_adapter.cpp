@@ -1,6 +1,8 @@
 
 
 #include "widget_adapter.h"
+#include "drawing/text_helper.h"
+#include <iostream>
 
 namespace View {
 
@@ -23,26 +25,25 @@ namespace View {
         _root.resize(widget_width, widget_height);
     }
 
-    void widget_adapter::sys_draw(cairo_t *cr)
+    void widget_adapter::sys_draw(NVGcontext *vg)
     {
-        begin_drawing(cr);
+        nvgSave(vg);
 
-        cairo_scale(
-            cr,
+        nvgScale(vg,
             _pixel_per_unit,
             _pixel_per_unit);
-        _root.draw(cr);
 
-        finish_drawing(cr);
+        _root.draw(vg);
+        
+        nvgRestore(vg);
     }
 
-    void widget_adapter::sys_draw_rect(cairo_t *cr, unsigned int top, unsigned int bottom, unsigned int left, unsigned int right)
+    void widget_adapter::sys_draw_rect(NVGcontext *vg, unsigned int top, unsigned int bottom, unsigned int left, unsigned int right)
     {
-        begin_drawing(cr);
+        nvgSave(vg);
 
         //  Scale to widget coordinate
-        cairo_scale(
-            cr,
+        nvgScale(vg,
             _pixel_per_unit,
             _pixel_per_unit);
 
@@ -53,15 +54,10 @@ namespace View {
                 static_cast<float>(bottom) / _pixel_per_unit,
                 static_cast<float>(left) / _pixel_per_unit,
                 static_cast<float>(right) / _pixel_per_unit);
+                
+        _root.draw_rect(vg, redraw_rect);
 
-        // cairo_rectangle(cr,
-        //     redraw_rect.left, redraw_rect.top,
-        //     redraw_rect.width(), redraw_rect.height());
-        // cairo_clip(cr);
-
-        _root.draw_rect(cr, redraw_rect);
-
-        finish_drawing(cr);
+        nvgRestore(vg);
     }
 
 	bool widget_adapter::sys_mouse_move(unsigned int cx, unsigned int cy)
@@ -150,19 +146,6 @@ namespace View {
     bool widget_adapter::sys_text_input(std::string_view txt)
     {
         return _root.on_text_input(txt);
-    }
-
-    void widget_adapter::begin_drawing(cairo_t *cr)
-    {
-        cairo_save(cr);
-        cairo_push_group(cr);
-    }
-
-    void widget_adapter::finish_drawing(cairo_t *cr)
-    {
-        cairo_pop_group_to_source(cr);
-        cairo_paint(cr);
-        cairo_restore(cr);
     }
 
     void widget_adapter::invalidate_rect(const rectangle<>& rect)

@@ -1,7 +1,6 @@
 
 #include "push_button.h"
-#include "drawing/cairo_helper.h"
-#include <iostream>
+#include "drawing/shadowed.h"
 
 namespace View {
 
@@ -31,36 +30,31 @@ namespace View {
 
     bool push_button::on_mouse_drag_cancel()
     {
-        std::cout << "Push button drag cancel" << std::endl;
         _update_pushed(false);
         return true;
     }
 
-    void push_button::draw(cairo_t *cr)
+    void push_button::draw(NVGcontext *vg)
     {
-        rounded_rectangle(cr, 0, 0, width(), height(), 0.3f);
-
-        //  Draw background
-        set_source(cr, _background_color);
-
-        if (hovered()) {
-            cairo_fill_preserve(cr);
-
-            //  Draw border
-            set_source(cr, _hovered_border_color);
-            cairo_set_line_width(cr, _pushed ? 0.3f : 0.2f);
-            cairo_stroke(cr);
+        //  Background
+        if (_pushed) {
+            shadowed_down_rounded_rect(vg, 0, 0, width(), height(), 3.f, _surface);
         }
         else {
-            cairo_fill(cr);
+            shadowed_up_rounded_rect(vg, 0, 0, width(), height(), 3.f, _background, _surface);
+        }
+
+        if (hovered()) {
+            nvgFillColor(vg, _hovered_border);
+            nvgFill(vg);
         }
     }
 
     void push_button::apply_color_theme(const View::color_theme& theme)
     {
-        _border_color = theme.on_surface;
-        _hovered_border_color = theme.secondary_light;
-        _background_color = theme.surface_light;
+        _hovered_border = nvgTransRGBA(theme.secondary_light, 48);
+        _background = theme.surface;
+        _surface = theme.surface_light;
         invalidate();
     }
 

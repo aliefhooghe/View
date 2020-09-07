@@ -1,20 +1,20 @@
 #ifndef VIEW8TEXT_HELPER_H_
 #define VIEW8TEXT_HELPER_H_
 
-#include "cairo_helper.h"
+#include <nanovg.h>
 
 namespace View {
 
     enum class horizontal_alignment {
-        left, center, right
+        left, center, right, none
     };
 
     enum class vertical_alignment {
-        top, center, bottom
+        top, center, bottom, none
     };
 
     void draw_text(
-        cairo_t *cr,
+        NVGcontext *,
         float x, float y, float width, float height, float font_size,
         const char *txt,
         bool bold = false,
