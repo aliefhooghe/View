@@ -61,6 +61,10 @@ set(VIEW_COMMON_SRC
     helpers/filesystem_directory_model.h
     helpers/filesystem_directory_model.cpp
 
+    internal_fonts/internal_fonts_data.cpp
+    internal_fonts/internal_fonts.cpp
+    internal_fonts/internal_fonts.h
+
     widget/event.h
     widget/color_theme.h
     widget/widget.cpp

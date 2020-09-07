@@ -4,7 +4,6 @@
 #include <array>
 #include <chrono>
 #include <iostream>
-#include <poll.h>
 
 #include <X11/X.h>
 #include <X11/Xlib.h>
@@ -16,6 +15,7 @@
 #include "display/common/display_controler.h"
 #include "display/common/widget_adapter.h"
 #include "x11_display.h"
+#include "internal_fonts/internal_fonts.h"
 
 #include <GL/glew.h>
 #include <GL/gl.h>
@@ -153,16 +153,8 @@ namespace View {
         //  NanoVG
         _vg = nvgCreateGL2(NVG_ANTIALIAS | NVG_STENCIL_STROKES | NVG_DEBUG);
 
-        //  Load fonts
-        const auto font_id = nvgCreateFontAtIndex(_vg, "regular", "./regular.ttf", 0);
-
-        std::cout << font_id << std::endl;
-
-        if (font_id < 0)
-        {
-            throw std::runtime_error("Cannot load font file");
-        }
-
+        //  Intitialize internals fonts
+        const auto font_id = create_roboto_regular_font(_vg);
         nvgFontFaceId(_vg, font_id);
 
         //  Adapt windows content to the actual size
@@ -190,13 +182,6 @@ namespace View {
 
     void x11_window::process(const bool& running)
     {
-        int event_socket = ConnectionNumber(_display);
-        pollfd fds = {
-            .fd = event_socket,
-            .events = POLLIN,
-            .revents = 0
-        };
-
         constexpr auto frame_interval = std::chrono::duration<float>{1.f/60.f};
         std::optional<draw_area> redraw_area = std::nullopt;
 
