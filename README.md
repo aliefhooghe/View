@@ -1,4 +1,4 @@
 # View
 
-A simple cairo based UI widget C++ library.
+A simple NanoVG based UI widget C++ library.
 
