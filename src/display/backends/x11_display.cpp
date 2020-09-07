@@ -204,36 +204,29 @@ namespace View {
 
         while (running)
         {
-            const auto timeout_ms = redraw_area ? 5 : 1000; // 1/100 sec - 1 sec
-            const auto rc = poll(&fds, 1, timeout_ms);
+            //  Sleep reduce drastically cpu usage of active polling
+            std::this_thread::sleep_for(std::chrono::microseconds(100));
 
-            if (rc < 0) {
-                //  poll error, close window
-                return;
+            //  There are some event to be processed
+            while (XPending(_display)) {
+                XEvent event;
+                XNextEvent(_display, &event);
+                if (_process_event(event, redraw_area))
+                    return;
             }
-            else if (rc != 0) {
-                //  There are some event to be processed
-                while (XPending(_display)) {
-                    XEvent event;
-                    XNextEvent(_display, &event);
-                    if (_process_event(event, redraw_area))
-                        return;
-                }
 
-                //  Redraw if something need to be redrawn and a sufficient
-                //  amount of time have elapsed since last redraw
-                const auto now = std::chrono::steady_clock::now();
-                if (redraw_area) {
-                    const auto current_interval = now - last_draw;
+            //  Redraw if something need to be redrawn and a sufficient
+            //  amount of time have elapsed since last redraw
+            const auto now = std::chrono::steady_clock::now();
+            if (redraw_area) {
+                const auto current_interval = now - last_draw;
 
-                    if (current_interval >= frame_interval) {
-                        _redraw_area(redraw_area.value());
-                        last_draw = now;
-                        redraw_area = std::nullopt;
-                    }
+                if (current_interval >= frame_interval) {
+                    _redraw_area(redraw_area.value());
+                    last_draw = now;
+                    redraw_area = std::nullopt;
                 }
             }
-            // else : poll timeout
         }
     }
 
