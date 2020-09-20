@@ -49,7 +49,7 @@ namespace View {
                 return storage::find(key);
             }
 
-            auto& operator[](const std::string& key)
+            const auto& operator[](const std::string& key)
             {
                 _scan();
                 return storage::operator[](key);
