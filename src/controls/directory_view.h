@@ -58,11 +58,6 @@ namespace View {
             :   ref{i}, level{l}, caption{std::move(c)}, type{t}
             {}
 
-            /**
-             *  cell_type is needed since the item* pointer is not supposed to be dereferenced
-             *  and it is just used as key
-             **/
-
             const cell_type type;
             const unsigned int level;
             const std::string caption;
@@ -79,6 +74,7 @@ namespace View {
 
     public:
         using value_select_callback = std::function<void(const Value&)>;
+        using directory_select_callback = std::function<void(const Model&)>;
 
         directory_view(model& m, float width, float height, float cell_height, float font_size);
         ~directory_view() override = default;
@@ -89,6 +85,7 @@ namespace View {
         void update();
         void close_all_directories();
         void set_value_select_callback(value_select_callback);
+        void set_directory_select_callback(directory_select_callback);
 
         void apply_color_theme(const color_theme&) override;
 
@@ -104,8 +101,11 @@ namespace View {
         //  update helper
         void add_cells(const Key&, item&, unsigned int level = 0u);
 
-        void on_cell_click(const unsigned int idx);
+        void on_cell_click(const unsigned int idx, float x);
         bool is_open(const cell& c) const;
+
+        //  geometry helper
+        auto cell_width_offset(const cell& c) { return c.level * _cell_height * 0.5f;  } 
 
         std::set<const item*> _open_dirs{};
 
@@ -116,8 +116,9 @@ namespace View {
         std::vector<cell> _cells{};
         unsigned int _display_cell_begin{0u};
         int _hoverred_cell{-1};
-        const item* _selected_value{nullptr};
+        const item* _selected_item{nullptr};
         value_select_callback _value_select_callback{nullptr};
+        directory_select_callback _directory_select_callback{nullptr};
 
         const float _cell_height;
         const float _font_size;
@@ -175,10 +176,10 @@ namespace View {
             const cell& c = _cells[idx];
 
             //  Draw Cell Background
-            const auto width_offset = c.level * _cell_height * 0.5f;
+            const auto width_offset = cell_width_offset(c);
             const auto height_offset = static_cast<float>(i) * _cell_height;
             const auto content_color =
-                    _selected_value == c.ref ? _selected_color : (
+                    _selected_item == c.ref ? _selected_color : (
                         hovered() && idx == _hoverred_cell ? _hoverred_color : _default_color);
 
             nvgFillColor(vg, content_color);
@@ -224,7 +225,7 @@ namespace View {
     void directory_view<Key, Value, Model>::update()
     {
         _open_dirs.clear();
-        _selected_value = nullptr;
+        _selected_item = nullptr;
         _model.update();
         unfold();
     }
@@ -240,6 +241,12 @@ namespace View {
     void directory_view<Key, Value, Model>::set_value_select_callback(value_select_callback callback)
     {
         _value_select_callback = callback;
+    }
+
+    template<typename Key, typename Value, typename Model>
+    void directory_view<Key, Value, Model>::set_directory_select_callback(directory_select_callback callback)
+    {
+        _directory_select_callback = callback;
     }
 
     template<typename Key, typename Value, typename Model>
@@ -289,7 +296,7 @@ namespace View {
     {
         unsigned int idx;
         if (button == mouse_button::left && cell_at(y, idx)) {
-            on_cell_click(idx);
+            on_cell_click(idx, x);
             return true;
         }
         else {
@@ -315,27 +322,38 @@ namespace View {
     }
 
     template<typename Key, typename Value, typename Model>
-    void directory_view<Key, Value, Model>::on_cell_click(const unsigned int idx)
+    void directory_view<Key, Value, Model>::on_cell_click(const unsigned int idx, float x)
     {
         auto& c = _cells[idx];
 
         if (c.type == cell_type::directory) {
-            //  Swap open state
-            if (is_open(c))
-                _open_dirs.erase(c.ref);
-            else
-                _open_dirs.insert(c.ref);
 
-            unfold();
+            if (!_directory_select_callback || (x < cell_width_offset(c) + _cell_height)) {    
+                //  Swap open state
+                if (is_open(c))
+                    _open_dirs.erase(c.ref);
+                else
+                    _open_dirs.insert(c.ref);
+
+                unfold();
+            }
+            else {
+                if (_selected_item != c.ref) {
+                    if (_directory_select_callback)
+                        _directory_select_callback(std::get<Model>(*c.ref));
+                }
+            }
+
         }
         else {
-            if (_selected_value != c.ref) {
+            if (_selected_item != c.ref) {
                 if (_value_select_callback)
                     _value_select_callback(std::get<Value>(*c.ref));
-                _selected_value = c.ref;
                 invalidate();
             }
         }
+
+        _selected_item = c.ref;
     }
 
     template<typename Key, typename Value, typename Model>

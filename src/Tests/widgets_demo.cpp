@@ -12,6 +12,10 @@ int main()
     filesystem_directory_model model{"/home/aliefhooghe"};
 
     auto dir_view = make_directory_view(model, 280, 280);
+
+    dir_view->set_value_select_callback([](const auto& file) { std::cout << "Select file " << file << std::endl; });
+    dir_view->set_directory_select_callback([](const auto& dir) { std::cout << dir.path() << std::endl; });
+
     auto update_button = std::make_unique<text_push_button>("Update");
     update_button->set_callback([dv = dir_view.get()]() { dv->update(); });
 
