@@ -154,8 +154,8 @@ namespace View {
         _vg = nvgCreateGL2(NVG_ANTIALIAS | NVG_STENCIL_STROKES | NVG_DEBUG);
 
         //  Intitialize internals fonts
-        const auto font_id = create_roboto_regular_font(_vg);
-        nvgFontFaceId(_vg, font_id);
+        create_roboto_regular_font(_vg);
+        create_roboto_bold_font(_vg);
 
         //  Adapt windows content to the actual size
         XWindowAttributes win_attrib;

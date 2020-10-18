@@ -3,7 +3,6 @@
 
 #include <thread>
 #include <memory>
-#include <X11/X.h>
 
 #include "widget/widget.h"
 
@@ -18,6 +17,9 @@ namespace View {
     class x11_display {
 
     public:
+        //  Alias for the" X11 type
+        using Window = unsigned long;
+
         x11_display(widget& root, float pixel_per_unit);
         virtual ~x11_display() = default;
 

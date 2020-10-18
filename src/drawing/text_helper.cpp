@@ -38,7 +38,7 @@ namespace View {
         float bounds[4]; // left, top, right, bottom
 
         //  Set font
-        //nvgFontFaceId(vg, 0);
+        nvgFontFaceId(vg, bold ? 1 : 0);
         nvgFontSize(vg, static_cast<int>(font_size));
 
         //  Compute pos
