@@ -30,6 +30,9 @@ namespace View {
         /** Size constraints **/
         auto& width_constraint() const noexcept  { return _width_constraint; }
         auto& height_constraint() const noexcept { return _height_constraint; }
+        bool constraint_match_size(float w, float h) const noexcept { return constraint_match_width(w) && constraint_match_height(h); }
+        bool constraint_match_width(float w) const noexcept { return _width_constraint.contains(w); }
+        bool constraint_match_height(float h) const noexcept { return _height_constraint.contains(h); }
         void freeze_size();
 
         virtual bool resize(float width, float height);
@@ -43,10 +46,10 @@ namespace View {
         virtual bool on_key_down(const keycode key)     { return false; }
         virtual bool on_text_input(std::string_view)    { return false; }
 
-        virtual bool on_mouse_enter()                   { return false ; }
-		virtual bool on_mouse_exit()                    { return false ; }
-		virtual bool on_mouse_move(float x, float y)    { return false ; }
-		virtual bool on_mouse_wheel(float distance)     { return false ; }
+        virtual bool on_mouse_enter()                   { return false; }
+		virtual bool on_mouse_exit()                    { return false; }
+		virtual bool on_mouse_move(float x, float y)    { return false; }
+		virtual bool on_mouse_wheel(float distance)     { return false; }
 
 		virtual bool on_mouse_button_down(const mouse_button button, float x, float y)  { return false; }
 		virtual bool on_mouse_button_up(const mouse_button button, float x, float y)    { return false; }
