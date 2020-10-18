@@ -27,10 +27,12 @@ namespace View {
             _widget->_display_ctl = this;
         }
 
+        display_controler(const display_controler& other) = delete;
         display_controler(display_controler&& other) noexcept
         {
             _widget = other._widget;
-            _widget->_display_ctl = this;
+            if (_widget)
+                _widget->_display_ctl = this;
             other._widget = nullptr;
         }
 
@@ -57,10 +59,11 @@ namespace View {
          **/
         virtual void invalidate_widget()
         {
-            invalidate_rect(
-                make_rectangle(
-                    0u, _widget->height(),
-                    0u, _widget->width()));
+            if (_widget != nullptr)
+                invalidate_rect(
+                    make_rectangle(
+                        0u, _widget->height(),
+                        0u, _widget->width()));
         }
 
         /**
@@ -72,8 +75,8 @@ namespace View {
         /**
          *  \brief Allow the widget top know its position
          **/
-        virtual float widget_pos_x() =0;
-        virtual float widget_pos_y() =0;
+        virtual float widget_pos_x() { return 0.f; };
+        virtual float widget_pos_y() { return 0.f; };
     private:
         void _detach()
         {
