@@ -46,7 +46,7 @@ namespace View {
             /**
              *  Removing an element from _childrens will invalidate any holder pointer or reference
              **/
-            auto focused_widget =implementation::focused_widget();
+            auto focused_widget = implementation::focused_widget();
             if (focused_widget != nullptr && focused_widget->get() == children)
                 implementation::reset_focused_widget();
 
