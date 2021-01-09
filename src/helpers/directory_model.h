@@ -4,7 +4,7 @@
 #include <variant>
 #include <memory>
 #include <map>
-
+#include <functional>
 #include <iostream>
 
 namespace View {
@@ -36,20 +36,9 @@ namespace View {
         item& operator[](const Key& k) { return self()[k]; }
         const item& operator[](const Key& k) const { return self()[k]; }
 
-        Derived& add_directory(const Key& k) { return self().add_directory(k); }
-        Derived& add_directory(const Key& k, Derived&& dir) { return self().add_directory(k, std::move(dir)); }
-
-        void add_value(const Key& k, Value&& v) { return self().add_value(k, std::move(v)); }
-
         bool is_directory(const Key& k) {   return std::holds_alternative<Derived>(self()[k]); }
         bool is_value(const Key& k) { return !is_directory(k); }
 
-        void update()
-        {
-            self().update();
-        }
-
-    private:
         auto& self()
         {
             return *static_cast<Derived*>(this);
@@ -81,6 +70,7 @@ namespace View {
         item& operator[](const Key& k) { return _childrens[k]; }
         const item& operator[](const Key& k) const { return _childrens[k]; }
 
+    protected:
         Derived& add_directory(const Key& k)
         {
             auto it = _childrens.find(k);
@@ -119,6 +109,11 @@ namespace View {
             _childrens.clear();
         }
 
+        void erase(const Key& k)
+        {
+            _childrens.erase(k);
+        }
+
     private:
         std::map<Key, item, Compare> _childrens{};
     };
@@ -126,6 +121,12 @@ namespace View {
 
     template <typename Key, typename Value, typename Compare = std::less<Key>>
     class storage_directory_model : public abstract_storage_directory_model<Key, Value, Compare, storage_directory_model<Key, Value, Compare>> {
+        using implem = abstract_storage_directory_model<Key, Value, Compare, storage_directory_model<Key, Value, Compare>>;
+    public:
+        using implem::add_directory;
+        using implem::add_value;
+        using implem::clear;
+        using implem::erase;
     };
 
 }

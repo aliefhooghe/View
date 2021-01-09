@@ -22,7 +22,10 @@ namespace View {
             : _root{root}
             {}
 
-            void update();
+            /**
+             * \brief sync the with the filesystem
+             */
+            void sync();
 
             //  directory model interface
             auto size()
@@ -55,6 +58,7 @@ namespace View {
                 return storage::operator[](key);
             }
 
+            const auto& path() const noexcept { return _root; }
 
         private:
             void _scan();

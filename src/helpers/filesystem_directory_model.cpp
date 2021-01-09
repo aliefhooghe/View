@@ -3,7 +3,7 @@
 
 namespace View {
 
-    void filesystem_directory_model::update()
+    void filesystem_directory_model::sync()
     {
         clear();
         _scanned = false;

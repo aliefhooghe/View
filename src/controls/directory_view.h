@@ -54,14 +54,14 @@ namespace View {
 
         struct cell {
 
-            cell(const item *i, const unsigned int l, std::string&& c, const cell_type t)
+            cell(item *i, const unsigned int l, std::string&& c, const cell_type t)
             :   ref{i}, level{l}, caption{std::move(c)}, type{t}
             {}
 
             const cell_type type;
             const unsigned int level;
             const std::string caption;
-            const item* const ref;
+            item* const ref;
         };
 
         auto caption_by_key(const Key& x)
@@ -74,10 +74,10 @@ namespace View {
 
     public:
         using value_select_callback = std::function<void(const Value&)>;
-        using directory_select_callback = std::function<void(const Model&)>;
+        using directory_select_callback = std::function<void(Model&)>;
 
         directory_view(model& m, float width, float height, float cell_height, float font_size);
-        ~directory_view() override = default;
+        ~directory_view() override;
 
         void draw(NVGcontext *vg) override;
         // todo : void draw_rect(cairo_t *cr, const rectangle<>& area) override;
@@ -93,6 +93,9 @@ namespace View {
         bool on_mouse_move(float x, float y) override;
 
         bool on_mouse_button_up(const mouse_button button, float x, float y) override;
+
+        Model& data_model() noexcept { return _model.self(); }
+        const Model& data_model() const noexcept { return _model.self(); }
 
     private:
         void unfold();
@@ -161,6 +164,11 @@ namespace View {
     }
 
     template<typename Key, typename Value, typename Model>
+    directory_view<Key, Value, Model>::~directory_view()
+    {
+    }
+
+    template<typename Key, typename Value, typename Model>
     void directory_view<Key, Value, Model>::draw(NVGcontext *vg)
     {
         //  The max number of cell that can fit in widget rectangle
@@ -226,7 +234,6 @@ namespace View {
     {
         _open_dirs.clear();
         _selected_item = nullptr;
-        _model.update();
         unfold();
     }
 
