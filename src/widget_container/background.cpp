@@ -12,9 +12,7 @@ namespace View {
 
     bool background::resize(float width, float height)
     {
-        if (width_constraint().contains(width) &&
-            height_constraint().contains(height) &&
-            _root->resize(width, height))
+        if (_root->resize(width, height))
         {
             widget_wrapper_base<background>::resize(width, height);
             return true;
