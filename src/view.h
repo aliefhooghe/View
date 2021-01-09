@@ -5,6 +5,7 @@
 #include "display/implementations/x11_application_display.h"
 #include "display/implementations/x11_vst2_display.h"
 #include "widget/widget.h"
+#include "widget/widget_proxy.h"
 
 //  Widget Container
 #include "widget_container/panel.h"

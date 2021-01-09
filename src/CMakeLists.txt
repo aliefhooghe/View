@@ -69,6 +69,7 @@ set(VIEW_COMMON_SRC
     widget/color_theme.h
     widget/widget.cpp
     widget/widget.h
+    widget/widget_proxy.h
     widget/rectangle.h
     widget/size_constraint.h
     widget/orientation.h

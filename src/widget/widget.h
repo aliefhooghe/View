@@ -82,6 +82,8 @@ namespace View {
             _height_constraint = height;
         }
 
+        display_controler *display_ctl() const noexcept { return _display_ctl; }
+
     private:
         display_controler *_display_ctl{nullptr};
         float _width;
