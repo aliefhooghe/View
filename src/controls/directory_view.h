@@ -232,9 +232,17 @@ namespace View {
     template<typename Key, typename Value, typename Model>
     void directory_view<Key, Value, Model>::update()
     {
-        _open_dirs.clear();
         _selected_item = nullptr;
         unfold();
+
+        // Clean open dir set : keep only item that still exist
+        std::set<const item*> new_open_dirs{};
+        for (auto& c : _cells) {
+            if (is_open(c)) {
+                new_open_dirs.insert(c.ref);
+            }
+        }
+        _open_dirs = std::move(new_open_dirs);
     }
 
     template<typename Key, typename Value, typename Model>
