@@ -98,6 +98,8 @@ target_link_libraries(View PUBLIC nanovg)
 ##  X11 Backend
 if (VIEW_X11_BACKEND)
     find_package(X11 REQUIRED)
+    find_package(OpenGL REQUIRED)
+    find_package(GLEW REQUIRED)
 
     target_sources(View PRIVATE
         display/backends/x11_display.cpp
@@ -114,8 +116,9 @@ if (VIEW_X11_BACKEND)
 
 	target_link_libraries(View PRIVATE
 		${X11_LIBRARIES}
-		GL GLU GLEW
-		# stdc++fs			# filesystem
+		OpenGL::GL
+        GLEW::GLEW
+		stdc++fs			# filesystem
         pthread
 	)
 endif()
