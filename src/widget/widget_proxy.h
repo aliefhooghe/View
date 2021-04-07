@@ -27,8 +27,10 @@ namespace View {
         {
             _children = w;
 
-            if (auto sptr = w.lock())
+            if (auto sptr = w.lock()) {
+                sptr->resize(width(), height());
                 display_controler::set_widget(*sptr);
+            }
 
             invalidate();
         }
