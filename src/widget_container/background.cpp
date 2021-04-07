@@ -36,9 +36,8 @@ namespace View {
 
     void background::draw_rect(NVGcontext *vg, const rectangle<>& area)
     {
-        //  Draw background on area (Header footer ???)
         nvgBeginPath(vg);
-        nvgRect(vg, area.left, area.top, area.width(), area.height());
+        nvgRect(vg, 0, 0, width(), height());
         nvgFillColor(vg, _background_color);
         nvgFill(vg);
 

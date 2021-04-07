@@ -5,15 +5,37 @@ namespace View {
     map_wrapper_widget_holder::map_wrapper_widget_holder(
             map_wrapper& parent, float x, float y,
             std::unique_ptr<widget>&& children)
-    :   widget_holder<>{parent, x, y, std::move(children)},
+    :   widget_holder<>{parent, 0.f, 0.f, std::move(children)},
         _parent{&parent}
     {
+        (void)x, (void)y;
     }
 
     void map_wrapper_widget_holder::invalidate_rect(const rectangle<>& rect)
     {
+        /**
+         *
+         * Problème :
+         *  - L'enfant vas demander de redessiner sa zone uniquement, qui peut carrement ne plus être visible
+         *
+         * Quick fix :
+         *  - Redessiner toute la map
+         *
+         * A faire :
+         *  - Compliqué car
+         *
+         * Solution ?
+         *      Prevoir une zone d'edition enorme ?
+         *      Comment gerer correctmenent le redimensionement
+         * Bref : rework la map
+         *
+         */
         /** @todo optimize : Redraw rect if it overlap view ! **/
-        _parent->invalidate_rect(rect.translate(_pos_x - _parent->_origin_x, _pos_y - _parent->_origin_y));
+        // std::cout << "map_wrapper_widget_holder::invalidate_rect : map origin = " << _parent->_origin_x << ", " << _parent->_origin_y << std::endl;
+        // std::cout << "map_wrapper_widget_holder::invalidate_rect : " << rect << " => " << rect.translate(_pos_x - _parent->_origin_x, _pos_y - _parent->_origin_y) << std::endl;
+        // _parent->invalidate_rect(rect.translate(_pos_x - _parent->_origin_x, _pos_y - _parent->_origin_y));
+
+        _parent->invalidate();
     }
 
     void map_wrapper_widget_holder::invalidate_widget()
