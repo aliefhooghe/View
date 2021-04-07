@@ -33,7 +33,7 @@ namespace View {
         return true;
     }
 
-    bool knob::on_mouse_wheel(float distance)
+    bool knob::on_mouse_wheel(float, float, float distance)
     {
         set_value(_value + 0.01f * distance);
         return true;

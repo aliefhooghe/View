@@ -89,7 +89,7 @@ namespace View {
 
         void apply_color_theme(const color_theme&) override;
 
-        bool on_mouse_wheel(float distance) override ;
+        bool on_mouse_wheel(float x, float y, float distance) override ;
         bool on_mouse_move(float x, float y) override;
 
         bool on_mouse_button_up(const mouse_button button, float x, float y) override;
@@ -273,7 +273,7 @@ namespace View {
     }
 
     template<typename Key, typename Value, typename Model>
-    bool directory_view<Key, Value, Model>::on_mouse_wheel(float distance)
+    bool directory_view<Key, Value, Model>::on_mouse_wheel(float, float, float distance)
     {
         if (_cells.size() > 0) {
             _display_cell_begin = std::clamp(

@@ -34,7 +34,7 @@ namespace View {
             _pixel_per_unit);
 
         _root.draw(vg);
-        
+
         nvgRestore(vg);
     }
 
@@ -54,7 +54,7 @@ namespace View {
                 static_cast<float>(bottom) / _pixel_per_unit,
                 static_cast<float>(left) / _pixel_per_unit,
                 static_cast<float>(right) / _pixel_per_unit);
-                
+
         _root.draw_rect(vg, redraw_rect);
 
         nvgRestore(vg);
@@ -124,7 +124,7 @@ namespace View {
 
 	bool widget_adapter::sys_mouse_wheel(const float distance)
     {
-        return _root.on_mouse_wheel(distance);
+        return _root.on_mouse_wheel(_cursor_fx, _cursor_fy, distance);
     }
 
 	bool widget_adapter::sys_mouse_dbl_click(void)

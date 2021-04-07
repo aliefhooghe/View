@@ -32,7 +32,7 @@ namespace View {
             float width, float height,
             size_constraint width_constrain, size_constraint height_constrain);
 
-        void recenter() noexcept;
+        void reset_view() noexcept;
 
         //  Events with coordinate
 		bool on_mouse_move(float x, float y) override;
@@ -42,6 +42,7 @@ namespace View {
 		bool on_mouse_drag(const mouse_button button, float x, float y, float dx, float dy) override;
 		bool on_mouse_drag_start(const mouse_button button, float x, float y) override;
 		bool on_mouse_drag_end(const mouse_button button, float x, float y) override;
+        bool on_mouse_wheel(float x, float y, float distance) override;
 
         void draw(NVGcontext *) override;
         void draw_rect(NVGcontext* vg, const rectangle<>& area) override { draw(vg); }
@@ -51,8 +52,8 @@ namespace View {
         void _translate_origin(float dx, float dy) noexcept;
         void _set_origin(float x, float y) noexcept;
 
-        float _x_to_content(float x) const noexcept { return x + _origin_x; }
-        float _y_to_content(float y) const noexcept { return y + _origin_y; }
+        float _x_to_content(float x) const noexcept { return (x + _origin_x) / _scale; }
+        float _y_to_content(float y) const noexcept { return (y + _origin_y) / _scale; }
 
     private:
         float _origin_x{0.f};

@@ -110,7 +110,7 @@ namespace View {
         bool on_mouse_enter() override;
 		bool on_mouse_exit() override;
 		bool on_mouse_move(float x, float y) override;
-		bool on_mouse_wheel(float distance) override;
+		bool on_mouse_wheel(float x, float y, float distance) override;
 		bool on_mouse_button_down(const mouse_button button, float x, float y) override;
 		bool on_mouse_button_up(const mouse_button button, float x, float y) override;
 		bool on_mouse_dbl_click(float x, float y) override;
@@ -225,10 +225,10 @@ namespace View {
     }
 
     template <typename TDerived, typename TChildren>
-    bool widget_container<TDerived, TChildren>::on_mouse_wheel(float distance)
+    bool widget_container<TDerived, TChildren>::on_mouse_wheel(float x, float y, float distance)
     {
         if (_focused_widget)
-            return _focused_widget->get()->on_mouse_wheel(distance);
+            return _focused_widget->get()->on_mouse_wheel(x, y, distance);
         else
             return false;
     }

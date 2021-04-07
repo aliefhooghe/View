@@ -39,7 +39,7 @@ namespace View {
 
         //  Set font
         nvgFontFaceId(vg, bold ? 1 : 0);
-        nvgFontSize(vg, static_cast<int>(font_size));
+        nvgFontSize(vg, font_size);
 
         //  Compute pos
         nvgTextBounds(vg, 0, 0, txt, nullptr, bounds);
@@ -47,9 +47,9 @@ namespace View {
         auto text_y_offset = compute_txt_y_offset(height, bounds, va);
 
         //  Draw text
-        nvgText(
-            vg, static_cast<int>(x + text_x_offset),
-            static_cast<int>(y + text_y_offset),
+        nvgText(vg,
+            x + text_x_offset,
+            y + text_y_offset,
             txt, nullptr);
     }
 }

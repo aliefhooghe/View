@@ -1,3 +1,4 @@
+#include <cmath>
 #include "map_wrapper.h"
 
 namespace View {
@@ -61,9 +62,11 @@ namespace View {
     :   widget_wrapper_base{std::move(root), width, height, width_constrain, height_constrain}
     {}
 
-    void map_wrapper::recenter() noexcept
+    void map_wrapper::reset_view() noexcept
     {
         _set_origin(0.f, 0.f);
+        _scale = 1.f;
+        invalidate();
     }
 
 	bool map_wrapper::on_mouse_move(float x, float y)
@@ -88,7 +91,7 @@ namespace View {
 
 	bool map_wrapper::on_mouse_drag(const mouse_button button, float x, float y, float dx, float dy)
     {
-        if (!widget_wrapper_base::on_mouse_drag(button, _x_to_content(x), _y_to_content(y), dx, dy)) {
+        if (!widget_wrapper_base::on_mouse_drag(button, _x_to_content(x), _y_to_content(y), dx / _scale, dy / _scale)) {
             _translate_origin(-dx, -dy);
             invalidate();
         }
@@ -114,8 +117,24 @@ namespace View {
         //  Translate and draw
         nvgSave(vg);
         nvgTranslate(vg, -_origin_x, -_origin_y);
+        nvgScale(vg, _scale, _scale);
         widget_wrapper_base::draw(vg);
         nvgRestore(vg);
+    }
+
+    bool map_wrapper::on_mouse_wheel(float x, float y, float distance)
+    {
+        if (!widget_wrapper_base::on_mouse_wheel(_x_to_content(x), _y_to_content(y), distance)) {
+            const auto factor = std::pow(1.0625f, distance);
+
+            _scale *= factor;
+            _origin_x = factor * (_origin_x + x) - x;
+            _origin_y = factor * (_origin_y + y) - y;
+
+            invalidate();
+        }
+
+        return true;
     }
 
     void map_wrapper::_translate_origin(float dx, float dy) noexcept

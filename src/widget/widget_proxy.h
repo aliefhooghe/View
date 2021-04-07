@@ -114,10 +114,10 @@ namespace View {
                 return false;
         }
 
-        bool on_mouse_wheel(float distance)  override
+        bool on_mouse_wheel(float x, float y, float distance)  override
         {
             if (auto sptr = _children.lock())
-                return sptr->on_mouse_wheel(distance);
+                return sptr->on_mouse_wheel(x, y, distance);
             else
                 return false;
         }

@@ -20,7 +20,7 @@ namespace View {
         float get_value() const noexcept { return _value; }
 
         bool on_mouse_drag(mouse_button, float, float, float, float) override;
-        bool on_mouse_wheel(float) override;
+        bool on_mouse_wheel(float, float, float) override;
         void draw(NVGcontext*) override;
 
         void apply_color_theme(const color_theme& theme) override;
