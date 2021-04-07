@@ -182,7 +182,7 @@ namespace View {
 
     void x11_window::process(const bool& running)
     {
-        constexpr auto frame_interval = std::chrono::duration<float>{1.f/60.f};
+        constexpr auto frame_interval = std::chrono::duration<float>{1.f/120.f};
         std::optional<draw_area> redraw_area = std::nullopt;
 
         auto last_draw = std::chrono::steady_clock::now();
@@ -190,7 +190,7 @@ namespace View {
         while (running)
         {
             //  Sleep reduce drastically cpu usage of active polling
-            std::this_thread::sleep_for(std::chrono::microseconds(100));
+            std::this_thread::sleep_for(frame_interval/2.f);
 
             //  There are some event to be processed
             while (XPending(_display)) {
@@ -208,7 +208,7 @@ namespace View {
 
                 if (current_interval >= frame_interval) {
                     _redraw_area(redraw_area.value());
-                    last_draw = now;
+                    last_draw = std::chrono::steady_clock::now();
                     redraw_area = std::nullopt;
                 }
             }
