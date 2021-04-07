@@ -65,4 +65,10 @@ namespace View {
         invalidate();
     }
 
+    void text_input::set_text(const std::string& txt)
+    {
+        _text = txt;
+        invalidate();
+    }
+
 }

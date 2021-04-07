@@ -17,6 +17,7 @@ namespace View {
         void draw(NVGcontext *vg) override;
         void apply_color_theme(const color_theme&) override;
 
+        void set_text(const std::string& txt);
         void clear_text();
         const auto& get_text() const noexcept { return _text; }
     private:
