@@ -96,7 +96,7 @@ target_link_libraries(View PUBLIC nanovg)
 
 ##  X11 Backend for UNIX
 if (UNIX)
-    message("Build with X11 backend")
+    message("Build View with X11 backend")
 
     find_package(X11 REQUIRED)
 
@@ -110,7 +110,7 @@ if (UNIX)
 		# stdc++fs			# filesystem
 	)
 elseif (WIN32)
-    message("Build with Win32 backend")
+    message("Build View with Win32 backend")
 
     target_sources(View PRIVATE
         display/backends/win32_backend.cpp
