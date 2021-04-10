@@ -12,9 +12,10 @@
 #include <X11/Xresource.h>
 #include <X11/Xlocale.h>
 
+#include "x11_backend.h"
+
 #include "display/common/display_controler.h"
 #include "display/common/widget_adapter.h"
-#include "x11_display.h"
 #include "internal_fonts/internal_fonts.h"
 
 #include <GL/glew.h>
@@ -86,6 +87,10 @@ namespace View {
         //  Drawing context
         GLXContext _glx;
         NVGcontext *_vg;
+
+        // for concurent redraw
+        std::thread::id _event_loop_thread_id{};
+        bool _dirty{false};
     };
 
     x11_window::x11_window(Window parent, widget& root, float pixel_per_unit)
@@ -187,6 +192,8 @@ namespace View {
 
         auto last_draw = std::chrono::steady_clock::now();
 
+        _event_loop_thread_id = std::this_thread::get_id();
+
         while (running)
         {
             //  Sleep reduce drastically cpu usage of active polling
@@ -203,7 +210,11 @@ namespace View {
             //  Redraw if something need to be redrawn and a sufficient
             //  amount of time have elapsed since last redraw
             const auto now = std::chrono::steady_clock::now();
-            if (redraw_area) {
+            if (_dirty) {
+                _redraw_window();
+                _dirty = false;
+            }
+            else if (redraw_area) {
                 const auto current_interval = now - last_draw;
 
                 if (current_interval >= frame_interval) {
@@ -213,6 +224,8 @@ namespace View {
                 }
             }
         }
+
+        _event_loop_thread_id = {};
     }
 
     void x11_window::_resize_window(unsigned int width, unsigned int height)
@@ -225,6 +238,8 @@ namespace View {
 
     bool x11_window::_process_event(const XEvent& event, std::optional<draw_area>& redraw_area)
     {
+        const auto thread_id = std::this_thread::get_id();
+
         switch (event.type)
         {
 
@@ -356,7 +371,7 @@ namespace View {
             nvgStrokeWidth(_vg, pixel_offset);
             nvgStroke(_vg);
 #endif
-            nvgEndFrame(_vg); 
+            nvgEndFrame(_vg);
             glXSwapBuffers(_display, _window);
             XFlush(_display);
         }
@@ -370,27 +385,33 @@ namespace View {
 
         //  Redraw
         sys_draw(_vg);
-    
-        nvgEndFrame(_vg);   
+
+        nvgEndFrame(_vg);
         glXSwapBuffers(_display, _window);
         XFlush(_display);
     }
 
     void x11_window::sys_invalidate_rect(const draw_area& area)
     {
-        XEvent ev;
-        std::memset(&ev, 0, sizeof(ev));
+        if (_event_loop_thread_id == std::this_thread::get_id()) {
+            XEvent ev;
+            std::memset(&ev, 0, sizeof(ev));
 
-        ev.type = Expose;
+            ev.type = Expose;
 
-        ev.xexpose.x = area.left;
-        ev.xexpose.y = area.top;
-        ev.xexpose.width = area.right - area.left;
-        ev.xexpose.height = area.bottom - area.top;
-        ev.xexpose.window = _window;
+            ev.xexpose.x = area.left;
+            ev.xexpose.y = area.top;
+            ev.xexpose.width = area.right - area.left;
+            ev.xexpose.height = area.bottom - area.top;
+            ev.xexpose.window = _window;
 
-        XSendEvent(_display, _window, true, ExposureMask, &ev);
-        XFlush(_display);
+            XSendEvent(_display, _window, true, ExposureMask, &ev);
+            XFlush(_display);
+        }
+        else {
+            // called from another thread
+            _dirty = true;
+        }
     }
 
     void x11_window::_initialize_cursors()
@@ -416,35 +437,38 @@ namespace View {
 
     /**
      *
-     *      x11_display implementation
+     *      x11_backend implementation
      *
      */
-
-    x11_display::x11_display(widget& root, float pixel_per_unit)
-    : _root{root}, _pixel_per_unit{pixel_per_unit}
+    x11_backend::x11_backend(widget& root, float pixel_per_unit)
+    : view_backend{root, pixel_per_unit}
     {
-
     }
 
-    void x11_display::_create_window(Window parent)
+    void x11_backend::create_window(const std::string& title, void *parent)
     {
         _running = true;
         _window_thread =
-            std::thread{_window_proc, this, parent};
+            std::thread{_window_proc, this, reinterpret_cast<Window>(parent)};
     }
 
-    void x11_display::_wait_window_thread()
+    void x11_backend::wait_window_thread()
     {
         if (_window_thread.joinable())
             _window_thread.join();
     }
 
-    void x11_display::_close_window()
+    void x11_backend::close_window()
     {
         _running = false;
     }
 
-    void x11_display::_window_proc(x11_display *self, Window parent)
+    bool x11_backend::windows_is_open() const noexcept
+    {
+        return _running;
+    }
+
+    void x11_backend::_window_proc(x11_backend *self, Window parent)
     {
         x11_window win{parent, self->_root, self->_pixel_per_unit};
         win.process(self->_running);

@@ -1,6 +1,10 @@
 #ifndef VIEW_VST2_DISPLAY_H_
 #define VIEW_VST2_DISPLAY_H_
 
+#include <memory>
+
+#include "display/backends/view_backend.h"
+
 namespace View {
 
     /**
@@ -9,30 +13,34 @@ namespace View {
      */
     class vst2_display {
     public:
-        virtual ~vst2_display() = default;
+        vst2_display(std::unique_ptr<view_backend>&& backend);
+        ~vst2_display() = default;
 
         /**
          *  \brief Open
          *  \param parent_handle An os specific handle to the parent window
          */
-        virtual void open(void *parent_handle) = 0;
+        void open(void *parent_handle);
 
         /**
          *  \brief Close the display
          */
-        virtual void close() = 0;
+        void close();
 
         /**
          *
          *  \brief Return width in pixel
          */
-        virtual unsigned int px_width() = 0;
+        unsigned int px_width();
 
         /**
          *
          *  \brief Return height in pixel
          */
-        virtual unsigned int px_height() = 0;
+        unsigned int px_height();
+
+    private:
+        std::unique_ptr<view_backend> _backend{};
     };
 
 }

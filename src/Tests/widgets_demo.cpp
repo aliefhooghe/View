@@ -45,9 +45,9 @@ int main()
         std::make_unique<background>(std::move(content));
 
     //
-    native_application_display dpy{*root, 1};
-    dpy.open("");
-    dpy.wait();
+    auto dpy = create_application_display(*root, 1);
+    dpy->open("");
+    dpy->wait();
 
     std::cout << "Demo finnishing" << std::endl;
 

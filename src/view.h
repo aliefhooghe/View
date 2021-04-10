@@ -2,8 +2,8 @@
 #define VIEW_H_
 
 //  TODO multiplatform settup
-#include "display/implementations/x11_application_display.h"
-#include "display/implementations/x11_vst2_display.h"
+#include "display/frontends/application_display.h"
+#include "display/frontends/vst2_display.h"
 #include "widget/widget.h"
 #include "widget/widget_proxy.h"
 
@@ -25,8 +25,8 @@
 
 namespace View {
 
-    using native_application_display = x11_application_display;
-    using native_vst2_display = x11_vst2_display;
+    std::unique_ptr<application_display> create_application_display(widget& root, float pixel_per_unit);
+    std::unique_ptr<vst2_display> create_vst2_display(widget& root, float pixel_per_unit);
 
 }
 

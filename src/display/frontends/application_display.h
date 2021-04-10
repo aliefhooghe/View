@@ -1,7 +1,9 @@
 #ifndef VIEW_APPLICATION_DISPLAY_H_
 #define VIEW_APPLICATION_DISPLAY_H_
 
-#include <string>
+#include <memory>
+
+#include "display/backends/view_backend.h"
 
 namespace View {
 
@@ -11,29 +13,33 @@ namespace View {
      */
     class application_display {
     public:
-        virtual ~application_display() = default;
+        application_display(std::unique_ptr<view_backend>&& backend);
+        ~application_display() = default;
 
         /**
          *  \brief Open a windows
          *  \param title windows's title (\TODO type ?)
          */
-        virtual void open(const std::string& title) = 0;
+        void open(const std::string& title);
 
         /**
          *  \brief Wait for the windows to be closed
-         *  \details Return if imediately if the windows is already closed
+         *  \details Return if immediately if the windows is already closed
          */
-        virtual void wait() = 0;
+        void wait();
 
         /**
          *  \brief Close the windows
          */
-        virtual void close() = 0;
+        void close();
 
         /**
          * \brief Return true if the windows is currently open
          */
-        virtual bool is_open() = 0;
+        bool is_open();
+
+    private:
+        std::unique_ptr<view_backend> _backend{};
     };
 
 }

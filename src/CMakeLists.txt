@@ -30,11 +30,13 @@ add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/../3rd_party/NanoVG NanoVG)
 ## Common Sources
 set(VIEW_COMMON_SRC
     view.h
+    view.cpp
 
     controls/control.h
     controls/control.cpp
     controls/checkbox.h
     controls/checkbox.cpp
+    controls/directory_view.h
     controls/knob.h
     controls/knob.cpp
     controls/label.h
@@ -46,10 +48,14 @@ set(VIEW_COMMON_SRC
     controls/text_push_button.cpp
     controls/text_push_button.h
 
-    display/display_types/application_display.h
+    display/backends/view_backend.h
     display/common/display_controler.h
     display/common/widget_adapter.cpp
     display/common/widget_adapter.h
+    display/frontends/application_display.cpp
+    display/frontends/application_display.h
+    display/frontends/vst2_display.cpp
+    display/frontends/vst2_display.h
 
     drawing/text_helper.h
     drawing/text_helper.cpp
@@ -87,7 +93,8 @@ set(VIEW_COMMON_SRC
     widget_container/pair_layout.h
     widget_container/widget_wrapper_base.h
 
-    helpers/alphabetical_compare.h controls/directory_view.h)
+    helpers/alphabetical_compare.h
+)
 
 ##  View Library
 add_library(View STATIC ${VIEW_COMMON_SRC})
@@ -102,14 +109,10 @@ if (VIEW_X11_BACKEND)
     find_package(GLEW REQUIRED)
 
     target_sources(View PRIVATE
-        display/backends/x11_display.cpp
-        display/backends/x11_display.h
-        display/implementations/x11_application_display.cpp
-        display/implementations/x11_application_display.h
-        display/implementations/x11_vst2_display.cpp
-        display/implementations/x11_vst2_display.h
+        display/backends/x11_backend.cpp
+        display/backends/x11_backend.h
     )
-    
+
     target_compile_definitions(View PUBLIC
         NANOVG_GLEW
     )
