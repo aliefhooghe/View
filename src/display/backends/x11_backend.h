@@ -2,7 +2,6 @@
 #define VIEW_X11_BACKEND_H_
 
 #include <thread>
-#include <memory>
 
 #include "view_backend.h"
 

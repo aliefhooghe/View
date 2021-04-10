@@ -41,10 +41,9 @@ namespace View {
 
     void knob::draw(NVGcontext *vg)
     {
-        constexpr auto theta = 0.5f;
-
-        constexpr auto start_angle = M_PI_2 + theta;
-        constexpr auto delta_angle = 2.f * (M_PI - theta);
+        constexpr float theta = 0.5f;
+        constexpr float start_angle = M_PI_2 + theta;
+        constexpr float delta_angle = 2.f * (M_PI - theta);
 
         const auto half = width() / 2.f;
 

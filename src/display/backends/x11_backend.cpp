@@ -24,7 +24,6 @@
 #include <GL/glu.h>
 
 #include "nanovg.h"
-#define NANOVG_GL2_IMPLEMENTATION	// Use GL2 implementation.
 #include "nanovg_gl.h"
 
 namespace View {
@@ -62,9 +61,6 @@ namespace View {
         void sys_invalidate_rect(const draw_area& area) override;
 
         //  Internal helpers
-        void _allocate_drawing_context(unsigned int width, unsigned int height);
-        void _free_drawing_context();
-
         void _resize_window(unsigned int width, unsigned int height);
         bool _process_event(const XEvent& event, std::optional<draw_area>& redraw_area);    // return true if window should be closed
 
@@ -447,9 +443,11 @@ namespace View {
 
     void x11_backend::create_window(const std::string& title, void *parent)
     {
-        _running = true;
-        _window_thread =
-            std::thread{_window_proc, this, reinterpret_cast<Window>(parent)};
+        if (_running == false) {
+            _running = true;
+            _window_thread =
+                std::thread{ _window_proc, this, reinterpret_cast<Window>(parent) };
+        }
     }
 
     void x11_backend::wait_window_thread()
@@ -461,6 +459,7 @@ namespace View {
     void x11_backend::close_window()
     {
         _running = false;
+        wait_window_thread();
     }
 
     bool x11_backend::windows_is_open() const noexcept
@@ -472,5 +471,6 @@ namespace View {
     {
         x11_window win{parent, self->_root, self->_pixel_per_unit};
         win.process(self->_running);
+        self->_running = false;
     }
 }

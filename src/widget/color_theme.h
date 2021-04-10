@@ -4,6 +4,8 @@
 #include <nanovg.h>
 #include <cstdint>
 
+#undef ERROR
+
 namespace View {
 
     /**

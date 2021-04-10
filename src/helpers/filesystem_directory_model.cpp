@@ -29,7 +29,7 @@ namespace View {
                     add_value(entry, p.path().string());
             }
         }
-        catch(std::filesystem::filesystem_error& error)
+        catch(std::filesystem::filesystem_error&)
         {
             //  this is not a fatal error
             /** \todo log something ! **/

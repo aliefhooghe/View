@@ -10,14 +10,6 @@ set(CMAKE_CXX_STANDARD 17)
 
 ############################
 #                          #
-#       Build Options      #
-#                          #
-############################
-
-option(VIEW_X11_BACKEND "" ON)
-
-############################
-#                          #
 #       VIEW LIBRARY       #
 #                          #
 ############################
@@ -102,28 +94,29 @@ set_target_properties(View PROPERTIES POSITION_INDEPENDENT_CODE ON)
 target_include_directories(View PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 target_link_libraries(View PUBLIC nanovg)
 
-##  X11 Backend
-if (VIEW_X11_BACKEND)
+##  X11 Backend for UNIX
+if (UNIX)
+    message("Build with X11 backend")
+
     find_package(X11 REQUIRED)
-    find_package(OpenGL REQUIRED)
-    find_package(GLEW REQUIRED)
 
     target_sources(View PRIVATE
         display/backends/x11_backend.cpp
         display/backends/x11_backend.h
     )
-
-    target_compile_definitions(View PUBLIC
-        NANOVG_GLEW
-    )
-
+    
 	target_link_libraries(View PRIVATE
 		${X11_LIBRARIES}
-		OpenGL::GL
-        GLEW::GLEW
-		stdc++fs			# filesystem
-        pthread
+		# stdc++fs			# filesystem
 	)
+elseif (WIN32)
+    message("Build with Win32 backend")
+
+    target_sources(View PRIVATE
+        display/backends/win32_backend.cpp
+        display/backends/win32_backend.h)
+
+    target_compile_definitions(View PRIVATE _USE_MATH_DEFINES)
 endif()
 
 #####################

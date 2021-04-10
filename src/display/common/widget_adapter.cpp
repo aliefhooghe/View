@@ -174,7 +174,7 @@ namespace View {
 
     void widget_adapter::_coord_widget2display(float fx, float fy, int &x, int &y)
     {
-        x = fx * _pixel_per_unit;
-        y = fy * _pixel_per_unit;
+        x = static_cast<int>(fx * _pixel_per_unit);
+        y = static_cast<int>(fy * _pixel_per_unit);
     }
 }
