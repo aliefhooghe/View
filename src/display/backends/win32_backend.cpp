@@ -364,14 +364,17 @@ namespace View {
 
     void win32_backend::close_window()
     {
-        _running = false;
-        
-        // there is no event manager, so we must delete the window instance
-        if (_window_thread.joinable()) {
-            _window_thread.join();
-        }
-        else {
-            _window.reset();
+        if (_running == true) {
+            _running = false;
+
+            if (_window_thread.joinable()) {
+                // instance is deleted by the window thread
+                _window_thread.join();
+            }
+            else {
+                // there is no event manager, so we must delete the window instance
+                _window.reset();
+            }
         }
     }
 
@@ -382,7 +385,7 @@ namespace View {
         
     void win32_backend::_app_window_proc(win32_backend* self, const std::string& title)
     {
-        // Window must be created in the event thread
+        // Window must be create, used and deleted in the same thread
         self->_window = std::make_unique<win32_window>(self->_root, self->_pixel_per_unit, title);
         
         //  Manage event until windows is closed
@@ -390,8 +393,6 @@ namespace View {
 
         //  Destroy window
         self->_window.reset();
-
-        self->_running = false;
     }
 
 } /* View */
