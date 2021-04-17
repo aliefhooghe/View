@@ -23,19 +23,20 @@ namespace View {
     void knob::set_value(float value)
     {
         _value = std::clamp(value, 0.f, 1.f);
-        _callback(_value);
         invalidate();
     }
 
     bool knob::on_mouse_drag(mouse_button, float, float, float, float dy)
     {
-        set_value(_value - 0.02f * dy);
+        set_value(_value - 0.01f * dy);
+        _callback(_value);
         return true;
     }
 
     bool knob::on_mouse_wheel(float, float, float distance)
     {
         set_value(_value + 0.01f * distance);
+        _callback(_value);
         return true;
     }
 
