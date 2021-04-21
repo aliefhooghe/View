@@ -11,9 +11,9 @@ namespace View {
     class filesystem_directory_model :
         public abstract_storage_directory_model<std::string, std::string, alphabetical_compare, filesystem_directory_model>
     {
-        using item =
-            typename directory_model<std::string, std::string, filesystem_directory_model>::item;
         using storage = abstract_storage_directory_model<std::string, std::string, alphabetical_compare, filesystem_directory_model>;
+        using item = typename storage::item;
+        using iterator = typename storage::iterator;
 
         public:
             filesystem_directory_model() = default;

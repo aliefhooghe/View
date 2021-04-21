@@ -14,6 +14,7 @@ namespace View {
     template <typename Key, typename Value, typename Derived>
     class directory_model {
     public:
+        //  Item default initialization is Derived
         using item =
             std::variant<
                 Derived,  /** = sub directory **/
@@ -36,8 +37,6 @@ namespace View {
         item& operator[](const Key& k) { return self()[k]; }
         const item& operator[](const Key& k) const { return self()[k]; }
 
-        bool is_directory(const Key& k) {   return std::holds_alternative<Derived>(self()[k]); }
-        bool is_value(const Key& k) { return !is_directory(k); }
 
         auto& self()
         {
@@ -55,6 +54,7 @@ namespace View {
 
     public:
         using item = typename directory_model<Key, Value, Derived>::item;
+        using iterator = typename std::map<Key, item, Compare>::iterator;
 
         auto size() const { return _childrens.size(); }
 
@@ -71,7 +71,7 @@ namespace View {
         const item& operator[](const Key& k) const { return _childrens[k]; }
 
     protected:
-        Derived& add_directory(const Key& k)
+        Derived& get_or_create_directory(const Key& k)
         {
             auto it = _childrens.find(k);
 
@@ -92,14 +92,14 @@ namespace View {
             }
         }
 
-        Derived& add_directory(const Key& k, Derived&& dir)
+        Derived& insert_directory(const Key& k, Derived&& dir)
         {
             auto& new_item = _childrens[k];
             new_item = std::move(dir);
             return std::get<Derived>(new_item);
         }
 
-        void add_value(const Key& k, Value&& v)
+        void insert_value(const Key& k, Value&& v)
         {
             _childrens[k] = std::move(v);
         }
@@ -114,6 +114,23 @@ namespace View {
             _childrens.erase(k);
         }
 
+        Derived& move(const Key& k1, const Key& k2)
+        {
+            if (_childrens.find(k2) != _childrens.end())
+                throw std::invalid_argument("move : can't overwrite target");
+
+            auto node = _childrens.extract(k1);
+
+            if (!node.empty()) {
+                node.key() = k2;
+                _childrens.insert(std::move(node));
+                return std::get<Derived>(operator[](k2));
+            }
+            else {
+                std::invalid_argument("move : Unknown key");
+            }
+        }
+
     private:
         std::map<Key, item, Compare> _childrens{};
     };
@@ -123,8 +140,13 @@ namespace View {
     class storage_directory_model : public abstract_storage_directory_model<Key, Value, Compare, storage_directory_model<Key, Value, Compare>> {
         using implem = abstract_storage_directory_model<Key, Value, Compare, storage_directory_model<Key, Value, Compare>>;
     public:
-        using implem::add_directory;
-        using implem::add_value;
+        using item = typename implem::item;
+        using iterator = typename implem::iterator;
+
+        using implem::move;
+        using implem::get_or_create_directory;
+        using implem::insert_directory;
+        using implem::insert_value;
         using implem::clear;
         using implem::erase;
     };
