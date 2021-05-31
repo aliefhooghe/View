@@ -15,6 +15,8 @@ namespace View {
     class directory_model {
     public:
         //  Item default initialization is Derived
+        using key = Key;
+        using value = Value;
         using item =
             std::variant<
                 Derived,  /** = sub directory **/
@@ -127,7 +129,7 @@ namespace View {
                 return std::get<Derived>(operator[](k2));
             }
             else {
-                std::invalid_argument("move : Unknown key");
+                throw std::invalid_argument("move : Unknown key");
             }
         }
 
