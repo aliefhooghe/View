@@ -262,13 +262,21 @@ namespace View {
     using vertical_pair_layout = pair_layout<orientation::vertical>;
 
     template <orientation O, typename T, typename ...Ts>
-    auto make_layout(T&& first, Ts ...next)
+    auto make_layout(T&& first, Ts&& ...next)
     {
         if constexpr (sizeof...(Ts) == 0)
             return std::move(first);
         else
             return std::make_unique<pair_layout<O>>(
                 std::move(first), make_layout<O>(std::move(next)...));
+    }
+
+    template <orientation O, typename T, typename ...Ts>
+    auto make_shared_layout(T&& first, Ts ...next)
+    {
+        static_assert(sizeof...(Ts) > 0);
+        return std::make_shared<pair_layout<O>>(
+            std::move(first), make_layout<O>(std::move(next)...));
     }
 
     template <typename ...T>
@@ -278,10 +286,23 @@ namespace View {
     }
 
     template <typename ...T>
+    auto make_shared_horizontal_layout(T&& ...childs)
+    {
+        return make_shared_layout<orientation::horizontal>(std::move(childs)...);
+    }
+
+    template <typename ...T>
     auto make_vertical_layout(T&& ...childs)
     {
         return make_layout<orientation::vertical>(std::move(childs)...);
     }
+
+    template <typename ...T>
+    auto make_shared_vertical_layout(T&& ...childs)
+    {
+        return make_shared_layout<orientation::vertical>(std::move(childs)...);
+    }
+
 
 }
 
