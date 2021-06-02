@@ -14,29 +14,13 @@ namespace View {
 
     void map_wrapper_widget_holder::invalidate_rect(const rectangle<>& rect)
     {
-        /**
-         *
-         * Problème :
-         *  - L'enfant vas demander de redessiner sa zone uniquement, qui peut carrement ne plus être visible
-         *
-         * Quick fix :
-         *  - Redessiner toute la map
-         *
-         * A faire :
-         *  - Compliqué car
-         *
-         * Solution ?
-         *      Prevoir une zone d'edition enorme ?
-         *      Comment gerer correctmenent le redimensionement
-         * Bref : rework la map
-         *
-         */
-        /** @todo optimize : Redraw rect if it overlap view ! **/
-        // std::cout << "map_wrapper_widget_holder::invalidate_rect : map origin = " << _parent->_origin_x << ", " << _parent->_origin_y << std::endl;
-        // std::cout << "map_wrapper_widget_holder::invalidate_rect : " << rect << " => " << rect.translate(_pos_x - _parent->_origin_x, _pos_y - _parent->_origin_y) << std::endl;
-        // _parent->invalidate_rect(rect.translate(_pos_x - _parent->_origin_x, _pos_y - _parent->_origin_y));
+        const auto scale = _parent->_scale;
+        const auto parent_rect = rectangle<>{0.f, _parent->height(), 0.f, _parent->width()};
+        const auto parent_redraw_rect = rect.scale(_parent->_scale).translate(-_parent->_origin_x, -_parent->_origin_y);
+        rectangle<> intersection;
 
-        _parent->invalidate();
+        if (parent_rect.intersect(parent_redraw_rect, intersection))
+            _parent->invalidate_rect(intersection);
     }
 
     void map_wrapper_widget_holder::invalidate_widget()
@@ -119,6 +103,19 @@ namespace View {
         nvgTranslate(vg, -_origin_x, -_origin_y);
         nvgScale(vg, _scale, _scale);
         widget_wrapper_base::draw(vg);
+        nvgRestore(vg);
+    }
+
+    void map_wrapper::draw_rect(NVGcontext* vg, const rectangle<>& area)
+    {
+        //  Clip the drawing area
+        nvgIntersectScissor(vg, area.left, area.right, area.width(), area.height());
+
+        //  Translate and draw
+        nvgSave(vg);
+        nvgTranslate(vg, -_origin_x, -_origin_y);
+        nvgScale(vg, _scale, _scale);
+        widget_wrapper_base::draw_rect(vg, _rect_to_content(area));
         nvgRestore(vg);
     }
 

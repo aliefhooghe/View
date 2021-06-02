@@ -44,6 +44,16 @@ namespace View {
             return rectangle{top + dy, bottom + dy, left + dx, right + dx};
         }
 
+        constexpr auto scale(float fx, float fy) const
+        {
+            return rectangle{top * fy, bottom * fy, left * fx, right * fx};
+        }
+
+        constexpr auto scale(float f) const
+        {
+            return scale(f, f);
+        }
+
         constexpr bool overlap(const rectangle& rect) const
         {
             const auto intersect_top = std::max(top, rect.top);

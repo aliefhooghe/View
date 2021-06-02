@@ -45,8 +45,7 @@ namespace View {
         bool on_mouse_wheel(float x, float y, float distance) override;
 
         void draw(NVGcontext *) override;
-        void draw_rect(NVGcontext* vg, const rectangle<>& area) override { draw(vg); }
-        /** @todo draw_rect ! **/
+        void draw_rect(NVGcontext* vg, const rectangle<>& area) override;
 
     protected:
         void _translate_origin(float dx, float dy) noexcept;
@@ -54,6 +53,7 @@ namespace View {
 
         float _x_to_content(float x) const noexcept { return (x + _origin_x) / _scale; }
         float _y_to_content(float y) const noexcept { return (y + _origin_y) / _scale; }
+        auto _rect_to_content(const rectangle<>& rect) { return rect.translate(_origin_x, _origin_y).scale(1.f / _scale); }
 
     private:
         float _origin_x{0.f};
