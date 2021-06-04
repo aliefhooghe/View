@@ -74,6 +74,7 @@ namespace View {
         void draw(NVGcontext *vg) override;
         // todo : void draw_rect(cairo_t *cr, const rectangle<>& area) override;
 
+        void reset_selection() noexcept;
         void update();
         void close_all_directories();
         void set_value_select_callback(value_select_callback);
@@ -221,9 +222,16 @@ namespace View {
     }
 
     template<typename DerivedModel>
-    void directory_view<DerivedModel>::update()
+    void directory_view<DerivedModel>::reset_selection() noexcept
     {
         _selected_item = nullptr;
+        invalidate();
+    }
+
+    template<typename DerivedModel>
+    void directory_view<DerivedModel>::update()
+    {
+        reset_selection();
         unfold();
 
         // Clean open dir set : keep only item that still exist
@@ -239,6 +247,7 @@ namespace View {
     template<typename DerivedModel>
     void directory_view<DerivedModel>::close_all_directories()
     {
+        reset_selection();
         _open_dirs.clear();
         unfold();
     }
