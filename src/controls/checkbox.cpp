@@ -10,6 +10,14 @@ namespace View {
         apply_color_theme(default_color_theme);
     }
 
+    void checkbox::set_checked(bool checked)
+    {
+        if (_checked != checked) {
+            _checked = checked;
+            invalidate();
+        }
+    }
+
     bool checkbox::on_mouse_button_up(mouse_button button, float x, float y)
     {
         _switch_state();

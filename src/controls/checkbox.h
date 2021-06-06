@@ -15,6 +15,7 @@ namespace View {
         ~checkbox() override = default;
 
         void set_callback(callback c) { _callback = c; }
+        void set_checked(bool checked = true);
         bool is_checked() const noexcept { return _checked; }
 
         bool on_mouse_button_up(mouse_button button, float x, float y) override;
