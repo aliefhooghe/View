@@ -38,6 +38,7 @@ namespace View {
         void reset_widget()
         {
             _children = {};
+            display_controler::_detach();
             invalidate();
         }
 

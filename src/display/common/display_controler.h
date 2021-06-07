@@ -77,7 +77,7 @@ namespace View {
          **/
         virtual float widget_pos_x() { return 0.f; };
         virtual float widget_pos_y() { return 0.f; };
-    private:
+    protected:
         void _detach()
         {
             if (_widget && _widget->_display_ctl == this) {
