@@ -54,6 +54,7 @@ namespace View {
         HGLRC _opengl_context{};
 
         // Win32 members
+        const HWND _parent;
         HWND _window{0};
         bool _has_focus{false};
 
@@ -64,7 +65,8 @@ namespace View {
      */
 
     win32_window::win32_window(widget& root, float pixel_per_unit, const std::string& title, HWND parent)
-    :   widget_adapter{root, pixel_per_unit}
+    :   widget_adapter{root, pixel_per_unit},
+        _parent{parent}
     {
         DWORD window_style = WS_VISIBLE;
         const auto window_width = display_width();
@@ -288,7 +290,8 @@ namespace View {
         break;
 
         case WM_MOUSELEAVE:
-            window_instance->sys_mouse_exit();
+            if (window_instance->_parent == 0)
+                window_instance->sys_mouse_exit();
             break;
 
         case WM_LBUTTONDOWN:
