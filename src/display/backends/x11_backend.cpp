@@ -43,7 +43,7 @@ namespace View {
             ConfigureNotify;
 
     public:
-        x11_window(Window parent, widget& root, float pixel_per_unit);
+        x11_window(Window parent, widget& root, const std::string& title, float pixel_per_unit);
         x11_window(x11_window&) = delete;
         ~x11_window();
 
@@ -89,7 +89,7 @@ namespace View {
         bool _dirty{false};
     };
 
-    x11_window::x11_window(Window parent, widget& root, float pixel_per_unit)
+    x11_window::x11_window(Window parent, widget& root, const std::string& title, float pixel_per_unit)
     :   widget_adapter{root, pixel_per_unit}
     {
         const auto width = display_width();
@@ -119,6 +119,8 @@ namespace View {
                 CopyFromParent, CopyFromParent,
                 visual_info->visual,
                 CWColormap, &xattributs);
+
+        XStoreName(_display, _window, title.c_str());
 
         //  Reparrent the windows if a parent was given
         _parent = parent;
@@ -448,7 +450,7 @@ namespace View {
         if (_running == false) {
             _running = true;
             _window_thread =
-                std::thread{ _window_proc, this, reinterpret_cast<Window>(parent) };
+                std::thread{ _window_proc, this, reinterpret_cast<Window>(parent), title};
         }
     }
 
@@ -469,9 +471,9 @@ namespace View {
         return _running;
     }
 
-    void x11_backend::_window_proc(x11_backend *self, Window parent)
+    void x11_backend::_window_proc(x11_backend *self, Window parent, const std::string& title)
     {
-        x11_window win{parent, self->_root, self->_pixel_per_unit};
+        x11_window win{parent, self->_root, title, self->_pixel_per_unit};
         win.process(self->_running);
         self->_running = false;
     }

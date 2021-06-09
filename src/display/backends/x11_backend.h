@@ -24,7 +24,7 @@ namespace View {
 
     private:
         typedef unsigned long Window;
-        static void _window_proc(x11_backend *self, Window parent);
+        static void _window_proc(x11_backend *self, Window parent, const std::string& title);
 
         std::thread _window_thread{};
         bool _running{false};
