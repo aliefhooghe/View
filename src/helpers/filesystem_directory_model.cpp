@@ -26,7 +26,7 @@ namespace View {
                 if (std::filesystem::is_directory(p))
                     insert_directory(entry, filesystem_directory_model{p});
                 else
-                    insert_value(entry, p.path().string());
+                    insert_value(entry, std::filesystem::path{p.path()});
             }
         }
         catch(std::filesystem::filesystem_error&)
