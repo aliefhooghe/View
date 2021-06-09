@@ -151,6 +151,8 @@ namespace View {
         glEnable(GL_STENCIL_TEST);
         glClearColor(0.0, 0.0, 0.0, 1.0);
 
+        free(visual_info);
+
         //  NanoVG
         _vg = nvgCreateGL2(NVG_ANTIALIAS | NVG_STENCIL_STROKES | NVG_DEBUG);
 
