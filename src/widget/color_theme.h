@@ -16,14 +16,15 @@ namespace View {
     constexpr auto color_from_integer(const uint32_t n)
     {
         NVGcolor color{};
-        color.r = ((n & 0xFF000000) >> 24) / 255.f;
-        color.g = ((n & 0x00FF0000) >> 16) / 255.f; 
-        color.b = ((n & 0x0000FF00) >> 8) / 255.f;
-        color.a = (n & 0x000000FF) / 255.f;
+        color.rgba[0] = ((n & 0xFF000000) >> 24) / 255.f;
+        color.rgba[1] = ((n & 0x00FF0000) >> 16) / 255.f; 
+        color.rgba[2] = ((n & 0x0000FF00) >> 8) / 255.f;
+        color.rgba[3] = (n & 0x000000FF) / 255.f;
         return color;
     }
 
     struct color_theme {
+        constexpr color_theme() = default;
 
         /**
          * \brief a tag used to identify a color in a given color theme
