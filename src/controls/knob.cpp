@@ -26,6 +26,12 @@ namespace View {
         invalidate();
     }
 
+    bool knob::on_mouse_drag_start(mouse_button, float, float)
+    {
+        // indicate that we will use the drag
+        return true;
+    }
+
     bool knob::on_mouse_drag(mouse_button, float, float, float, float dy)
     {
         set_value(_value - 0.01f * dy);
