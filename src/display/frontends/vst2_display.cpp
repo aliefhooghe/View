@@ -53,16 +53,16 @@ namespace View
             }
             else {
                 switch (c) {
-                case '0': return 'à';
+                case '0': return 'a';
                 case '1': return '&';
-                case '2': return 'é';
+                case '2': return 'e';
                 case '3': return '"';
                 case '4': return '\'';
                 case '5': return '(';
                 case '6': return '-';
-                case '7': return 'è';
+                case '7': return 'e';
                 case '8': return '_';
-                case '9': return 'ç';
+                case '9': return 'c';
                 default: return 0;
                 }
             }
