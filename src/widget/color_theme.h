@@ -87,7 +87,7 @@ namespace View {
         NVGcolor background = color_from_integer(0x101010FF);
         NVGcolor on_background = color_from_integer(0xFFFFFFFF);
 
-        NVGcolor error = color_from_integer(0xFF0000FF);
+        NVGcolor error = color_from_integer(0xE63547FF);
         NVGcolor on_error = color_from_integer(0x000000FF);
     };
 
