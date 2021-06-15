@@ -121,7 +121,8 @@ namespace View {
 
         if (_is_draging && button == _draging_button) {
             _is_draging = false;
-            return _root.on_mouse_drag_end(button, _cursor_fx, _cursor_fy);
+            return _root.on_mouse_drag_end(button, _cursor_fx, _cursor_fy) ||
+                _root.on_mouse_button_up(button, _cursor_fx, _cursor_fy);
         }
         else {
             return _root.on_mouse_button_up(button, _cursor_fx, _cursor_fy);
