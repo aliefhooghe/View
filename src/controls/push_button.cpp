@@ -41,7 +41,7 @@ namespace View {
             shadowed_down_rounded_rect(vg, 0, 0, width(), height(), 3.f, _surface);
         }
         else {
-            shadowed_up_rounded_rect(vg, 0, 0, width(), height(), 3.f, _background, _surface);
+            shadowed_up_rounded_rect(vg, 0, 0, width(), height(), 3.f, _surface);
         }
 
         if (hovered()) {
@@ -53,7 +53,6 @@ namespace View {
     void push_button::apply_color_theme(const View::color_theme& theme)
     {
         _hovered_border = nvgTransRGBA(theme.secondary_light, 48);
-        _background = theme.surface;
         _surface = theme.surface_light;
         invalidate();
     }

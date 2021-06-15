@@ -31,7 +31,6 @@ namespace View {
         float _value;
         bool _display_value;
 
-        NVGcolor _background;
         NVGcolor _surface;
         NVGcolor _hovered_border;
         NVGcolor _track;

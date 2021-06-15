@@ -31,7 +31,6 @@ namespace View {
 
             NVGcolor _hovered_border;
             NVGcolor _surface;
-            NVGcolor _background;
     };
 
 }

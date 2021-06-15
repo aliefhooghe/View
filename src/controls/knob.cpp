@@ -55,7 +55,7 @@ namespace View {
         const auto half = width() / 2.f;
 
         //  External Circle + background
-        shadowed_up_circle(vg, half, half, half, _background, _surface);
+        shadowed_up_circle(vg, half, half, half, _surface);
 
 
         //  Light Indicator
@@ -79,7 +79,6 @@ namespace View {
 
     void knob::apply_color_theme(const View::color_theme& theme)
     {
-        _background = theme.surface;
         _surface = theme.surface_light;
         _track = theme.secondary_light;
         _hovered_border = nvgTransRGBA(theme.secondary_light, 48);
