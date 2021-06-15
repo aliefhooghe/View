@@ -17,15 +17,25 @@ namespace View {
 
     bool push_button::on_mouse_button_up(const mouse_button button, float x, float y)
     {
-        _update_pushed(false);
-        _callback();
-        return true;
+        if (button == mouse_button::left) {
+            _update_pushed(false);
+            _callback();
+            return true;
+        }
+        else {
+            return false;
+        }
     }
 
     bool push_button::on_mouse_button_down(const mouse_button button, float x, float y)
     {
-        _update_pushed(true);
-        return true;
+        if (button == mouse_button::left) {
+            _update_pushed(true);
+            return true;
+        }
+        else {
+            return false;
+        }
     }
 
     bool push_button::on_mouse_exit()

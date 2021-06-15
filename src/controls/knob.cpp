@@ -26,17 +26,22 @@ namespace View {
         invalidate();
     }
 
-    bool knob::on_mouse_drag_start(mouse_button, float, float)
+    bool knob::on_mouse_drag_start(mouse_button button, float, float)
     {
-        // indicate that we will use the drag
-        return true;
+        // indicate if we will use the drag
+        return (button == mouse_button::left);
     }
 
-    bool knob::on_mouse_drag(mouse_button, float, float, float, float dy)
+    bool knob::on_mouse_drag(mouse_button button, float, float, float, float dy)
     {
-        set_value(_value - 0.01f * dy);
-        _callback(_value);
-        return true;
+        if (button == mouse_button::left) {
+            set_value(_value - 0.01f * dy);
+            _callback(_value);
+            return true;
+        }
+        else {
+            return false;
+        }
     }
 
     bool knob::on_mouse_wheel(float, float, float distance)
