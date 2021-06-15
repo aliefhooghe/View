@@ -39,7 +39,6 @@ namespace View {
         void sys_invalidate_rect(const draw_area& area) override;
 
         //  Internal helpers
-        void _redraw_area(draw_area area);
         void _redraw_window();
         void _resize_window(unsigned int width, unsigned int height);
 
@@ -186,24 +185,31 @@ namespace View {
         InvalidateRect(_window, &win32_rect, true);
     }
 
-    void win32_window::_redraw_area(draw_area area)
-    {
-        _redraw_window();
-    }
-
     void win32_window::_redraw_window()
     {
+        const auto window_area = make_rectangle(0, display_height(), 0, display_width());
+
         PAINTSTRUCT paint_struct{};
         BeginPaint(_window, &paint_struct);
 
-        glClear(GL_COLOR_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-        nvgBeginFrame(_vg, display_width(), display_height(), 1.);
+        // Contains the area to be redrawn
+        const draw_area rc_paint{
+            paint_struct.rcPaint.top,
+            paint_struct.rcPaint.bottom,
+            paint_struct.rcPaint.left,
+            paint_struct.rcPaint.right };
 
-        sys_draw(_vg);
+        draw_area drawing_area;
+        if (rc_paint.intersect(window_area, drawing_area)) {
+            glClear(GL_COLOR_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+            nvgBeginFrame(_vg, display_width(), display_height(), 1.);
 
-        nvgEndFrame(_vg);
-        glFlush();
-        SwapBuffers(paint_struct.hdc);
+            sys_draw_rect(_vg, drawing_area.top, drawing_area.bottom, drawing_area.left, drawing_area.right);
+
+            nvgEndFrame(_vg);
+            glFlush();
+            SwapBuffers(paint_struct.hdc);
+        }
 
         EndPaint(_window, &paint_struct);
     }
