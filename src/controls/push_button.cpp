@@ -28,6 +28,13 @@ namespace View {
         return true;
     }
 
+    bool push_button::on_mouse_exit()
+    {
+        control::on_mouse_exit();
+        _update_pushed(false);
+        return true;
+    }
+
     bool push_button::on_mouse_drag_cancel()
     {
         _update_pushed(false);
