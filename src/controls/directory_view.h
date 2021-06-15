@@ -75,6 +75,9 @@ namespace View {
         // todo : void draw_rect(cairo_t *cr, const rectangle<>& area) override;
 
         void reset_selection() noexcept;
+        bool select_directory(const DerivedModel&); 
+        // todo select_value
+
         void update();
         void close_all_directories();
         void set_value_select_callback(value_select_callback);
@@ -91,6 +94,7 @@ namespace View {
         const DerivedModel& data_model() const noexcept { return _model.self(); }
 
     private:
+        bool _select_directory(const DerivedModel& parent, const DerivedModel& directory); 
         void unfold();
         bool cell_at(float y, unsigned int &idx);
 
@@ -211,6 +215,28 @@ namespace View {
     }
 
     template<typename DerivedModel>
+    bool directory_view<DerivedModel>::_select_directory(const DerivedModel& parent, const DerivedModel& directory)
+    {
+        for (const auto& pair : parent) {
+            if (std::holds_alternative<DerivedModel>(pair.second)) {
+                const auto& subdir = std::get<DerivedModel>(pair.second);
+
+                if (&subdir == &directory) {
+                    _selected_item = &(pair.second);
+                    return true;
+                }
+                else if (_select_directory(subdir, directory)) {
+                    _open_dirs.insert(&(pair.second));
+                    return true;
+                }
+            }
+        }
+
+        // Not found in this level
+        return false;
+    }
+
+    template<typename DerivedModel>
     void directory_view<DerivedModel>::unfold()
     {
         _cells.clear();
@@ -226,6 +252,19 @@ namespace View {
     {
         _selected_item = nullptr;
         invalidate();
+    }
+
+    template <typename DerivedModel>
+    bool directory_view<DerivedModel>::select_directory(const DerivedModel& directory)
+    {
+        if (_select_directory(_model.self(), directory)) {
+            unfold();
+            invalidate();
+            return true;
+        }
+        else {
+            return false;
+        }
     }
 
     template<typename DerivedModel>
