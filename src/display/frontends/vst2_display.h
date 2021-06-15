@@ -39,7 +39,14 @@ namespace View {
          */
         unsigned int px_height();
 
+        /**
+         *  \brief Handle keyboard event and produce text input
+         */
+        void text_input(int32_t index, intptr_t value, int32_t opt);
+
     private:
+        static char _convert_char(int32_t index, intptr_t value, int32_t opt);
+
         std::unique_ptr<view_backend> _backend{};
     };
 

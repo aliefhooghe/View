@@ -25,6 +25,7 @@ namespace View {
         void close_window() override;
         bool windows_is_open() const noexcept override;
 
+        void vst2_text_input(const std::string_view) override;
     private:
         static void _app_window_proc(win32_backend* self, const std::string& title);
 

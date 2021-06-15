@@ -32,6 +32,8 @@ namespace View {
 
         // display controller interface
         void set_cursor(cursor c) override;
+
+        using widget_adapter::sys_text_input;
     private:
         //  Widget adapter interface
         void sys_invalidate_rect(const draw_area& area) override;
@@ -343,6 +345,7 @@ namespace View {
     void win32_backend::create_window(const std::string& title, void* parent)
     {
         if (_running == false) {
+            _running = true;
 
             if (parent == nullptr) {
                 // Root window : need a thread to manage the window
@@ -354,8 +357,6 @@ namespace View {
                 _window = std::make_unique<win32_window>(
                     _root, _pixel_per_unit, title, reinterpret_cast<HWND>(parent));
             }
-
-            _running = true;
         }
     }
 
@@ -384,6 +385,13 @@ namespace View {
     bool win32_backend::windows_is_open() const noexcept
     {
         return _running;
+    }
+
+    void win32_backend::vst2_text_input(const std::string_view text)
+    {
+        // Apply only on a child windows (for audio plugins)
+        if (!_window_thread.joinable() && _window)
+            _window->sys_text_input(text);
     }
         
     void win32_backend::_app_window_proc(win32_backend* self, const std::string& title)
