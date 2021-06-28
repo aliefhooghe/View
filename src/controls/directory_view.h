@@ -65,10 +65,10 @@ namespace View {
         }
 
     public:
-        using value_select_callback = std::function<void(const value&)>;
+        using value_select_callback = std::function<void(value&)>;
         using directory_select_callback = std::function<void(DerivedModel&)>;
 
-        directory_view(DerivedModel& m, float width, float height, float cell_height, float font_size);
+        directory_view(DerivedModel& m, float width, float height, float cell_height = 16.f, float font_size = 14.f);
         ~directory_view() override;
 
         void draw(NVGcontext *vg) override;
@@ -78,7 +78,7 @@ namespace View {
         bool select_directory(const DerivedModel&); 
         // todo select_value
 
-        void update();
+        virtual void update();
         void close_all_directories();
         void set_value_select_callback(value_select_callback);
         void set_directory_select_callback(directory_select_callback);
@@ -90,6 +90,7 @@ namespace View {
 
         bool on_mouse_button_up(const mouse_button button, float x, float y) override;
 
+    protected:
         DerivedModel& data_model() noexcept { return _model.self(); }
         const DerivedModel& data_model() const noexcept { return _model.self(); }
 
@@ -132,10 +133,12 @@ namespace View {
     class owning_directory_view : public directory_view<DerivedModel>
     {
     public:
-        owning_directory_view(std::unique_ptr<DerivedModel>&& model, float width, float height, float cell_height, float font_size)
+        owning_directory_view(std::unique_ptr<DerivedModel>&& model, float width, float height, float cell_height = 16.f, float font_size = 14.f)
         :   directory_view<DerivedModel>{*model, width, height, cell_height, font_size},
             _model{std::move(model)}
         {}
+
+        ~owning_directory_view() override = default;
 
     private:
         std::unique_ptr<DerivedModel> _model;

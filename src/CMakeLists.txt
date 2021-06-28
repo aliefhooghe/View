@@ -58,6 +58,8 @@ set(VIEW_COMMON_SRC
     helpers/directory_model.h
     helpers/filesystem_directory_model.h
     helpers/filesystem_directory_model.cpp
+    controls/filesystem_view.h
+    controls/filesystem_view.cpp
 
     internal_fonts/internal_fonts_data.cpp
     internal_fonts/internal_fonts.cpp
