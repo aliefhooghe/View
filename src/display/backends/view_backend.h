@@ -26,7 +26,7 @@ namespace View
          *  \note This should not be implemented if keyboard event can be retrieved by the vst2 plugin
          *  directly from the windows manager
          */
-        virtual void vst2_text_input(const std::string_view) {}
+        virtual bool vst2_text_input(const std::string_view) { return false; }
     protected:
         widget& _root;
         const float _pixel_per_unit;

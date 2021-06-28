@@ -27,14 +27,14 @@ namespace View
         return _backend->px_height();
     }
 
-    void vst2_display::text_input(int32_t index, intptr_t value, int32_t opt)
+    bool vst2_display::text_input(int32_t index, intptr_t value, int32_t opt)
     {
         const char text[2] =
         {
             _convert_char(index, value, opt),
             '\0'
         };
-        _backend->vst2_text_input(text);
+        return _backend->vst2_text_input(text);
     }
 
     char vst2_display::_convert_char(int32_t index, intptr_t value, int32_t opt)

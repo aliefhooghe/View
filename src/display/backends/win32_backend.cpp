@@ -393,11 +393,13 @@ namespace View {
         return _running;
     }
 
-    void win32_backend::vst2_text_input(const std::string_view text)
+    bool win32_backend::vst2_text_input(const std::string_view text)
     {
         // Apply only on a child windows (for audio plugins)
         if (!_window_thread.joinable() && _window)
-            _window->sys_text_input(text);
+            return _window->sys_text_input(text);
+        else
+            return false;
     }
         
     void win32_backend::_app_window_proc(win32_backend* self, const std::string& title)
