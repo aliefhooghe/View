@@ -97,13 +97,15 @@ namespace View {
         Derived& insert_directory(const Key& k, Derived&& dir)
         {
             auto& new_item = _childrens[k];
-            new_item = std::move(dir);
+            new_item.emplace<Derived>(std::move(dir));
             return std::get<Derived>(new_item);
         }
 
-        void insert_value(const Key& k, Value&& v)
+        Value& insert_value(const Key& k, Value&& v)
         {
-            _childrens[k] = std::move(v);
+            auto& new_item = _childrens[k];
+            new_item.emplace<Value>(std::move(v));
+            return std::get<Value>(new_item);
         }
 
         void clear()
@@ -116,7 +118,7 @@ namespace View {
             _childrens.erase(k);
         }
 
-        Derived& move(const Key& k1, const Key& k2)
+        item& move(const Key& k1, const Key& k2)
         {
             if (_childrens.find(k2) != _childrens.end())
                 throw std::invalid_argument("move : can't overwrite target");
@@ -126,7 +128,7 @@ namespace View {
             if (!node.empty()) {
                 node.key() = k2;
                 _childrens.insert(std::move(node));
-                return std::get<Derived>(operator[](k2));
+                return operator[](k2);
             }
             else {
                 throw std::invalid_argument("move : Unknown key");
