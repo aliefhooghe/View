@@ -10,7 +10,10 @@ namespace View {
         public:
             using callback = std::function<void()>;
 
-            push_button(float width, float height);
+            push_button(
+                float width, float height,
+                size_constraint width_constraint = free_size,
+                size_constraint hieght_constraint = free_size);
             ~push_button() override = default;
 
             void set_callback(callback c);

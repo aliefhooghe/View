@@ -42,11 +42,11 @@ namespace View {
             return size_constraint{std::max(min, other.min), std::min(max, other.max)};
         }
 
-        float min;
-        float max;
+        float min{0.f};
+        float max{std::numeric_limits<float>::infinity()};
     };
 
-    constexpr auto free_size = size_constraint{0.f, std::numeric_limits<float>::infinity()};
+    constexpr auto free_size = size_constraint{};
 
 }
 

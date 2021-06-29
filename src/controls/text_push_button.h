@@ -9,8 +9,13 @@ namespace View {
 
     public:
         template <typename TText>
-        text_push_button(TText&& text, float width = 70, float height = 21)
-        : push_button{width, height}, _text{std::forward<TText>(text)}
+        text_push_button(
+            TText&& text,
+            float width = 70, float height = 21,
+            size_constraint width_constraint = free_size,
+            size_constraint height_constraint = free_size)
+        : push_button{width, height, width_constraint, height_constraint},
+          _text{std::forward<TText>(text)}
         {
             apply_color_theme(default_color_theme);
         }

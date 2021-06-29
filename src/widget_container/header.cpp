@@ -8,32 +8,38 @@ namespace View {
 
     header::header(
         std::unique_ptr<widget>&& root, color_theme::color background,
-        float header_size, float border_size)
+        float header_size, float border, float internal_border)
     :   _background_color_id{background},
-        widget_wrapper_base<header>{
-            std::move(root),
-            root->width() + 2.f * border_size,
-            root->height() + header_size + 2.f * border_size,
-            size_constraint{
-                root->width_constraint().min + 2.f * (border_size + header_size),   //  avoid overlaping of header arcs
-                root->width_constraint().max + 2.f * border_size},
-            size_constraint{
-                root->height_constraint().min + 2.f * (border_size + header_size),
-                root->height_constraint().max + header_size + 2.f * border_size}},
-        _header_size{header_size},
-        _border_size{border_size}
+        widget_wrapper_base<header>{std::move(root), 0.f, 0.f, 1.f, 1.f},
+        _header_size{header_size}, _border{border}, _internal_border{internal_border}
     {
+        const auto border_offset = 2.f * (_border + _internal_border);
+        size_constraint height_constraint{};
+        size_constraint width_constraint{};
+
+        width_constraint.min = _root->width_constraint().min + border_offset;
+        width_constraint.max = _root->width_constraint().max + border_offset;
+        height_constraint.min = _root->height_constraint().min + border_offset + 2.f * _header_size; // avoid overlap
+        height_constraint.max = std::max(height_constraint.min, _root->height_constraint().max + border_offset + _header_size);
+
         apply_color_theme(default_color_theme);
-        _root.set_pos(_border_size, _border_size + _header_size);
+
+        widget_wrapper_base<header>::resize(
+            _root->width() + border_offset,
+            _root->height() + header_size + border_offset);
+        set_size_constraints(width_constraint, height_constraint);
+        _root.set_pos(_border + _internal_border,  _header_size + _border + _internal_border);
     }
 
     bool header::resize(float width, float height)
     {
+        const auto border_offset = 2.f * (_border + _internal_border);
         if (width_constraint().contains(width) &&
             height_constraint().contains(height))
         {
-            if (_root.get()->resize(
-                width - 2.f * _border_size,height - (_header_size + 2.f * _border_size)))
+            if (_root->resize(
+                width - border_offset,
+                height - (_header_size + border_offset)))
             {
                 widget_wrapper_base<header>::resize(width, height);
                 return true;
@@ -49,32 +55,29 @@ namespace View {
         const auto rect_radius = _header_size / 3;
 
         nvgBeginPath(vg);
-        
+
         // Main Shape
         nvgRoundedRect(vg,
-            _border_size, _border_size,
-            _root.get()->width(), _root.get()->height() + _header_size,
+            0.f, 0.f,
+            width(), height(),
             rect_radius);
 
         //  Draw Header
         nvgFillColor(vg, _header_color);
         nvgFill(vg);
 
-        //  Draw Border
-        nvgStrokeWidth(vg, 3);
-        nvgStrokeColor(vg, _header_color);
-        nvgStroke(vg);
-
         //  Draw background
-        shadowed_down_rounded_rect(vg, 
-            _border_size, _border_size + _header_size,
-            _root.get()->width(), _root.get()->height(),
+        shadowed_down_rounded_rect(vg,
+            _border, _header_size + _border,
+            _root->width() + 2.f * _internal_border,
+            _root->height() + 2.f * _internal_border,
             rect_radius, _background_color);
 
         //  Clip to ensure that child only draw on background
-        nvgIntersectScissor(vg, 
-            _border_size, _border_size + _header_size,
-            _root.get()->width(), _root.get()->height());
+        nvgIntersectScissor(vg,
+            _border, _header_size + _border,
+            _root->width() + 2.f * _internal_border,
+            _root->height() + 2.f * _internal_border);
 
         //  Draw child
         widget_wrapper_base<header>::draw(vg);
@@ -84,9 +87,8 @@ namespace View {
     {
         auto root_area =
             make_rectangle(
-                _border_size + _header_size,
-                _border_size + _header_size + _root.get()->height(),
-                _border_size, _border_size + _root.get()->height());
+                _header_size + _border, _header_size + _border + 2.f * _internal_border + _root->height(),
+                _border, _border + 2.f * _internal_border + _root->width());
 
         if (root_area.contains(area))
         {

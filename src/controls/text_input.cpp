@@ -8,8 +8,11 @@
 
 namespace View {
 
-    text_input::text_input(float width, float height)
-    :   control{width, height, cursor::text}
+    text_input::text_input(
+        float width, float height,
+        size_constraint width_constraint,
+        size_constraint height_constraint)
+    :   control{width, height, width_constraint, height_constraint, cursor::text}
     {
         apply_color_theme(default_color_theme);
     }

@@ -4,8 +4,12 @@
 
 namespace View {
 
-    push_button::push_button(float width, float height)
-    : control{width, height}
+    push_button::push_button(
+        float width,
+        float height,
+        size_constraint width_constraint,
+        size_constraint hieght_constraint)
+    : control{width, height, width_constraint, hieght_constraint}
     {
         apply_color_theme(default_color_theme);
     }

@@ -13,6 +13,7 @@
 #include "widget_container/header.h"
 #include "widget_container/background.h"
 #include "widget_container/map_wrapper.h"
+#include "widget_container/border_wrapper.h"
 
 //  Controls
 #include "controls/label.h"

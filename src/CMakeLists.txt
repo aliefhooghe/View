@@ -58,6 +58,8 @@ set(VIEW_COMMON_SRC
     helpers/directory_model.h
     helpers/filesystem_directory_model.h
     helpers/filesystem_directory_model.cpp
+    helpers/layout_builder.h
+    helpers/layout_builder.cpp
     controls/filesystem_view.h
     controls/filesystem_view.cpp
 
@@ -77,6 +79,8 @@ set(VIEW_COMMON_SRC
     widget_container/widget_container.h
     widget_container/background.h
     widget_container/background.cpp
+    widget_container/border_wrapper.h
+    widget_container/border_wrapper.cpp
     widget_container/layout_separator.h
     widget_container/layout_separator.cpp
     widget_container/map_wrapper.h
@@ -106,7 +110,7 @@ if (UNIX)
         display/backends/x11_backend.cpp
         display/backends/x11_backend.h
     )
-    
+
 	target_link_libraries(View PRIVATE
 		${X11_LIBRARIES}
 		# stdc++fs			# filesystem

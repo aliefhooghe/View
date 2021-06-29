@@ -36,14 +36,14 @@ namespace View {
     map_wrapper::map_wrapper(
         std::unique_ptr<widget>&& root,
         float width, float height)
-    :   widget_wrapper_base{std::move(root), width, height}
+    :   widget_wrapper_base{std::move(root), 0.f, 0.f, width, height}
     {}
 
     map_wrapper::map_wrapper(
         std::unique_ptr<widget>&& root,
         float width, float height,
         size_constraint width_constrain, size_constraint height_constrain)
-    :   widget_wrapper_base{std::move(root), width, height, width_constrain, height_constrain}
+    :   widget_wrapper_base{std::move(root), 0.f, 0.f, width, height, width_constrain, height_constrain}
     {}
 
     void map_wrapper::reset_view() noexcept

@@ -10,9 +10,10 @@ namespace View {
         friend class widget_container<widget_wrapper_base>;
     public:
         widget_wrapper_base(std::unique_ptr<widget>&& root);
-        widget_wrapper_base(std::unique_ptr<widget>&& root, float width, float height);
+        widget_wrapper_base(std::unique_ptr<widget>&& root, float x, float y, float width, float height);
         widget_wrapper_base(
             std::unique_ptr<widget>&& root,
+            float x, float y,
             float width, float height,
             size_constraint width_constrain, size_constraint height_constrain);
         ~widget_wrapper_base() override = default;
@@ -39,19 +40,20 @@ namespace View {
     }
 
     template <typename Derived, typename TWidgetHolder>
-    widget_wrapper_base<Derived, TWidgetHolder>::widget_wrapper_base(std::unique_ptr<widget>&& root, float width, float height)
+    widget_wrapper_base<Derived, TWidgetHolder>::widget_wrapper_base(std::unique_ptr<widget>&& root, float x, float y, float width, float height)
     : widget_container<widget_wrapper_base<Derived, TWidgetHolder>>{width, height},
-        _root{static_cast<Derived&>(*this), 0, 0, std::move(root)}
+        _root{static_cast<Derived&>(*this), x, y, std::move(root)}
     {
     }
 
     template <typename Derived, typename TWidgetHolder>
     widget_wrapper_base<Derived, TWidgetHolder>::widget_wrapper_base(
         std::unique_ptr<widget>&& root,
+        float x, float y,
         float width, float height,
         size_constraint width_constrain, size_constraint height_constrain)
     :   widget_container<widget_wrapper_base<Derived, TWidgetHolder>>{width, height, width_constrain, height_constrain},
-        _root{static_cast<Derived&>(*this), 0, 0, std::move(root)}
+        _root{static_cast<Derived&>(*this), x, y, std::move(root)}
     {
     }
 
