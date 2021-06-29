@@ -18,9 +18,8 @@ namespace View {
 
         bool on_mouse_enter() override;
         bool on_mouse_exit() override;
-
-    protected:
         bool hovered() const noexcept;
+        void set_hover_cursor(cursor c) noexcept;
 
     private:
         bool _hovered{false};

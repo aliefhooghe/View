@@ -45,4 +45,11 @@ namespace View {
         return _hovered;
     }
 
+    void control::set_hover_cursor(cursor c) noexcept
+    {
+        _cursor = c;
+        if (_hovered)
+            set_cursor(_cursor);
+    }
+
 }
