@@ -230,13 +230,13 @@ namespace View {
         auto widget_at(float x, float y)
         {
             const auto orientation_cursor = choose_dim<Orientation>(x, y);
-            //const auto orthogonal_cursor = choose_dim<orthogonal(Orientation)>(x, y);
-            const auto delta = widget_pos<Orientation>(_separator) - orientation_cursor;
+            const auto min = widget_pos<Orientation>(_separator);
+            const auto max = min + _separator_width;
 
-            if (std::abs(delta) < (_separator_width / 2.f))
-                return &_separator;
-            else if (delta > 0)
+            if (orientation_cursor < min)
                 return &_first;
+            else if (orientation_cursor <= max)
+                return &_separator;
             else
                 return &_second;
         }
@@ -244,9 +244,9 @@ namespace View {
         template <typename TFunction>
         void foreach_holder(TFunction func)
         {
+            func(_separator);
             func(_first);
             func(_second);
-            func(_separator);
         }
 
         widget_holder<> _first;
