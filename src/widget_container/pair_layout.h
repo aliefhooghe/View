@@ -141,7 +141,7 @@ namespace View {
 
             //  Create separator
             auto separator = std::make_unique<layout_separator>(0.f, 0.f, orthogonal(Orientation));
-
+            _separator_ref = separator.get();
             separator->set_callback(
                 [this](float delta) {
                     const auto target_first_orientation_size = widget_size<Orientation>(_first.get()) + delta;
@@ -225,6 +225,11 @@ namespace View {
             widget_container<pair_layout<Orientation>>::draw_widgets(vg);
         }
 
+        void set_frozen(bool frozen = true) noexcept
+        {
+            _separator_ref->set_frozen(frozen);
+        }
+
     private:
 
         auto widget_at(float x, float y)
@@ -252,6 +257,7 @@ namespace View {
         widget_holder<> _first;
         widget_holder<> _second;
         widget_holder<> _separator;
+        layout_separator *_separator_ref{nullptr};
     };
 
     /**
@@ -261,46 +267,52 @@ namespace View {
     using horizontal_pair_layout = pair_layout<orientation::horizontal>;
     using vertical_pair_layout = pair_layout<orientation::vertical>;
 
-    template <orientation O, typename T, typename ...Ts>
+    template <orientation O, bool Frozen, typename T, typename ...Ts>
     auto make_layout(T&& first, Ts&& ...next)
     {
-        if constexpr (sizeof...(Ts) == 0)
+        if constexpr (sizeof...(Ts) == 0) {
             return std::move(first);
-        else
-            return std::make_unique<pair_layout<O>>(
-                std::move(first), make_layout<O>(std::move(next)...));
+        }
+        else {
+            auto layout = std::make_unique<pair_layout<O>>(
+                std::move(first), make_layout<O, Frozen>(std::move(next)...));
+            layout->set_frozen(Frozen);
+            return layout;
+        }
     }
 
-    template <orientation O, typename T, typename ...Ts>
+    template <orientation O, bool Frozen, typename T, typename ...Ts>
     auto make_shared_layout(T&& first, Ts ...next)
     {
         static_assert(sizeof...(Ts) > 0);
-        return std::make_shared<pair_layout<O>>(
-            std::move(first), make_layout<O>(std::move(next)...));
+        auto layout = std::make_shared<pair_layout<O>>(
+            std::move(first), make_layout<O, Frozen>(std::move(next)...));
+        layout->set_frozen(Frozen);
+        return layout;
     }
 
-    template <typename ...T>
+    template <bool Frozen = false, typename ...T>
     auto make_horizontal_layout(T&& ...childs)
     {
-        return make_layout<orientation::horizontal>(std::move(childs)...);
+        return make_layout<orientation::horizontal, Frozen>(std::move(childs)...);
     }
 
-    template <typename ...T>
+    template <bool Frozen = false, typename ...T>
     auto make_shared_horizontal_layout(T&& ...childs)
     {
-        return make_shared_layout<orientation::horizontal>(std::move(childs)...);
+        return make_shared_layout<orientation::horizontal, Frozen>(std::move(childs)...);
     }
 
-    template <typename ...T>
+    template <bool Frozen = false, typename ...T>
     auto make_vertical_layout(T&& ...childs)
     {
-        return make_layout<orientation::vertical>(std::move(childs)...);
+        return make_layout<orientation::vertical, Frozen>(std::move(childs)...);
     }
 
-    template <typename ...T>
+    template <bool Frozen = false, typename ...T>
     auto make_shared_vertical_layout(T&& ...childs)
     {
-        return make_shared_layout<orientation::vertical>(std::move(childs)...);
+        return make_shared_layout<orientation::vertical, Frozen>(std::move(childs)...);
     }
 
 

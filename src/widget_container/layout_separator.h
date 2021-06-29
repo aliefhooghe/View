@@ -18,8 +18,9 @@ namespace View {
 
         bool on_mouse_drag(mouse_button, float x, float y, float dx, float dy) override;
         void set_callback(callback c) { _callback = c; }
-
+        void set_frozen(bool frozen = true);
     private:
+        bool _frozen{false};
         orientation _orientation;
         callback _callback{[](float){}};
     };
