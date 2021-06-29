@@ -7,6 +7,8 @@
 
 #include <GL/glew.h>
 #include <GL/gl.h>
+#include <array>
+
 #include "nanovg.h"
 #include "nanovg_gl.h"
 
@@ -41,6 +43,8 @@ namespace View {
         //  Internal helpers
         void _redraw_window();
         void _resize_window(unsigned int width, unsigned int height);
+        void _initialize_cursors();
+        void _apply_cursor();
 
         static void _register_window_class();
 
@@ -49,12 +53,14 @@ namespace View {
             UINT msg,
             WPARAM w_param,
             LPARAM l_param);
-        
+
         // Drawing context
         NVGcontext* _vg;
         HGLRC _opengl_context{};
 
         // Win32 members
+        cursor _current_cursor{cursor::standard};
+        std::array<HCURSOR, VIEW_CURSOR_COUNT> _win32_cursors{};
         const HWND _parent;
         HWND _window{0};
         bool _has_focus{false};
@@ -125,7 +131,7 @@ namespace View {
             throw std::runtime_error("win32_backend : unable to set pixel format");
 
         DescribePixelFormat(hdc, pixel_format, sizeof(PIXELFORMATDESCRIPTOR), &pixel_format_descriptor);
-        
+
         _opengl_context = wglCreateContext(hdc);
         wglMakeCurrent(hdc, _opengl_context);
 
@@ -137,9 +143,12 @@ namespace View {
         //  NanoVG
         _vg = nvgCreateGL2(NVG_ANTIALIAS | NVG_STENCIL_STROKES | NVG_DEBUG);
 
-        //  Intitialize internals fonts
+        //  Intitialize internals fonts and cursors
         create_roboto_regular_font(_vg);
         create_roboto_bold_font(_vg);
+
+        _initialize_cursors();
+        _apply_cursor();
 
         ReleaseDC(_window, hdc);
     }
@@ -169,9 +178,10 @@ namespace View {
 
     void win32_window::set_cursor(cursor c)
     {
-
+        _current_cursor = c;
+        _apply_cursor();
     }
-    
+
     void win32_window::sys_invalidate_rect(const draw_area& area)
     {
         const RECT win32_rect =
@@ -213,13 +223,34 @@ namespace View {
 
         EndPaint(_window, &paint_struct);
     }
-    
+
     void win32_window::_resize_window(unsigned int width, unsigned int height)
     {
         //  Notify the content that window size has changed
         resize_display(width, height);
         //  Update drawing context
         glViewport(0, 0, width, height);
+    }
+
+    void win32_window::_initialize_cursors()
+    {
+        _win32_cursors[static_cast<int>(cursor::standard)] = LoadCursor(nullptr, IDC_ARROW);
+        _win32_cursors[static_cast<int>(cursor::arrow)] = LoadCursor(nullptr, IDC_ARROW);
+        _win32_cursors[static_cast<int>(cursor::cross)] = LoadCursor(nullptr, IDC_CROSS);
+        _win32_cursors[static_cast<int>(cursor::noway)] = LoadCursor(nullptr, IDC_NO);
+        _win32_cursors[static_cast<int>(cursor::wait)] = LoadCursor(nullptr, IDC_WAIT);
+        _win32_cursors[static_cast<int>(cursor::hand)] = LoadCursor(nullptr, IDC_HAND);
+        _win32_cursors[static_cast<int>(cursor::size_horizontal)] = LoadCursor(nullptr, IDC_SIZEWE);
+        _win32_cursors[static_cast<int>(cursor::size_vertical)] = LoadCursor(nullptr, IDC_SIZENS);
+        _win32_cursors[static_cast<int>(cursor::move)] = LoadCursor(nullptr, IDC_SIZEALL);
+        _win32_cursors[static_cast<int>(cursor::text)] = LoadCursor(nullptr, IDC_IBEAM);
+    }
+
+    void win32_window::_apply_cursor()
+    {
+        const auto cursor_idx = static_cast<unsigned int>(_current_cursor);
+        if (cursor_idx < VIEW_CURSOR_COUNT)
+            SetCursor(_win32_cursors[cursor_idx]);
     }
 
     void win32_window::_register_window_class()
@@ -237,7 +268,7 @@ namespace View {
             window_class.cbWndExtra = 0;
             window_class.hInstance = nullptr;
             window_class.hIcon = LoadIcon(nullptr, IDI_APPLICATION);
-            window_class.hCursor = LoadCursor(nullptr, IDC_ARROW);
+            window_class.hCursor = nullptr; // let the windows choose
             window_class.hbrBackground = nullptr;
             window_class.lpszMenuName = nullptr;
             window_class.lpszClassName = TEXT(WINDOW_VIEW_CLASS_NAME);
@@ -282,6 +313,9 @@ namespace View {
                 TrackMouseEvent(&track_mouse_event_param);
                 window_instance->sys_mouse_enter();
                 window_instance->_has_focus = true;
+
+                // Make sure to re apply cursor when the mouse enter
+                window_instance->_apply_cursor();
             }
 
             window_instance->sys_mouse_move(
@@ -300,6 +334,7 @@ namespace View {
         case WM_MOUSELEAVE:
             if (window_instance->_parent == 0)
                 window_instance->sys_mouse_exit();
+            window_instance->_has_focus = false;
             break;
 
         case WM_LBUTTONDOWN:
@@ -356,7 +391,7 @@ namespace View {
             if (parent == nullptr) {
                 // Root window : need a thread to manage the window
                 _window_thread = std::thread{ _app_window_proc, this, title};
-                
+
             }
             else {
                 // children window : event are manager by parent
@@ -401,12 +436,12 @@ namespace View {
         else
             return false;
     }
-        
+
     void win32_backend::_app_window_proc(win32_backend* self, const std::string& title)
     {
         // Window must be create, used and deleted in the same thread
         self->_window = std::make_unique<win32_window>(self->_root, self->_pixel_per_unit, title);
-        
+
         //  Manage event until windows is closed
         self->_window->manage_event_loop(self->_running);
 
