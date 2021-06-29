@@ -75,8 +75,8 @@ namespace View {
         // todo : void draw_rect(cairo_t *cr, const rectangle<>& area) override;
 
         void reset_selection() noexcept;
-        bool select_directory(const DerivedModel&); 
-        // todo select_value
+        bool select_directory(const DerivedModel&);
+        bool select_value(const value&);
 
         virtual void update();
         void close_all_directories();
@@ -95,7 +95,25 @@ namespace View {
         const DerivedModel& data_model() const noexcept { return _model.self(); }
 
     private:
-        bool _select_directory(const DerivedModel& parent, const DerivedModel& directory); 
+        template <typename TPredicat>
+        bool _select_item(const DerivedModel& parent, TPredicat pred)
+        {
+            for (const auto& pair : parent) {
+                if (pred(pair.second)) {
+                    _selected_item = &(pair.second);
+                    return true;
+                }
+                else if (std::holds_alternative<DerivedModel>(pair.second)) {
+                    const auto& subdir = std::get<DerivedModel>(pair.second);
+                    if (_select_item(subdir, pred)) {
+                        _open_dirs.insert(&(pair.second));
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+
         void unfold();
         bool cell_at(float y, unsigned int &idx);
 
@@ -106,7 +124,7 @@ namespace View {
         bool is_open(const cell& c) const;
 
         //  geometry helper
-        auto cell_width_offset(const cell& c) { return c.level * _cell_height * 0.5f;  } 
+        auto cell_width_offset(const cell& c) { return c.level * _cell_height * 0.5f;  }
 
         std::set<const item*> _open_dirs{};
 
@@ -194,7 +212,7 @@ namespace View {
             //  Arrow
             if (c.type == cell_type::directory) {
                 const auto arrow_offset = 0.3f * _cell_height;
-                
+
                 nvgBeginPath(vg);
                 nvgMoveTo(vg, width_offset + arrow_offset, height_offset + arrow_offset);
 
@@ -206,7 +224,7 @@ namespace View {
                     nvgLineTo(vg, width_offset + arrow_offset, height_offset + _cell_height - arrow_offset);
                     nvgLineTo(vg, width_offset + _cell_height - arrow_offset, height_offset + _cell_height / 2.f);
                 }
-                
+
                 nvgFill(vg);
             }
 
@@ -215,28 +233,6 @@ namespace View {
                 vg, width_offset + _cell_height, height_offset, width(), _cell_height, _font_size, c.caption.c_str(), c.type == cell_type::directory,
                 horizontal_alignment::left, vertical_alignment::bottom);
         }
-    }
-
-    template<typename DerivedModel>
-    bool directory_view<DerivedModel>::_select_directory(const DerivedModel& parent, const DerivedModel& directory)
-    {
-        for (const auto& pair : parent) {
-            if (std::holds_alternative<DerivedModel>(pair.second)) {
-                const auto& subdir = std::get<DerivedModel>(pair.second);
-
-                if (&subdir == &directory) {
-                    _selected_item = &(pair.second);
-                    return true;
-                }
-                else if (_select_directory(subdir, directory)) {
-                    _open_dirs.insert(&(pair.second));
-                    return true;
-                }
-            }
-        }
-
-        // Not found in this level
-        return false;
     }
 
     template<typename DerivedModel>
@@ -260,14 +256,45 @@ namespace View {
     template <typename DerivedModel>
     bool directory_view<DerivedModel>::select_directory(const DerivedModel& directory)
     {
-        if (_select_directory(_model.self(), directory)) {
+        const bool selected =
+            _select_item(
+                _model.self(),
+                [&directory](const item& i)
+                {
+                    if (std::holds_alternative<DerivedModel>(i))
+                        return &std::get<DerivedModel>(i) == &directory;
+                    else
+                        return false;
+                });
+
+        if (selected) {
             unfold();
             invalidate();
-            return true;
         }
-        else {
-            return false;
+
+        return selected;
+    }
+
+    template <typename DerivedModel>
+    bool directory_view<DerivedModel>::select_value(const value& val)
+    {
+        const bool selected =
+            _select_item(
+                _model.self(),
+                [&val](const item& i)
+                {
+                    if (std::holds_alternative<value>(i))
+                        return &std::get<value>(i) == &val;
+                    else
+                        return false;
+                });
+
+        if (selected) {
+            unfold();
+            invalidate();
         }
+
+        return selected;
     }
 
     template<typename DerivedModel>
@@ -385,7 +412,7 @@ namespace View {
 
         if (c.type == cell_type::directory) {
 
-            if (!_directory_select_callback || (x < cell_width_offset(c) + _cell_height)) {    
+            if (!_directory_select_callback || (x < cell_width_offset(c) + _cell_height)) {
                 //  Swap open state
                 if (is_open(c))
                     _open_dirs.erase(c.ref);
