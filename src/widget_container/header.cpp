@@ -19,8 +19,8 @@ namespace View {
 
         width_constraint.min = _root->width_constraint().min + border_offset;
         width_constraint.max = _root->width_constraint().max + border_offset;
-        height_constraint.min = _root->height_constraint().min + border_offset + 2.f * _header_size; // avoid overlap
-        height_constraint.max = std::max(height_constraint.min, _root->height_constraint().max + border_offset + _header_size);
+        height_constraint.min = _root->height_constraint().min + border_offset + _header_size;
+        height_constraint.max = _root->height_constraint().max + border_offset + _header_size;
 
         apply_color_theme(default_color_theme);
 
@@ -31,17 +31,18 @@ namespace View {
         _root.set_pos(_border + _internal_border,  _header_size + _border + _internal_border);
     }
 
-    bool header::resize(float width, float height)
+    bool header::resize(float w, float h)
     {
         const auto border_offset = 2.f * (_border + _internal_border);
-        if (width_constraint().contains(width) &&
-            height_constraint().contains(height))
+
+        if (width_constraint().contains(w) &&
+            height_constraint().contains(h))
         {
             if (_root->resize(
-                width - border_offset,
-                height - (_header_size + border_offset)))
+                w - border_offset,
+                h - (_header_size + border_offset)))
             {
-                widget_wrapper_base<header>::resize(width, height);
+                widget_wrapper_base<header>::resize(w, h);
                 return true;
             }
         }
