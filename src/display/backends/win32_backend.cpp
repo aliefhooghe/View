@@ -332,8 +332,7 @@ namespace View {
         break;
 
         case WM_MOUSELEAVE:
-            if (window_instance->_parent == 0)
-                window_instance->sys_mouse_exit();
+            window_instance->sys_mouse_exit();
             window_instance->_has_focus = false;
             break;
 
