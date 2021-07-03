@@ -12,10 +12,10 @@ namespace View {
         public abstract_storage_directory_model<std::string, std::filesystem::path, alphabetical_compare, filesystem_directory_model>
     {
         using storage = abstract_storage_directory_model<std::string, std::filesystem::path, alphabetical_compare, filesystem_directory_model>;
+    public:
         using item = typename storage::item;
         using iterator = typename storage::iterator;
 
-        public:
             filesystem_directory_model() = default;
 
             filesystem_directory_model(const std::filesystem::path& root)
@@ -28,40 +28,16 @@ namespace View {
             void sync();
 
             //  directory model interface
-            auto size()
-            {
-                _scan();
-                return storage::size();
-            }
-
-            auto begin()
-            {
-                _scan();
-                return storage::begin();
-            }
-
-            auto end()
-            {
-                _scan();
-                return storage::end();
-            }
-
-            auto find(const std::string& key)
-            {
-                _scan();
-                return storage::find(key);
-            }
-
-            const auto& operator[](const std::string& key)
-            {
-                _scan();
-                return storage::operator[](key);
-            }
-
-            const auto& path() const noexcept { return _root; }
+            std::size_t size();
+            iterator begin();
+            iterator end();
+            iterator find(const std::string& key);
+            const item& operator[](const std::string& key);
+            const std::filesystem::path& path() const noexcept;
 
         private:
-            void _scan();
+            void _initialize();
+            static bool _ignore(const std::filesystem::directory_entry&);
 
             bool _scanned{false};
             std::filesystem::path _root{};
