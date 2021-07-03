@@ -118,6 +118,11 @@ namespace View {
             _childrens.erase(k);
         }
 
+        void erase(iterator it)
+        {
+            _childrens.erase(it);
+        }
+
         item& move(const Key& k1, const Key& k2)
         {
             if (_childrens.find(k2) != _childrens.end())
