@@ -25,6 +25,14 @@ namespace View {
         using node =
             std::pair<const Key, item>;
 
+        directory_model() noexcept = default;
+        directory_model(const directory_model&) = default;
+        directory_model(directory_model&&) noexcept = default;
+        ~directory_model() noexcept = default;
+
+        directory_model& operator= (const directory_model&) = default;
+        directory_model& operator= (directory_model&&) noexcept = default;
+
         auto size() const { return self().size(); }
 
         auto begin() { return self().begin(); }
@@ -57,6 +65,13 @@ namespace View {
     public:
         using item = typename directory_model<Key, Value, Derived>::item;
         using iterator = typename std::map<Key, item, Compare>::iterator;
+
+        abstract_storage_directory_model() noexcept = default;
+        abstract_storage_directory_model(abstract_storage_directory_model&&) noexcept = default;
+        ~abstract_storage_directory_model() noexcept = default;
+
+        abstract_storage_directory_model& operator= (const abstract_storage_directory_model&) = default;
+        abstract_storage_directory_model& operator= (abstract_storage_directory_model&&) noexcept = default;
 
         auto size() const { return _childrens.size(); }
 
@@ -97,14 +112,14 @@ namespace View {
         Derived& insert_directory(const Key& k, Derived&& dir)
         {
             auto& new_item = _childrens[k];
-            new_item.emplace<Derived>(std::move(dir));
+            new_item = std::move(dir);
             return std::get<Derived>(new_item);
         }
 
         Value& insert_value(const Key& k, Value&& v)
         {
             auto& new_item = _childrens[k];
-            new_item.emplace<Value>(std::move(v));
+            new_item = std::move(v);
             return std::get<Value>(new_item);
         }
 
