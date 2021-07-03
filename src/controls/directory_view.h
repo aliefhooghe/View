@@ -99,14 +99,18 @@ namespace View {
         bool _select_item(const DerivedModel& parent, TPredicat pred)
         {
             for (const auto& pair : parent) {
+                const auto item_ref = &(pair.second);
                 if (pred(pair.second)) {
-                    _selected_item = &(pair.second);
+                    _selected_item = item_ref;
+                    // Open if found item is a directory
+                    if (std::holds_alternative<DerivedModel>(pair.second))
+                        _open_dirs.insert(item_ref);
                     return true;
                 }
                 else if (std::holds_alternative<DerivedModel>(pair.second)) {
                     const auto& subdir = std::get<DerivedModel>(pair.second);
                     if (_select_item(subdir, pred)) {
-                        _open_dirs.insert(&(pair.second));
+                        _open_dirs.insert(item_ref);
                         return true;
                     }
                 }
