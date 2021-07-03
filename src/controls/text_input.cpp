@@ -8,6 +8,14 @@
 
 namespace View {
 
+    text_input::text_input(float width, float height)
+    :   control{
+            width, height,
+            size_constraint::at_least(width),
+            size_constraint::frozen(height), cursor::text}
+    {
+    }
+
     text_input::text_input(
         float width, float height,
         size_constraint width_constraint,

@@ -42,6 +42,16 @@ namespace View {
             return size_constraint{std::max(min, other.min), std::min(max, other.max)};
         }
 
+        static constexpr auto frozen(float value)
+        {
+            return size_constraint{value, value};
+        }
+
+        static constexpr auto at_least(float value)
+        {
+            return size_constraint{value};
+        }
+
         float min{0.f};
         float max{std::numeric_limits<float>::infinity()};
     };

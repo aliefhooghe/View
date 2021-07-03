@@ -10,10 +10,11 @@ namespace View {
      */
     class text_input : public control {
     public:
+        text_input(float width = 140, float height = 21);
         text_input(
-            float width = 140, float height = 21,
-            size_constraint width_constraint = free_size,
-            size_constraint height_constraint = free_size);
+            float width, float height,
+            size_constraint width_constraint,
+            size_constraint height_constraint);
 
         bool on_text_input(std::string_view) override;
 

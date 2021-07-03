@@ -4,6 +4,11 @@
 
 namespace View {
 
+    push_button::push_button(float width, float height)
+    : control{width, height, size_constraint::at_least(width), size_constraint::frozen(height)}
+    {
+    }
+
     push_button::push_button(
         float width,
         float height,
