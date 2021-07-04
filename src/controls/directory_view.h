@@ -427,8 +427,8 @@ namespace View {
             }
             else {
                 if (_selected_item != c.ref) {
-                    _directory_select_callback(std::get<DerivedModel>(*c.ref));
                     _selected_item = c.ref;
+                    _directory_select_callback(std::get<DerivedModel>(*c.ref));
                     invalidate();
                 }
             }
@@ -436,9 +436,9 @@ namespace View {
         }
         else {
             if (_selected_item != c.ref) {
+                _selected_item = c.ref;
                 if (_value_select_callback)
                     _value_select_callback(std::get<value>(*c.ref));
-                _selected_item = c.ref;
                 invalidate();
             }
         }
