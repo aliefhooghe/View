@@ -25,6 +25,9 @@ namespace View {
 
         void set_widget(std::weak_ptr<TChildren> w)
         {
+            if (auto sptr = _children.lock())
+                sptr->on_mouse_exit();
+
             _children = w;
 
             if (auto sptr = w.lock()) {
