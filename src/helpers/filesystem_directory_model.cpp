@@ -114,7 +114,7 @@ namespace View {
     {
         if (entry.is_directory() || entry.is_regular_file()) {
             const auto filename = entry.path().filename().string();
-            return filename == "." || filename == "..";
+            return filename[0] == '.';
         }
         else {
             return true;
