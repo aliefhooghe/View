@@ -67,6 +67,7 @@ namespace View {
         using iterator = typename std::map<Key, item, Compare>::iterator;
 
         abstract_storage_directory_model() noexcept = default;
+        abstract_storage_directory_model(const abstract_storage_directory_model&) = default;
         abstract_storage_directory_model(abstract_storage_directory_model&&) noexcept = default;
         ~abstract_storage_directory_model() noexcept = default;
 

@@ -17,6 +17,12 @@ namespace View {
         using iterator = typename storage::iterator;
 
             filesystem_directory_model() = default;
+            filesystem_directory_model(const filesystem_directory_model&) = default;
+            filesystem_directory_model(filesystem_directory_model&&) noexcept = default;
+            ~filesystem_directory_model() noexcept = default;
+
+            filesystem_directory_model& operator =(const filesystem_directory_model&) = default;
+            filesystem_directory_model& operator =(filesystem_directory_model&&) noexcept = default;
 
             filesystem_directory_model(const std::filesystem::path& root)
             : _root{root}
