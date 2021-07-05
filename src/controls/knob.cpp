@@ -12,6 +12,7 @@ namespace View {
     knob::knob(float size, float initial_value, bool display_value)
     :   control{size, size}, _value{initial_value}, _display_value{display_value}
     {
+        freeze_size();
         apply_color_theme(default_color_theme);
     }
 

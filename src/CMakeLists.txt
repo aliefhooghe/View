@@ -111,10 +111,12 @@ if (UNIX)
         display/backends/x11_backend.h
     )
 
-	target_link_libraries(View PRIVATE
-		${X11_LIBRARIES}
-		# stdc++fs			# filesystem
-	)
+	target_link_libraries(View PRIVATE ${X11_LIBRARIES})
+
+    if(LINUX)
+    target_link_libraries(View PRIVATE pthread)
+    endif()
+
 elseif (WIN32)
     message("Build View with Win32 backend")
 

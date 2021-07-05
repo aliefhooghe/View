@@ -2,47 +2,37 @@
 #include <iostream>
 
 #include "view.h"
-#include "helpers/filesystem_directory_model.h"
+#include "helpers/layout_builder.h"
 
 int main()
 {
-    using namespace View;
-
     // tree structure
-    filesystem_directory_model model{"/home/aliefhooghe"};
-
-    auto dir_view = make_directory_view(model, 280, 280);
+    auto dir_view = std::make_unique<View::filesystem_view>("/home", 250, 250);
 
     dir_view->set_value_select_callback([](const auto& file) { std::cout << "Select file " << file << std::endl; });
     dir_view->set_directory_select_callback([](const auto& dir) { std::cout << dir.path() << std::endl; });
 
-    auto update_button = std::make_unique<text_push_button>("Update");
+    auto update_button = std::make_unique<View::text_push_button>("Update");
     update_button->set_callback([dv = dir_view.get()]() { dv->update(); });
 
-    auto left_panel = std::make_unique<panel<>>(280, 280, size_constraint{140, 1500}, free_size);
-    left_panel->insert_widget(70, 14, std::make_unique<knob>());
-    left_panel->insert_widget(168, 14, std::make_unique<text_push_button>("Save"));
-    left_panel->insert_widget(168, 42, std::move(update_button));
-    left_panel->insert_widget(70, 112, std::make_unique<text_input>());
-
-    for (auto i = 0u; i < 15u; ++i) {
-        const float y = static_cast<float>(i) * 28.f + 140;
-        left_panel->insert_widget(42, y, std::make_unique<checkbox>());
-    }
-
-    auto content =
-        std::make_unique<horizontal_pair_layout>(
-            std::make_unique<header>(std::move(left_panel)),
-            std::make_unique<vertical_pair_layout>(
-                    make_horizontal_layout(
-                        std::make_unique<header>(std::make_unique<panel<>>(280, 140, free_size, size_constraint{42, 210})),
-                        std::make_unique<header>(std::make_unique<panel<>>(280, 140, free_size, size_constraint{42, 210})),
-                        std::make_unique<header>(std::make_unique<panel<>>(280, 140, free_size, size_constraint{42, 210}))
-                    ),
-                    std::make_unique<header>(std::move(dir_view))));
+    View::layout_builder builder{};
 
     auto root =
-        std::make_unique<background>(std::move(content));
+        builder.windows(
+            builder.horizontal<false>(
+                builder.header(
+                    builder.vertical(
+                        builder.horizontal(std::make_unique<View::knob>(), builder.empty_space()),
+                        builder.empty_space(),
+                        builder.horizontal(std::make_unique<View::text_push_button>("Save"), std::move(update_button)),
+                        std::make_unique<View::text_input>()
+                    )
+                ),
+                builder.header(
+                    std::move(dir_view)
+                )
+            )
+        );
 
     //
     auto dpy = create_application_display(*root, 1);
