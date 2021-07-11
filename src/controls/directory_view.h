@@ -173,8 +173,8 @@ namespace View {
         float cell_height, float font_size)
     :   control{
             width, height,
-            size_constraint{5, std::numeric_limits<float>::infinity()},
-            size_constraint{1, std::numeric_limits<float>::infinity()}
+            size_constraint::at_least(4.f * cell_height),
+            size_constraint::at_least(2.f * cell_height)
         },
         _model{m.self()},
         _cell_height{cell_height},
