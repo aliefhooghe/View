@@ -107,14 +107,14 @@ namespace View {
 			std::unique_ptr<widget>&& child,
 			color_theme::color background = color_theme::color::SURFACE,
 			float internal_border_size = 5.f,
-			float header_size = 14.f,
+			float header_size = 16.f,
 			float border_size = 3.f) const;
 
 		std::shared_ptr<View::header> shared_header(
 			std::unique_ptr<widget>&& child,
 			color_theme::color background = color_theme::color::SURFACE,
 			float header_size = 5.f,
-			float border_size = 14.f,
+			float border_size = 16.f,
 			float internal_border_size = 3.f) const;
 
 		std::unique_ptr<map_wrapper> map(std::unique_ptr<widget>&& child, float width = 100.f, float height = 100.f) const;
