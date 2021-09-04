@@ -78,6 +78,17 @@ namespace View {
         bool select_directory(const DerivedModel&);
         bool select_value(const value&);
 
+        template <typename TPredicate>
+        bool select_item_if(TPredicate pred)
+        {
+            const auto selected = _select_item(_model.self(), pred);
+            if (selected){
+                unfold();
+                invalidate();
+            }
+            return selected;
+        }
+
         virtual void update();
         void close_all_directories();
         void set_value_select_callback(value_select_callback);
