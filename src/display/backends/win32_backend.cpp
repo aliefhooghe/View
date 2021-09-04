@@ -315,6 +315,10 @@ namespace View {
             window_instance->_resize_window(LOWORD(l_param), HIWORD(l_param));
             break;
 
+        case WM_MOVE:
+            InvalidateRect(window_instance->_window, NULL, TRUE);
+            break;
+
         case WM_MOUSEMOVE:
         {
             if (!window_instance->_has_focus) {
