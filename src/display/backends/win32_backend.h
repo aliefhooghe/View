@@ -11,7 +11,7 @@ namespace View {
     class win32_window;
 
     /**
-     *  \class x11_backend
+     *  \class win32 backend
      *  \brief
      */
     class win32_backend : public view_backend {

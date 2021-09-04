@@ -163,15 +163,28 @@ namespace View {
     void win32_window::manage_event_loop(const bool& running)
     {
         SetFocus(_window);
+
         while (running) {
             MSG msg;
+            const auto status = GetMessage(&msg, _window, 0, 0);
 
-            if (GetMessage(&msg, _window, 0, 0)) {
-                TranslateMessage(&msg);
-                DispatchMessage(&msg);
+            if (status == -1) {
+                // Error: try to display an parentless error message box
+                MessageBox(
+                    nullptr,
+                    "Win32 backend: An fatal error happened while processing events.",
+                    nullptr,
+                    MB_OK | MB_ICONERROR | MB_TOPMOST
+                );
+                break;
+            }
+            else if (status == 0) {
+                // WM_QUIT received
+                break;
             }
             else {
-                break; // WM_QUIT received
+                TranslateMessage(&msg);
+                DispatchMessage(&msg);
             }
         }
     }
@@ -357,7 +370,12 @@ namespace View {
             break;
 
         case WM_CLOSE:
-            PostQuitMessage(0);
+        case WM_DESTROY:
+            if (window_instance->_parent == nullptr)
+            {
+                // Only post a quit message if this is the root windows
+                PostQuitMessage(0);
+            }
             break;
 
         case WM_KEYDOWN:
