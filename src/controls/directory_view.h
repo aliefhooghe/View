@@ -94,6 +94,18 @@ namespace View {
         void set_value_select_callback(value_select_callback);
         void set_directory_select_callback(directory_select_callback);
 
+        template <typename TVisitor>
+        bool visit_selected_item(TVisitor visitor)
+        {
+            if (_selected_item) {
+                std::visit(visitor, *_selected_item);
+                return true;
+            }
+            else {
+                return false;
+            }
+        }
+
         void apply_color_theme(const color_theme&) override;
 
         bool on_mouse_wheel(float x, float y, float distance) override ;
