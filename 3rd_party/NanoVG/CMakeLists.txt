@@ -18,10 +18,10 @@ set(NANOVG_SRC
 add_library(nanovg ${NANOVG_SRC})
 
 # Use Freetype
-find_package(Freetype REQUIRED)
+# find_package(Freetype REQUIRED)
 target_include_directories(nanovg PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/nanovg/src)
-target_compile_definitions(nanovg PUBLIC FONS_USE_FREETYPE)
-target_link_libraries(nanovg PUBLIC Freetype::Freetype)
+# target_compile_definitions(nanovg PUBLIC FONS_USE_FREETYPE)
+# target_link_libraries(nanovg PUBLIC Freetype::Freetype)
 
 # Allow use in a shared library
 set_target_properties(nanovg PROPERTIES POSITION_INDEPENDENT_CODE ON)

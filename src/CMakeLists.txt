@@ -15,8 +15,7 @@ set(CMAKE_CXX_STANDARD 17)
 ############################
 
 
-## Dependencies
-list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake_modules")
+## Vector graphic dependency
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/../3rd_party/NanoVG NanoVG)
 
 ## Common Sources
