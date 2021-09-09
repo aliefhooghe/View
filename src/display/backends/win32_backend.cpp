@@ -35,7 +35,7 @@ namespace View {
         // display controller interface
         void set_cursor(cursor c) override;
 
-        using widget_adapter::sys_text_input;
+        using widget_adapter::sys_char_input;
     private:
         //  Widget adapter interface
         void sys_invalidate_rect(const draw_area& area) override;
@@ -373,6 +373,13 @@ namespace View {
             window_instance->sys_mouse_dbl_click();
             break;
 
+        case WM_CHAR:
+        {
+            window_instance->sys_char_input(
+                static_cast<char>(w_param));
+        }
+            break;
+
         case WM_CLOSE:
         case WM_DESTROY:
             if (window_instance->_parent == nullptr)
@@ -382,10 +389,6 @@ namespace View {
             }
             break;
 
-        case WM_KEYDOWN:
-        case WM_KEYUP:
-        case WM_SYSKEYDOWN:
-        case WM_SYSKEYUP:
         default:
             return DefWindowProc(window, msg, w_param, l_param);
             break;
@@ -449,11 +452,11 @@ namespace View {
         return _running;
     }
 
-    bool win32_backend::vst2_text_input(const std::string_view text)
+    bool win32_backend::vst2_char_input(char c)
     {
         // Apply only on a child windows (for audio plugins)
         if (!_window_thread.joinable() && _window)
-            return _window->sys_text_input(text);
+            return _window->sys_char_input(c);
         else
             return false;
     }

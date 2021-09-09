@@ -29,12 +29,8 @@ namespace View
 
     bool vst2_display::text_input(int32_t index, intptr_t value, int32_t opt)
     {
-        const char text[2] =
-        {
-            _convert_char(index, value, opt),
-            '\0'
-        };
-        return _backend->vst2_text_input(text);
+        return _backend->vst2_char_input(
+            _convert_char(index, value, opt));
     }
 
     char vst2_display::_convert_char(int32_t index, intptr_t value, int32_t opt)

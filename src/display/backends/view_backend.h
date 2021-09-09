@@ -22,11 +22,11 @@ namespace View
         virtual bool windows_is_open() const noexcept = 0;
 
         /**
-         *  \brief Used to receive keyboard text input from VST2 Host 
+         *  \brief Used to receive keyboard text input from VST2 Host
          *  \note This should not be implemented if keyboard event can be retrieved by the vst2 plugin
          *  directly from the windows manager
          */
-        virtual bool vst2_text_input(const std::string_view) { return false; }
+        virtual bool vst2_char_input(char) { return false; }
     protected:
         widget& _root;
         const float _pixel_per_unit;

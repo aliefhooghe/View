@@ -53,9 +53,7 @@ namespace View {
 		bool sys_mouse_button_up(const mouse_button button);
 		bool sys_mouse_wheel(const float distance);
 		bool sys_mouse_dbl_click(void);
-		bool sys_key_down(const keycode key);
-		bool sys_key_up(const keycode key);
-        bool sys_text_input(std::string_view txt);
+        bool sys_char_input(char);
     protected:
         /**
          *  \brief Inform the underlying display that an area must be redrawn

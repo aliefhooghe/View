@@ -283,7 +283,7 @@ namespace View {
             const auto size = XLookupString(
                 const_cast<XKeyEvent*>(&event.xkey), buffer, 7, nullptr, nullptr);
             if (size > 0)
-                sys_text_input(std::string_view{buffer, static_cast<std::size_t>(size)});
+                sys_char_input(std::string_view{buffer, static_cast<std::size_t>(size)});
         }
         break;
 

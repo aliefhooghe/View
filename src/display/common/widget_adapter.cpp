@@ -140,19 +140,9 @@ namespace View {
         return _root.on_mouse_dbl_click(_cursor_fx, _cursor_fy);
     }
 
-	bool widget_adapter::sys_key_down(const keycode key)
+    bool widget_adapter::sys_char_input(char c)
     {
-        return _root.on_key_down(key);
-    }
-
-	bool widget_adapter::sys_key_up(const keycode key)
-    {
-        return _root.on_key_up(key);
-    }
-
-    bool widget_adapter::sys_text_input(std::string_view txt)
-    {
-        return _root.on_text_input(txt);
+        return _root.on_char_input(c);
     }
 
     void widget_adapter::invalidate_rect(const rectangle<>& rect)

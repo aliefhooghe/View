@@ -70,26 +70,11 @@ namespace View {
         }
 
         //  Events
-        bool on_key_up(const keycode key) override
-        {
-            if (auto sptr = _children.lock())
-                return sptr->on_key_up(key);
-            else
-                return false;
-        }
 
-        bool on_key_down(const keycode key) override
+        bool on_char_input(char c) override
         {
             if (auto sptr = _children.lock())
-                return sptr->on_key_down(key);
-            else
-                return false;
-        }
-
-        bool on_text_input(std::string_view str) override
-        {
-            if (auto sptr = _children.lock())
-                return sptr->on_text_input(str);
+                return sptr->on_char_input(c);
             else
                 return false;
         }

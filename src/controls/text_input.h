@@ -16,7 +16,7 @@ namespace View {
             size_constraint width_constraint,
             size_constraint height_constraint);
 
-        bool on_text_input(std::string_view) override;
+        bool on_char_input(char) override;
 
         void draw(NVGcontext *vg) override;
         void apply_color_theme(const color_theme&) override;

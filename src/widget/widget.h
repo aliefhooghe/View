@@ -42,9 +42,7 @@ namespace View {
         virtual bool contains(float x, float y);
 
         //  Events
-        virtual bool on_key_up(const keycode key)       { return false; }
-        virtual bool on_key_down(const keycode key)     { return false; }
-        virtual bool on_text_input(std::string_view)    { return false; }
+        virtual bool on_char_input(char)                { return false; }
 
         virtual bool on_mouse_enter()                   { return false; }
 		virtual bool on_mouse_exit()                    { return false; }

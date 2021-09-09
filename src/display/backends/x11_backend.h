@@ -22,7 +22,7 @@ namespace View {
         void close_window() override;
         bool windows_is_open() const noexcept override;
 
-        // no need to implement vst2_text_input as keyboard event are retrieved by vst plgin directly from X11.
+        // no need to implement vst2_char_input as keyboard event are retrieved by vst plgin directly from X11.
     private:
         typedef unsigned long Window;
         static void _window_proc(x11_backend *self, Window parent, const std::string& title);

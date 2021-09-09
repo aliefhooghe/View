@@ -14,14 +14,6 @@ namespace View {
 		right,
 		wheel
 	};
-
-    enum keycode {
-		key_unknown,
-
-		//------------
-		keycode_count
-	};
-
 }
 
 #endif

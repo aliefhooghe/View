@@ -25,20 +25,18 @@ namespace View {
         apply_color_theme(default_color_theme);
     }
 
-    bool text_input::on_text_input(const std::string_view txt)
+    bool text_input::on_char_input(char c)
     {
-        for (const auto c : txt) {
-            //  ascii backspace
-            if (c == 8u) {
-                if (!_text.empty())
-                    _text.pop_back();
-            }
-            else if (c == 13) {
-                std::cout << "enter!" << std::endl;
-            }
-            else if (std::isprint(c)) {
-                _text.append(1, c);
-            }
+        //  ascii backspace
+        if (c == 8u) {
+            if (!_text.empty())
+                _text.pop_back();
+        }
+        else if (c == 13) {
+            std::cout << "enter!" << std::endl;
+        }
+        else if (std::isprint(c)) {
+            _text.append(1, c);
         }
 
         invalidate();
