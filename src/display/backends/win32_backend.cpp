@@ -90,8 +90,10 @@ namespace View {
             POINT cursor_pos;
             GetCursorPos(&cursor_pos);
 
-            window_x = std::max<unsigned long>(0u, cursor_pos.x - (window_width / 2));
-            window_y = std::max<unsigned long>(0u, cursor_pos.y - (window_height / 2));
+            window_x = static_cast<unsigned int>(
+                    std::max<int>(0, cursor_pos.x - static_cast<int>(window_width / 2)));
+            window_y = static_cast<unsigned int>(
+                    std::max<int>(0, cursor_pos.y - static_cast<int>(window_height / 2)));
 
             //  add menu icons
             window_style |= WS_OVERLAPPEDWINDOW | CS_VREDRAW | CS_HREDRAW;
@@ -166,25 +168,16 @@ namespace View {
 
         while (running) {
             MSG msg;
-            const auto status = GetMessage(&msg, _window, 0, 0);
-
-            if (status == -1) {
-                // Error: try to display an parentless error message box
-                MessageBox(
-                    nullptr,
-                    "Win32 backend: An fatal error happened while processing events.",
-                    nullptr,
-                    MB_OK | MB_ICONERROR | MB_TOPMOST
-                );
-                break;
-            }
-            else if (status == 0) {
-                // WM_QUIT received
-                break;
-            }
-            else {
-                TranslateMessage(&msg);
-                DispatchMessage(&msg);
+            const auto got_msg = PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE);
+            
+            if (got_msg) {
+                if (msg.message != WM_QUIT) {
+                    TranslateMessage(&msg);
+                    DispatchMessage(&msg);
+                }
+                else {
+                    break;
+                }
             }
         }
     }
@@ -381,7 +374,6 @@ namespace View {
             break;
 
         case WM_CLOSE:
-        case WM_DESTROY:
             if (window_instance->_parent == nullptr)
             {
                 // Only post a quit message if this is the root windows
