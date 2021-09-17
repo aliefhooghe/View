@@ -279,11 +279,11 @@ namespace View {
 
         case KeyPress:
         {
-            char buffer[8];
+            char input_char;
             const auto size = XLookupString(
-                const_cast<XKeyEvent*>(&event.xkey), buffer, 7, nullptr, nullptr);
-            if (size > 0)
-                sys_char_input(std::string_view{buffer, static_cast<std::size_t>(size)});
+                const_cast<XKeyEvent*>(&event.xkey), &input_char, 1, nullptr, nullptr);
+            if (size == 1)
+                sys_char_input(input_char);
         }
         break;
 
