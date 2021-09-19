@@ -4,13 +4,16 @@
 namespace View {
 
     /**
-     *  \enum orientation
+     * \enum orientation
      **/
     enum class orientation {
         horizontal,
         vertical
     };
 
+    /**
+     * \brief Compute the orthogonal of a given orientation
+     */
     constexpr auto orthogonal(const orientation o)
     {
         return o == orientation::horizontal ?

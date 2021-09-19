@@ -6,9 +6,8 @@
 namespace View {
 
 	/**
-	 *	\brief Return status of event processing
+	 *	\brief Mouse button enumeration
 	 **/
-
     enum class mouse_button {
 		left,
 		right,

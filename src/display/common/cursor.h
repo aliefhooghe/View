@@ -5,7 +5,7 @@
 namespace View {
     /**
      *  \brief PLatform independent cursors identifiers
-     *  \details Theses are mapped to closer platform cursors
+     *  \details Theses are mapped to the best platform cursor match
      **/
     enum class cursor {
         standard,
@@ -24,6 +24,9 @@ namespace View {
 
     constexpr auto VIEW_CURSOR_COUNT = static_cast<unsigned int>(cursor::_count);
 
+    /**
+     * \brief Return a resize cursor with the given orientation
+     */
     constexpr cursor make_size_cursor(orientation o)
     {
         return o == orientation::horizontal ? cursor::size_horizontal : cursor::size_vertical;
