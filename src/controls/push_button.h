@@ -10,7 +10,13 @@ namespace View {
         public:
             using callback = std::function<void()>;
 
-            push_button(float width = 70, float height = 21);
+            static constexpr auto default_width = 70;
+            static constexpr auto default_height = 21;
+
+            push_button(
+                float width = default_width,
+                float height = default_height);
+
             push_button(
                 float width, float height,
                 size_constraint width_constraint,

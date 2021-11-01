@@ -10,7 +10,12 @@ namespace View {
      */
     class text_input : public control {
     public:
-        text_input(float width = 140, float height = 21);
+        static constexpr float default_width = 140.f;
+        static constexpr float default_height = 21.f;
+
+        text_input(
+            float width = default_width,
+            float height = default_height);
         text_input(
             float width, float height,
             size_constraint width_constraint,
