@@ -5,7 +5,11 @@
 namespace View {
 
     checkbox::checkbox(float size, bool checked)
-    : control{size, size}, _checked{checked}
+    : control{
+        size, size,
+        size_constraint::frozen(size),
+        size_constraint::frozen(size)
+     }, _checked{checked}
     {
         apply_color_theme(default_color_theme);
     }
