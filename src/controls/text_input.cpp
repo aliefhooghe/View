@@ -14,6 +14,7 @@ namespace View {
             size_constraint::at_least(width),
             size_constraint::frozen(height), cursor::text}
     {
+        apply_color_theme(default_color_theme);
     }
 
     text_input::text_input(
