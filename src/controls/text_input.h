@@ -1,6 +1,7 @@
 #ifndef VIEW_TEXT_INPUT_H_
 #define VIEW_TEXT_INPUT_H_
 
+#include <functional>
 #include "control.h"
 
 namespace View {
