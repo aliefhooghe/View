@@ -34,7 +34,7 @@ namespace View {
                 _text.pop_back();
         }
         else if (c == 13) {
-            std::cout << "enter!" << std::endl;
+            _enter_callback();
         }
         else if (std::isprint(c)) {
             _text.append(1, c);
@@ -79,6 +79,11 @@ namespace View {
     {
         _text = txt;
         invalidate();
+    }
+
+    void text_input::set_enter_callback(callback enter_callback)
+    {
+        _enter_callback = enter_callback;
     }
 
 }

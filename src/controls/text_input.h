@@ -12,6 +12,7 @@ namespace View {
     public:
         static constexpr float default_width = 140.f;
         static constexpr float default_height = 21.f;
+        using callback = std::function<void()>;
 
         text_input(
             float width = default_width,
@@ -29,11 +30,13 @@ namespace View {
         void set_text(const std::string& txt);
         void clear_text();
         const auto& get_text() const noexcept { return _text; }
+        void set_enter_callback(callback enter_callback);
     private:
         NVGcolor _surface_color;
         NVGcolor _text_color;
         NVGcolor _hoverred_border_color;
         std::string _text{""};
+        callback _enter_callback{[](){}};
     };
 
 }
