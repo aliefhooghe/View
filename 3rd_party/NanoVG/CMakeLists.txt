@@ -31,7 +31,7 @@ find_package(OpenGL REQUIRED)
 find_package(GLEW REQUIRED)
 target_compile_definitions(nanovg INTERFACE NANOVG_GLEW NANOVG_GL2_IMPLEMENTATION)
 target_link_libraries(nanovg INTERFACE OpenGL::GL GLEW::GLEW)
-		
+
 if (WIN32)
     target_compile_definitions(nanovg PUBLIC "_CRT_SECURE_NO_WARNINGS")
 endif()

@@ -45,17 +45,17 @@ namespace View {
         virtual bool on_char_input(char)                { return false; }
 
         virtual bool on_mouse_enter()                   { return false; }
-		virtual bool on_mouse_exit()                    { return false; }
-		virtual bool on_mouse_move(float x, float y)    { return false; }
-		virtual bool on_mouse_wheel(float x, float y, float distance)                   { return false; }
+        virtual bool on_mouse_exit()                    { return false; }
+        virtual bool on_mouse_move(float x, float y)    { return false; }
+        virtual bool on_mouse_wheel(float x, float y, float distance)                   { return false; }
 
-		virtual bool on_mouse_button_down(const mouse_button button, float x, float y)  { return false; }
-		virtual bool on_mouse_button_up(const mouse_button button, float x, float y)    { return false; }
-		virtual bool on_mouse_dbl_click(float x, float y)                               { return false; }
+        virtual bool on_mouse_button_down(const mouse_button button, float x, float y)  { return false; }
+        virtual bool on_mouse_button_up(const mouse_button button, float x, float y)    { return false; }
+        virtual bool on_mouse_dbl_click(float x, float y)                               { return false; }
 
-		virtual bool on_mouse_drag(const mouse_button button, float x, float y, float dx, float dy)     { return false; }
-		virtual bool on_mouse_drag_start(const mouse_button button, float x, float y)                   { return false; }
-		virtual bool on_mouse_drag_end(const mouse_button button, float x, float y)                     { return false; }
+        virtual bool on_mouse_drag(const mouse_button button, float x, float y, float dx, float dy)     { return false; }
+        virtual bool on_mouse_drag_start(const mouse_button button, float x, float y)                   { return false; }
+        virtual bool on_mouse_drag_end(const mouse_button button, float x, float y)                     { return false; }
         virtual bool on_mouse_drag_cancel()                                                             { return false; }
 
         virtual void draw(NVGcontext*) {}

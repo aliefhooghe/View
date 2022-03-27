@@ -53,27 +53,27 @@ namespace View {
         invalidate();
     }
 
-	bool map_wrapper::on_mouse_move(float x, float y)
+    bool map_wrapper::on_mouse_move(float x, float y)
     {
         return widget_wrapper_base::on_mouse_move(_x_to_content(x), _y_to_content(y));
     }
 
-	bool map_wrapper::on_mouse_button_down(const mouse_button button, float x, float y)
+    bool map_wrapper::on_mouse_button_down(const mouse_button button, float x, float y)
     {
         return widget_wrapper_base::on_mouse_button_down(button, _x_to_content(x), _y_to_content(y));
     }
 
-	bool map_wrapper::on_mouse_button_up(const mouse_button button, float x, float y)
+    bool map_wrapper::on_mouse_button_up(const mouse_button button, float x, float y)
     {
         return widget_wrapper_base::on_mouse_button_up(button, _x_to_content(x), _y_to_content(y));
     }
 
-	bool map_wrapper::on_mouse_dbl_click(float x, float y)
+    bool map_wrapper::on_mouse_dbl_click(float x, float y)
     {
         return widget_wrapper_base::on_mouse_dbl_click(_x_to_content(x), _y_to_content(y));
     }
 
-	bool map_wrapper::on_mouse_drag(const mouse_button button, float x, float y, float dx, float dy)
+    bool map_wrapper::on_mouse_drag(const mouse_button button, float x, float y, float dx, float dy)
     {
         if (!widget_wrapper_base::on_mouse_drag(button, _x_to_content(x), _y_to_content(y), dx / _scale, dy / _scale)) {
             _translate_origin(-dx, -dy);
@@ -83,13 +83,13 @@ namespace View {
         return true;
     }
 
-	bool map_wrapper::on_mouse_drag_start(const mouse_button button, float x, float y)
+    bool map_wrapper::on_mouse_drag_start(const mouse_button button, float x, float y)
     {
         widget_wrapper_base::on_mouse_drag_start(button, _x_to_content(x), _y_to_content(y));
         return true;
     }
 
-	bool map_wrapper::on_mouse_drag_end(const mouse_button button, float x, float y)
+    bool map_wrapper::on_mouse_drag_end(const mouse_button button, float x, float y)
     {
         widget_wrapper_base::on_mouse_drag_end(button, _x_to_content(x), _y_to_content(y));
         return true;

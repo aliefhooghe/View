@@ -5,14 +5,14 @@
 
 namespace View {
 
-	/**
-	 *	\brief Mouse button enumeration
-	 **/
+    /**
+     *    \brief Mouse button enumeration
+     **/
     enum class mouse_button {
-		left,
-		right,
-		wheel
-	};
+        left,
+        right,
+        wheel
+    };
 }
 
 #endif

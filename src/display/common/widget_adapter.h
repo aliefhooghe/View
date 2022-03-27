@@ -46,13 +46,13 @@ namespace View {
             NVGcontext *vg, unsigned int top, unsigned int bottom,
             unsigned int left, unsigned int right);
 
-		bool sys_mouse_move(unsigned int cx, unsigned int cy);
-		bool sys_mouse_enter(void);
-		bool sys_mouse_exit(void);
-		bool sys_mouse_button_down(const mouse_button button);
-		bool sys_mouse_button_up(const mouse_button button);
-		bool sys_mouse_wheel(const float distance);
-		bool sys_mouse_dbl_click(void);
+        bool sys_mouse_move(unsigned int cx, unsigned int cy);
+        bool sys_mouse_enter(void);
+        bool sys_mouse_exit(void);
+        bool sys_mouse_button_down(const mouse_button button);
+        bool sys_mouse_button_up(const mouse_button button);
+        bool sys_mouse_wheel(const float distance);
+        bool sys_mouse_dbl_click(void);
         bool sys_char_input(char);
     protected:
         /**

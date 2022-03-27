@@ -35,13 +35,13 @@ namespace View {
         void reset_view() noexcept;
 
         //  Events with coordinate
-		bool on_mouse_move(float x, float y) override;
-		bool on_mouse_button_down(const mouse_button button, float x, float y) override;
-		bool on_mouse_button_up(const mouse_button button, float x, float y) override;
-		bool on_mouse_dbl_click(float x, float y) override;
-		bool on_mouse_drag(const mouse_button button, float x, float y, float dx, float dy) override;
-		bool on_mouse_drag_start(const mouse_button button, float x, float y) override;
-		bool on_mouse_drag_end(const mouse_button button, float x, float y) override;
+        bool on_mouse_move(float x, float y) override;
+        bool on_mouse_button_down(const mouse_button button, float x, float y) override;
+        bool on_mouse_button_up(const mouse_button button, float x, float y) override;
+        bool on_mouse_dbl_click(float x, float y) override;
+        bool on_mouse_drag(const mouse_button button, float x, float y, float dx, float dy) override;
+        bool on_mouse_drag_start(const mouse_button button, float x, float y) override;
+        bool on_mouse_drag_end(const mouse_button button, float x, float y) override;
         bool on_mouse_wheel(float x, float y, float distance) override;
 
         void draw(NVGcontext *) override;

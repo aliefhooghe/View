@@ -60,7 +60,7 @@ namespace View {
         nvgRestore(vg);
     }
 
-	bool widget_adapter::sys_mouse_move(unsigned int cx, unsigned int cy)
+    bool widget_adapter::sys_mouse_move(unsigned int cx, unsigned int cy)
     {
         bool ret = false;
         float old_cursor_x = _cursor_fx;
@@ -85,19 +85,19 @@ namespace View {
         }
     }
 
-	bool widget_adapter::sys_mouse_enter(void)
+    bool widget_adapter::sys_mouse_enter(void)
     {
         return _root.on_mouse_enter();
     }
 
-	bool widget_adapter::sys_mouse_exit(void)
+    bool widget_adapter::sys_mouse_exit(void)
     {
         _pressed_button_count = 0u;
         _is_draging = false;
         return _root.on_mouse_exit();
     }
 
-	bool widget_adapter::sys_mouse_button_down(const mouse_button button)
+    bool widget_adapter::sys_mouse_button_down(const mouse_button button)
     {
         // Cancel lost drag
         if (_is_draging && _draging_button == button) {
@@ -112,7 +112,7 @@ namespace View {
         return _root.on_mouse_button_down(button, _cursor_fx, _cursor_fy);
     }
 
-	bool widget_adapter::sys_mouse_button_up(const mouse_button button)
+    bool widget_adapter::sys_mouse_button_up(const mouse_button button)
     {
         _root.on_mouse_move(_cursor_fx, _cursor_fy);
 
@@ -129,12 +129,12 @@ namespace View {
         }
     }
 
-	bool widget_adapter::sys_mouse_wheel(const float distance)
+    bool widget_adapter::sys_mouse_wheel(const float distance)
     {
         return _root.on_mouse_wheel(_cursor_fx, _cursor_fy, distance);
     }
 
-	bool widget_adapter::sys_mouse_dbl_click(void)
+    bool widget_adapter::sys_mouse_dbl_click(void)
     {
         _root.on_mouse_move(_cursor_fx, _cursor_fy);
         return _root.on_mouse_dbl_click(_cursor_fx, _cursor_fy);

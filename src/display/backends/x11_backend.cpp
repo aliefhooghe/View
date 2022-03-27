@@ -97,8 +97,8 @@ namespace View {
 
         _display = XOpenDisplay(nullptr /* display name*/);
 
-	if (_display == nullptr)
-	    throw std::runtime_error("Unable to open X display");
+    if (_display == nullptr)
+        throw std::runtime_error("Unable to open X display");
 
 
         int attributes[] = {GLX_RGBA, GLX_DEPTH_SIZE, 24, GLX_DOUBLEBUFFER, None};
@@ -122,8 +122,8 @@ namespace View {
                 visual_info->visual,
                 CWColormap, &xattributs);
 
-	if (_window == 0u)
-	    throw std::runtime_error("Unable to open a X11 window");
+    if (_window == 0u)
+        throw std::runtime_error("Unable to open a X11 window");
 
         XStoreName(_display, _window, title.c_str());
 

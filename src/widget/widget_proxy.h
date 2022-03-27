@@ -95,7 +95,7 @@ namespace View {
                 return false;
         }
 
-		bool on_mouse_move(float x, float y) override
+        bool on_mouse_move(float x, float y) override
         {
             if (auto sptr = _children.lock())
                 return sptr->on_mouse_move(x, y);
@@ -112,7 +112,7 @@ namespace View {
         }
 
 
-		bool on_mouse_button_down(const mouse_button button, float x, float y) override
+        bool on_mouse_button_down(const mouse_button button, float x, float y) override
         {
             if (auto sptr = _children.lock())
                 return sptr->on_mouse_button_down(button, x, y);
@@ -120,7 +120,7 @@ namespace View {
                 return false;
         }
 
-		bool on_mouse_button_up(const mouse_button button, float x, float y) override
+        bool on_mouse_button_up(const mouse_button button, float x, float y) override
         {
             if (auto sptr = _children.lock())
                 return sptr->on_mouse_button_up(button, x, y);
@@ -128,7 +128,7 @@ namespace View {
                 return false;
         }
 
-		bool on_mouse_dbl_click(float x, float y) override
+        bool on_mouse_dbl_click(float x, float y) override
         {
             if (auto sptr = _children.lock())
                 return sptr->on_mouse_dbl_click(x, y);
@@ -136,7 +136,7 @@ namespace View {
                 return false;
         }
 
-		bool on_mouse_drag(const mouse_button button, float x, float y, float dx, float dy) override
+        bool on_mouse_drag(const mouse_button button, float x, float y, float dx, float dy) override
         {
             if (auto sptr = _children.lock())
                 return sptr->on_mouse_drag(button, x, y, dx, dy);
@@ -144,7 +144,7 @@ namespace View {
                 return false;
         }
 
-		bool on_mouse_drag_start(const mouse_button button, float x, float y) override
+        bool on_mouse_drag_start(const mouse_button button, float x, float y) override
         {
             if (auto sptr = _children.lock())
                 return sptr->on_mouse_drag_start(button, x, y);
@@ -152,7 +152,7 @@ namespace View {
                 return false;
         }
 
-		bool on_mouse_drag_end(const mouse_button button, float x, float y) override
+        bool on_mouse_drag_end(const mouse_button button, float x, float y) override
         {
             if (auto sptr = _children.lock())
                 return sptr->on_mouse_drag_end(button, x, y);

@@ -2,7 +2,7 @@ cmake_minimum_required (VERSION 3.1)
 
 # include guard
 if(TARGET View)
-	return()
+    return()
 endif()
 
 project(View CXX)
@@ -110,7 +110,7 @@ if (UNIX)
         display/backends/x11_backend.h
     )
 
-	target_link_libraries(View PRIVATE ${X11_LIBRARIES})
+    target_link_libraries(View PRIVATE ${X11_LIBRARIES})
 
     if(LINUX)
     target_link_libraries(View PRIVATE pthread)

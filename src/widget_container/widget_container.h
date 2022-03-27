@@ -106,15 +106,15 @@ namespace View {
         //  Events
         bool on_char_input(char) override;
         bool on_mouse_enter() override;
-		bool on_mouse_exit() override;
-		bool on_mouse_move(float x, float y) override;
-		bool on_mouse_wheel(float x, float y, float distance) override;
-		bool on_mouse_button_down(const mouse_button button, float x, float y) override;
-		bool on_mouse_button_up(const mouse_button button, float x, float y) override;
-		bool on_mouse_dbl_click(float x, float y) override;
-		bool on_mouse_drag(const mouse_button button, float x, float y, float dx, float dy) override;
-		bool on_mouse_drag_start(const mouse_button button, float x, float y) override;
-		bool on_mouse_drag_end(const mouse_button button, float x, float y) override;
+        bool on_mouse_exit() override;
+        bool on_mouse_move(float x, float y) override;
+        bool on_mouse_wheel(float x, float y, float distance) override;
+        bool on_mouse_button_down(const mouse_button button, float x, float y) override;
+        bool on_mouse_button_up(const mouse_button button, float x, float y) override;
+        bool on_mouse_dbl_click(float x, float y) override;
+        bool on_mouse_drag(const mouse_button button, float x, float y, float dx, float dy) override;
+        bool on_mouse_drag_start(const mouse_button button, float x, float y) override;
+        bool on_mouse_drag_end(const mouse_button button, float x, float y) override;
         bool on_mouse_drag_cancel() override;
 
         void apply_color_theme(const color_theme& theme) override;
@@ -225,7 +225,7 @@ namespace View {
             return false;
     }
 
-	template <typename TDerived, typename TChildren>
+    template <typename TDerived, typename TChildren>
     bool widget_container<TDerived, TChildren>::on_mouse_button_up(const mouse_button button, float x, float y)
     {
         if (_focused_widget)
@@ -237,7 +237,7 @@ namespace View {
             return false;
     }
 
-	template <typename TDerived, typename TChildren>
+    template <typename TDerived, typename TChildren>
     bool widget_container<TDerived, TChildren>::on_mouse_dbl_click(float x, float y)
     {
         if (_focused_widget)
@@ -278,7 +278,7 @@ namespace View {
         }
     }
 
-	template <typename TDerived, typename TChildren>
+    template <typename TDerived, typename TChildren>
     bool widget_container<TDerived, TChildren>::on_mouse_drag_end(const mouse_button button, float x, float y)
     {
         if (_draging) {
