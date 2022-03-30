@@ -42,7 +42,7 @@ namespace View {
 
         //  Internal helpers
         void _redraw_window();
-        void _resize_window(unsigned int width, unsigned int height);
+        void _resize_content(unsigned int width, unsigned int height);
         void _initialize_cursors();
         void _apply_cursor();
 
@@ -230,7 +230,7 @@ namespace View {
         EndPaint(_window, &paint_struct);
     }
 
-    void win32_window::_resize_window(unsigned int width, unsigned int height)
+    void win32_window::_resize_content(unsigned int width, unsigned int height)
     {
         //  Notify the content that window size has changed
         resize_display(width, height);
@@ -305,7 +305,7 @@ namespace View {
         break;
 
         case WM_SIZE:
-            window_instance->_resize_window(LOWORD(l_param), HIWORD(l_param));
+            window_instance->_resize_content(LOWORD(l_param), HIWORD(l_param));
             break;
 
         case WM_MOVE:
