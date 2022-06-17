@@ -16,6 +16,7 @@ namespace View {
      */
     class display_controler {
         friend class widget;
+        friend class widget_holder_base;
     public:
         display_controler() noexcept
         : _widget{nullptr}

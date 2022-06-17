@@ -8,45 +8,37 @@
 
 namespace View {
 
-    template <typename TChildren = widget>
-    class widget_holder : private display_controler {
+    class widget_holder_base : private display_controler {
 
     public:
-        widget_holder(widget& parent,
-            float x, float y, std::unique_ptr<TChildren>&& w)
-        :   _parent{&parent}, display_controler{*w},
-            _pos_x{x}, _pos_y{y}, _widget_instance{std::move(w)}
-        {}
-
-        widget_holder(widget& parent, float x, float y)
-        :   _parent{&parent},
+        widget_holder_base(widget& parent, float x, float y, widget& children)
+        :   display_controler{children},
+            _parent{&parent},
             _pos_x{x}, _pos_y{y}
         {}
 
-        widget_holder(widget_holder&& other) noexcept
-        :   display_controler{*other._widget_instance},
-            _parent{other._parent},
-            _pos_x{other._pos_x}, _pos_y{other._pos_y},
-            _widget_instance{std::move(other._widget_instance)}
+        widget_holder_base(widget& parent, float x, float y)
+        :   display_controler{},
+            _parent{&parent},
+            _pos_x{x}, _pos_y{y}
         {}
 
-        widget_holder(const widget_holder& x) noexcept = delete;
-        virtual ~widget_holder() = default;
+        widget_holder_base(const widget_holder_base& other) noexcept
+        :   _parent{other._parent},
+            _pos_x{other._pos_x},
+            _pos_y{other._pos_y}
+        {
+        }
 
-        widget_holder& operator=(widget_holder&& other) noexcept
+        widget_holder_base& operator=(const widget_holder_base& other) noexcept
         {
             _parent = other._parent;
             _pos_x = other._pos_x;
             _pos_y = other._pos_y;
-            set_widget(std::move(other._widget_instance));
             return *this;
         }
 
-        void set_widget(std::unique_ptr<TChildren>&& w)
-        {
-            _widget_instance = std::move(w);
-            display_controler::set_widget(*_widget_instance);   //  assign this widget to the display_ctl interface
-        }
+        virtual ~widget_holder_base() = default;
 
         void set_pos(float x, float y) noexcept { _pos_x = x; _pos_y = y; }
         void set_pos_x(float x) noexcept { _pos_x = x; }
@@ -55,13 +47,10 @@ namespace View {
         auto pos_x() const noexcept { return _pos_x; }
         auto pos_y() const noexcept { return _pos_y; }
 
-        auto get() noexcept { return _widget_instance.get(); }
-        auto get() const noexcept { return _widget_instance.get(); }
-
-        auto operator->() noexcept { return get(); }
-        auto operator->() const noexcept { return get(); }
-
     protected:
+        using display_controler::set_widget;
+
+    private:
         /**
          *      Display controler interface
          */
@@ -87,8 +76,53 @@ namespace View {
 
         float _pos_x;
         float _pos_y;
-        std::unique_ptr<TChildren> _widget_instance{};
         widget *_parent;
+    };
+
+    template <typename TChildren = widget>
+    class widget_holder : public widget_holder_base {
+
+    public:
+        widget_holder(widget& parent,
+            float x, float y, std::unique_ptr<TChildren>&& w)
+        :   widget_holder_base{parent, x, y, *w},
+            _widget_instance{std::move(w)}
+        {}
+
+        widget_holder(widget& parent, float x, float y)
+        :   widget_holder_base{parent, x, y},
+            _widget_instance{nullptr}
+        {}
+
+        widget_holder(widget_holder&& other) noexcept
+        :   widget_holder_base{other},
+            _widget_instance{std::move(other._widget_instance)}
+        {}
+
+        widget_holder(const widget_holder&) noexcept = delete;
+        virtual ~widget_holder() = default;
+
+        widget_holder& operator=(widget_holder&& other) noexcept
+        {
+            widget_holder_base::operator=(other);
+            set_widget(std::move(other._widget_instance));
+            return *this;
+        }
+
+        void set_widget(std::unique_ptr<TChildren>&& w)
+        {
+            _widget_instance = std::move(w);
+            widget_holder_base::set_widget(*_widget_instance);   //  assign this widget to the display_ctl interface
+        }
+
+        auto get() noexcept { return _widget_instance.get(); }
+        auto get() const noexcept { return _widget_instance.get(); }
+
+        auto operator->() noexcept { return get(); }
+        auto operator->() const noexcept { return get(); }
+
+    protected:
+        std::unique_ptr<TChildren> _widget_instance{};
     };
 
     template <typename TDerived, typename TChildren = widget>
