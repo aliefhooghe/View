@@ -13,12 +13,10 @@
 namespace View {
 
     class display_controler;
-    class widget_holder_base;
 
     class widget {
         //  Note : widget is not a rectangle because it does not know its position
         friend class display_controler;
-        friend class widget_holder_base;
     public:
         widget(float width, float height) noexcept;
         widget(float width, float height, size_constraint width_constraint, size_constraint height_constraint);
@@ -66,7 +64,6 @@ namespace View {
         //  Color theme handling
         virtual void apply_color_theme(const color_theme& theme) {}
 
-    protected:
         //  Position in parent
         float pos_x() const;
         float pos_y() const;
@@ -76,6 +73,7 @@ namespace View {
         void invalidate_rect(const rectangle<>&);
         void set_cursor(cursor cursor);
 
+    protected:
         void set_size_constraints(size_constraint width, size_constraint height) noexcept
         {
             _width_constraint = width;
